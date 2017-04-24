@@ -1,6 +1,6 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
-            [clojure.string :refer [split]]))
+            [clojure.string :refer [split join]]))
 
 (defn parse-align [^Character c]
   (case (Character/toUpperCase c)
@@ -17,11 +17,13 @@
                     (= c \[) [true aligns spaces]
                     (= c \]) [false aligns (conj spaces "")]
                     in-brace [in-brace (conj aligns (parse-align c)) spaces]
-                    :else [in-brace aligns (conj (into [] (butlast spaces)) (str (last spaces) c))]))
+                    :else [in-brace
+                           aligns
+                           (conj (into [] (butlast spaces)) (str (last spaces) c))]))
                 [false [] [""]]
                 layout-string)]
     [aligns
-     (map #(if (= (.toLowerCase %) "fill") "fill" %) spaces)]))
+     (mapv #(if (= (.toLowerCase %) "fill") :F %) spaces)]))
 
 (defn transpose [vs]
   (into []
@@ -33,39 +35,107 @@
           (take-while seq))
         (range)))
 
+(def border-ascii-box
+  {
+   :outer  ["┌─┐"
+            "│ │"
+            "└─┘"]
+   :inner  ["│─"]
+   :header ["┌─┐"
+            "│ │"
+            "┝━┥"]
+   })
+
+(def border-markdown
+  {
+   :outer  [nil
+            "| |"
+            nil]
+   :inner  ["|x"]
+   :header [nil
+            "│ │"
+            "|-|"]
+   })
+
 (def layout-config
   {:align-char \space
    :width      10
-   }
-  )
+   :borders    border-markdown
+   })
+
+(defn normalize-rows [col-count rows]
+  "Add empty elements to any rows which have fewer elements
+  col-count"
+  (map (fn [row]
+         (let [c (count row)
+               d (- col-count c)]
+           (cond
+             (zero? d) row
+             (pos? d) (into [] (concat row (repeat d "")))
+             :else (subvec row 0 col-count))))
+       rows))
+
+
+(defn expand-fills [spaces fill-width align-char i]
+  (prn spaces i (= (nth spaces i) :F) "fill-width" fill-width "align char" align-char)
+  (if (= (nth spaces i) :F)
+    (apply str (repeat fill-width align-char))
+    (nth spaces i)))
+
+(defn align-word [aligns col-widths align-char word i]
+  (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) word))]
+    (case (nth aligns i)
+      :L (fmt "~v,,,vA")
+      :R (fmt "~v,,,v@A")
+      :C (fmt "~v,,,v:@<~A~>")
+      ;:W (fmt (str "~{~<~%~1,"  ":;~A~> ~}"))
+      :else (throw (IllegalArgumentException.
+                     (str "Unsupported alignment operation '" (nth aligns i)
+                          "' encountered, index: " i ", aligns: " aligns))))))
+
+(defn expand [spaces width col-widths align-char]
+  (let [fill-width (max 0 (- width (+ (reduce + col-widths)
+                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))
+        len (dec (count spaces))
+        fill-count (count (filter keyword? spaces))
+        width-per (/ fill-width fill-count)
+        int-per (int width-per)
+        diff (- width-per int-per)
+        fill (join (repeat int-per " "))]
+    (first
+      (reduce
+        (fn [[res e i] x]
+          (cond
+            (not= (nth spaces i) :F) [(conj res (nth spaces i)) e (inc i)]
+            (= i len) (if (zero? e)  [(conj res fill) 0 (inc i)]
+                                     [(conj res (str fill " ")) 0 (inc i)]) [(conj res (str fill " ")) 0 (inc i)]
+            (= (int e) 1)            [(conj res (str fill " ")) 0 (inc i)]
+            :else                    [(conj res fill) (+ e diff) (inc i)]))
+        [[] 0 0]
+        spaces))))
+
+(defn rep [q i]
+  (int (reduce + (repeat i q))))
 
 ; TODO: read up on mig layout, change precondition
+; TODO: fix parsing failure handling
 (defn layout [rows layout-string layout-config]
   {:pre [(pos? (count rows))]}
   (let [{:keys [align-char width]} layout-config
-        rows (if (instance? String rows) [] rows)
         [aligns spaces] (parse-layout-string layout-string)
+        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))
         col-widths (map #(apply max (map count %)) (transpose rows))
         fill-width (max 0 (- width (+ (reduce + col-widths)
-                                      (reduce + (map count (filter #(not= % "fill")))))))
-        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))
-
-        align (fn [w i]
-                (case (nth aligns i)
-                  :L (cl-format nil "~v,,,vA" align-char width w)
-                  :R (cl-format nil "~v,,,v@A" align-char width w)
-                  :C (cl-format nil "~v,,,v:@<~A~>" align-char width w)
-                  ;:W (clojure.pprint/cl-format nil "~{~<~%~1," size ":;~A~> ~}")
-                  (fail (str "Unsupported alignment operation '" (nth aligns i)
-                             "' encountered, index: " i ", aligns: " aligns))))
-        space (fn [i]
-                (if (= (nth spaces i) "fill")
-                  (apply str (repeat fill-width align-char))
-                  (nth spaces i)))]
-    (map #(reduce (fn [[i r] w] [(inc i) (str (align w i) (space (inc i)))])
-                  [-1 ""]
-                  %)
-         rows)))
+                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))
+        align (partial align-word aligns col-widths align-char)
+        space (partial expand-fills spaces fill-width align-char)
+        indent-row (fn [row]
+                     (second
+                       (reduce (fn [[i r] w]
+                                 [(inc i) (str r (align w i) (space (inc i)))])
+                               [0 (first spaces)]
+                               row)))]
+    (map indent-row rows)))
 
 ;  rows.collect { List<String> row ->
 ;    // can not use
