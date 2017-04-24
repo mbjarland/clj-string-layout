@@ -45,12 +45,12 @@
   " "               []               [" "]
   "[L]"             [:L]             ["" ""]
   "[L][C][R]"       [:L :C :R]       ["" "" "" ""]
-  "fill"            []               [:F]
+  "f"               []               [:F]
   "|[L]|[C]|"       [:L :C]          ["|" "|" "|"]
    "[L]|[C]|"       [:L :C]          ["" "|" "|"]
   "|[L]|[C]"        [:L :C]          ["|" "|" ""]
   "[L]|[C]"         [:L :C]          ["" "|" ""]
-  "|[L][C]|"       [:L :C]           ["|" "" "|"])
+  "|[L][C]|"        [:L :C]          ["|" "" "|"])
 
 
 
@@ -81,11 +81,11 @@
         "a b\naa bb"             "[L] [R]"         0       ["a   b"  "aa bb"]
         "a b\naa bb"             "[L]  [R]"       20       ["a    b"  "aa  bb"]
         "a b\naa bb"             "[L]  [R]"        0       ["a    b"  "aa  bb"]
-        "a b"                    "[L]fill[R]"     20       ["a                  b"]
-        "a b"                    "[L]fill[R]"      0       ["ab"]
-        "a b\naa bb"             "[L]fill[R]"     10       ["a        b"  "aa      bb"]
-        "a b\naa bb"             "[L]fill[R]"      0       ["a  b"  "aabb"]
-        "a b\naa bb"             "fill[R] [R]"    10       ["      a  b"  "     aa bb"]
-        "a b\naa bb"             "fill[R] [R]"     0       [" a  b"  "aa bb"]
-        "a b\naa bb"             "[R] [R]fill"    10       [" a  b     "  "aa bb     "]
-        "a b\naa bb"             "[R] [R]fill"     0       [" a  b"  "aa bb"])
+        "a b"                    "[L]f[R]"        20       ["a                  b"]
+        "a b"                    "[L]f[R]"         0       ["ab"]
+        "a b\naa bb"             "[L]f[R]"        10       ["a        b"  "aa      bb"]
+        "a b\naa bb"             "[L]f[R]"         0       ["a  b"  "aabb"]
+        "a b\naa bb"             "f[R] [R]"       10       ["      a  b"  "     aa bb"]
+        "a b\naa bb"             "f[R] [R]"        0       [" a  b"  "aa bb"]
+        "a b\naa bb"             "[R] [R]f"       10       [" a  b     "  "aa bb     "]
+        "a b\naa bb"             "[R] [R]f"        0       [" a  b"  "aa bb"])

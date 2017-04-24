@@ -1,13 +1,44 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
-            [clojure.string :refer [split join]]))
+            [clojure.string :refer [split join]]
+            [clojure.spec   :as s]))
 
 (defn parse-align [^Character c]
   (case (Character/toUpperCase c)
     \L :L
     \R :R
     \C :C
-    (throw IllegalArgumentException)))                      ;; TODO: figure out x
+    (throw (IllegalArgumentException. "invalid align char: " c)))) ;; TODO: figure out x
+
+
+(s/def ::layout-string (s/coll-of
+                         (s/alt :f keyword? :s string?)
+                         :kind vector?))
+
+
+(defn expand-fills [spaces width col-widths align-char]
+  {:pre []}
+  (when (pos? (count (filter keyword? spaces)))
+    (let [fill-count (count (filter keyword? spaces))
+          fill-width (max 0 (- width (+ (reduce + col-widths)
+                                        (reduce + (keep #(if (string? %) (count %)) spaces)))))
+          int-per (int (/ fill-width fill-count))
+          doubles (- fill-width (* fill-count int-per))
+          fills (mapv
+                  #(join (repeat % align-char))
+                  (mapv +
+                        (repeat fill-count int-per)
+                        (concat (repeat doubles 1)
+                                (repeat (- fill-count doubles) 0))))
+          spaces (first
+                  (reduce
+                    (fn [[res i f] x]
+                      (if (= (nth spaces i) :F)
+                        [(conj res (nth fills f)) (inc i) (inc f)]
+                        [(conj res x) (inc i) f]))
+                    [[] 0 0]
+                    spaces))]))
+  spaces)
 
 (defn parse-layout-string [layout-string]
   {:pre [(not-empty layout-string)]}
@@ -21,9 +52,9 @@
                            aligns
                            (conj (into [] (butlast spaces)) (str (last spaces) c))]))
                 [false [] [""]]
-                layout-string)]
-    [aligns
-     (mapv #(if (= (.toLowerCase %) "fill") :F %) spaces)]))
+                layout-string)
+        spaces (mapv #(if (= (.toLowerCase %) "f") :F %) spaces)]
+    [aligns spaces]))
 
 (defn transpose [vs]
   (into []
@@ -75,13 +106,6 @@
              :else (subvec row 0 col-count))))
        rows))
 
-
-(defn expand-fills [spaces fill-width align-char i]
-  (prn spaces i (= (nth spaces i) :F) "fill-width" fill-width "align char" align-char)
-  (if (= (nth spaces i) :F)
-    (apply str (repeat fill-width align-char))
-    (nth spaces i)))
-
 (defn align-word [aligns col-widths align-char word i]
   (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) word))]
     (case (nth aligns i)
@@ -93,27 +117,27 @@
                      (str "Unsupported alignment operation '" (nth aligns i)
                           "' encountered, index: " i ", aligns: " aligns))))))
 
-(defn expand [spaces width col-widths align-char]
-  (let [fill-width (max 0 (- width (+ (reduce + col-widths)
-                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))
-        len (dec (count spaces))
-        fill-count (count (filter keyword? spaces))
-        width-per (/ fill-width fill-count)
-        int-per (int width-per)
-        diff (- width-per int-per)
-        fill (join (repeat int-per " "))]
-    (first
-      (reduce
-        (fn [[res e i] x]
-          (cond
-            (not= (nth spaces i) :F) [(conj res (nth spaces i)) e (inc i)]
-            (= i len) (if (zero? e)  [(conj res fill) 0 (inc i)]
-                                     [(conj res (str fill " ")) 0 (inc i)]) [(conj res (str fill " ")) 0 (inc i)]
-            (= (int e) 1)            [(conj res (str fill " ")) 0 (inc i)]
-            :else                    [(conj res fill) (+ e diff) (inc i)]))
-        [[] 0 0]
-        spaces))))
 
+; [1 1 1 1]
+; [2 1 1 1]
+; [2 2 1 1]
+; [2 2 2 1]
+; [2 2 2 2] - not needed
+;
+; in the below
+; 7 is the fill-width, 1 is (int width-per),
+; 
+; (some #(if (= (reduce + %) 7) %)
+;       (into [] (for [a [1 2]
+;                      b [1 2]
+;                      c [1 2]
+;                      d [1 2] :when (>= a b c d)]
+;                  [a b c d])))
+;
+;  => [2 2 2 1
+;
+;
+;
 (defn rep [q i]
   (int (reduce + (repeat i q))))
 
@@ -128,6 +152,7 @@
         fill-width (max 0 (- width (+ (reduce + col-widths)
                                       (reduce + (keep #(if (string? %) (count %)) spaces)))))
         align (partial align-word aligns col-widths align-char)
+        spaces (expand-fills spaces width col-widths align-char)
         space (partial expand-fills spaces fill-width align-char)
         indent-row (fn [row]
                      (second
