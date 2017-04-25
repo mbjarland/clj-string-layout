@@ -1,7 +1,7 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
-            [clojure.spec   :as s]))
+            [clojure.spec :as s]))
 
 (defn parse-align [^Character c]
   (case (Character/toUpperCase c)
@@ -11,13 +11,27 @@
     (throw (IllegalArgumentException. "invalid align char: " c)))) ;; TODO: figure out x
 
 
-(s/def ::layout-string (s/coll-of
-                         (s/alt :f keyword? :s string?)
-                         :kind vector?))
+(defn valid-layout-string? [s]
+  (re-matches #".*" s))                                     ;;TODO: regex for layout string
 
+(s/def ::parsed-spaces (s/cat :layout-element
+                              (s/* (s/alt :f #(= % :F) :s string?))))
 
-(defn expand-fills [spaces width col-widths align-char]
-  {:pre []}
+(s/def ::layout-width nat-int?)
+(s/def ::col-widths (s/cat :col-width
+                           (s/* nat-int?)))
+(s/def ::layout-string (s/and string?
+                              valid-layout-string?))
+(s/def ::align-char char?)
+
+(defn expand-fills
+  "expands the 'f' formatting specifiers in the 'spaces' vector
+  to the appropriate number fo 'align-char' characters"
+  [spaces width col-widths align-char]
+  {:pre [(s/valid? ::parsed-spaces spaces)
+         (s/valid? ::layout-width width)
+         (s/valid? ::col-widths col-widths)
+         (s/valid? ::align-char align-char)]}
   (when (pos? (count (filter keyword? spaces)))
     (let [fill-count (count (filter keyword? spaces))
           fill-width (max 0 (- width (+ (reduce + col-widths)
@@ -31,13 +45,13 @@
                         (concat (repeat doubles 1)
                                 (repeat (- fill-count doubles) 0))))
           spaces (first
-                  (reduce
-                    (fn [[res i f] x]
-                      (if (= (nth spaces i) :F)
-                        [(conj res (nth fills f)) (inc i) (inc f)]
-                        [(conj res x) (inc i) f]))
-                    [[] 0 0]
-                    spaces))]))
+                   (reduce
+                     (fn [[res i f] x]
+                       (if (= (nth spaces i) :F)
+                         [(conj res (nth fills f)) (inc i) (inc f)]
+                         [(conj res x) (inc i) f]))
+                     [[] 0 0]
+                     spaces))]))
   spaces)
 
 (defn parse-layout-string [layout-string]
