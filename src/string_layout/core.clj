@@ -1,7 +1,11 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
-            [clojure.spec :as s]))
+            [clojure.spec :as s]
+            [clojure.spec.test :as stest]
+            [clojure.spec.gen :as gen]
+            [string-layout.spec :refer :all])
+  (:import (clojure.lang StringSeq)))
 
 (defn parse-align [^Character c]
   (case (Character/toUpperCase c)
@@ -14,24 +18,11 @@
 (defn valid-layout-string? [s]
   (re-matches #".*" s))                                     ;;TODO: regex for layout string
 
-(s/def ::parsed-spaces (s/cat :layout-element
-                              (s/* (s/alt :f #(= % :F) :s string?))))
-
-(s/def ::layout-width nat-int?)
-(s/def ::col-widths (s/cat :col-width
-                           (s/* nat-int?)))
-(s/def ::layout-string (s/and string?
-                              valid-layout-string?))
-(s/def ::align-char char?)
 
 (defn expand-fills
   "expands the 'f' formatting specifiers in the 'spaces' vector
   to the appropriate number fo 'align-char' characters"
   [spaces width col-widths align-char]
-  {:pre [(s/valid? ::parsed-spaces spaces)
-         (s/valid? ::layout-width width)
-         (s/valid? ::col-widths col-widths)
-         (s/valid? ::align-char align-char)]}
   (when (pos? (count (filter keyword? spaces)))
     (let [fill-count (count (filter keyword? spaces))
           fill-width (max 0 (- width (+ (reduce + col-widths)
@@ -54,8 +45,17 @@
                      spaces))]))
   spaces)
 
-(defn parse-layout-string [layout-string]
-  {:pre [(not-empty layout-string)]}
+
+(declare parse-layout-string)
+(s/fdef parse-layout-string
+        :args ::layout-string
+        :ret (s/cat :aligns ::parsed-aligns
+                    :spaces ::parsed-spaces))
+
+(defn parse-layout-string
+  "parses a col-layout string"
+  [layout-string]
+  {:pre [(check ::layout-string layout-string)]}
   (let [[_ aligns spaces]
         (reduce (fn [[in-brace aligns spaces] c]
                   (cond
@@ -69,6 +69,24 @@
                 layout-string)
         spaces (mapv #(if (= (.toLowerCase %) "f") :F %) spaces)]
     [aligns spaces]))
+
+(s/fdef expand-fills
+        :args (s/and (s/cat :spaces (s/cat :layout-element
+                                           (s/* (s/alt :f #(= % :F) :s string?)))
+                            :width nat-int?
+                            :col-widths (s/cat :col-width
+                                               (s/* nat-int?))
+                            :align-char char?)
+                     (fn [{:keys [spaces width col-widths]}]
+                       (> width (+ (reduce + col-widths)
+                                   (reduce + (map count (filter string? spaces)))))))
+        :ret (s/cat :layout-element (s/* string?))
+        :fn (s/and (fn [{:keys [spaces ret]}]
+                     (= (count ret) (count spaces)))
+                   (fn [{:keys [width col-widths ret]}]
+                     (= (+ (reduce + (map count ret))
+                           (reduce + col-widths))
+                        width))))
 
 (defn transpose [vs]
   (into []
@@ -140,7 +158,7 @@
 ;
 ; in the below
 ; 7 is the fill-width, 1 is (int width-per),
-; 
+;
 ; (some #(if (= (reduce + %) 7) %)
 ;       (into [] (for [a [1 2]
 ;                      b [1 2]
