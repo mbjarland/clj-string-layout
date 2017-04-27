@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3ce2c75-0126-48dc-a917-71cf2831dd61" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Leiningen__org_clojure_test_check_0_9_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project.clj" afterPath="$PROJECT_DIR$/project.clj" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/string_layout/core.clj" afterPath="$PROJECT_DIR$/src/string_layout/core.clj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/string-layout.iml" afterPath="$PROJECT_DIR$/string-layout.iml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,12 +30,82 @@
     <favorites_list name="string-layout" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="core.clj" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="core.clj" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/string_layout/core.clj">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="14" column="60" lean-forward="false" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
+            <state relative-caret-position="1410">
+              <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="spec.clj" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/string_layout/spec.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="48" column="80" lean-forward="false" selection-start-line="48" selection-start-column="80" selection-end-line="48" selection-end-column="80" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="core.clj" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/core.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="7950">
+              <caret line="265" column="16" lean-forward="false" selection-start-line="265" selection-start-column="16" selection-end-line="265" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StringSeq.class" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/lang/StringSeq.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="7" column="54" lean-forward="false" selection-start-line="7" selection-start-column="54" selection-end-line="7" selection-end-column="54" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CharSequence.java" pinned="false" current-in-tab="false">
+        <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/CharSequence.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="870">
+              <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="spec.clj" pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/spec.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4410">
+              <caret line="147" column="39" lean-forward="false" selection-start-line="147" selection-start-column="39" selection-end-line="147" selection-end-column="39" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="project.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/project.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="9" column="52" lean-forward="false" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="core_test.clj" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/string_layout/core_test.clj">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1920">
+              <caret line="64" column="35" lean-forward="false" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -51,6 +126,8 @@
       <find>layout</find>
       <find>Illegal</find>
       <find>c/and</find>
+      <find>expand-fills</find>
+      <find>e</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -69,7 +146,11 @@
       <list>
         <option value="$PROJECT_DIR$/test/string_layout/core_test.clj" />
         <option value="$PROJECT_DIR$/project.clj" />
+        <option value="/usr/lib/jvm/java-8-oracle/src.zip!/java/lang/CharSequence.java" />
+        <option value="$PROJECT_DIR$/target/classes/string_layout/core$matias_test_one.class" />
+        <option value="$PROJECT_DIR$/src/string_layout/string_layout/spec.clj" />
         <option value="$PROJECT_DIR$/src/string_layout/core.clj" />
+        <option value="$PROJECT_DIR$/src/string_layout/spec.clj" />
       </list>
     </option>
   </component>
@@ -80,11 +161,13 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
+    <option name="x" value="-1" />
+    <option name="y" value="-11" />
+    <option name="width" value="2562" />
+    <option name="height" value="1612" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -97,25 +180,7 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="string-layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="string-layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
@@ -127,14 +192,15 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Debugger" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../mapdb-test" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///home/mbjarland/projects/clojure/clj-string-layout/src/string_layout/core.clj&#10;project.cl&#9;FILE&#9;file:///home/mbjarland/projects/clojure/clj-string-layout/project.clj&#10;test&#9;FILE&#9;file:///Users/mbjarland/projects/clojure/clj-string-layout/test/string_layout/core_test.clj&#10;core.cl&#9;FILE&#9;file:///home/mbjarland/projects/clojure/string-layout/src/string_layout/core.clj&#10;core_test&#9;FILE&#9;file:///home/mbjarland/projects/clojure/string-layout/test/string_layout/core_test.clj" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/target/classes/string_layout/core$matias_test_zero.class" />
+    <property name="SearchEverywhereHistoryKey" value="spec.clj&#9;FILE&#9;file:///home/mbjarland/projects/clojure/clj-string-layout/src/string_layout/spec.clj&#10;StringSeq&#9;PSI&#9;JAVA://clojure.lang.StringSeq&#10;project.cl&#9;FILE&#9;file:///home/mbjarland/projects/clojure/clj-string-layout/project.clj&#10;test&#9;FILE&#9;file:///Users/mbjarland/projects/clojure/clj-string-layout/test/string_layout/core_test.clj&#10;core.cl&#9;FILE&#9;file:///home/mbjarland/projects/clojure/string-layout/src/string_layout/core.clj&#10;core_test&#9;FILE&#9;file:///home/mbjarland/projects/clojure/string-layout/test/string_layout/core_test.clj" />
     <property name="FullScreen" value="true" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="cursive.last.file.extension./home/mbjarland/projects/clojure/clj-string-layout/src" value="clj" />
   </component>
-  <component name="ReplState" timestamp="1493067601967">{:repl-history {:ide [], :local [{:command &quot;(mapv)&quot;, :offset 5} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string ?aligns ?spaces\n  \&quot; \&quot;            []      [\&quot; \&quot;]\n  \&quot;[L]\&quot;          [:L]    [\&quot;\&quot; \&quot;\&quot;])&quot;, :offset 221, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot;])&quot;, :offset 302, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot; \&quot;\&quot; \&quot;\&quot;])&quot;, :offset 308, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot; \&quot;\&quot; \&quot;\&quot;]\n  \&quot;fill\&quot;            []               [:F]\n  \&quot;|[L]|[C]|\&quot;       [:L :C]          [\&quot;|\&quot; \&quot;|\&quot; \&quot;|\&quot;])&quot;, :offset 401, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot; \&quot;\&quot; \&quot;\&quot;]\n  \&quot;fill\&quot;            []               [:F]\n  \&quot;|[L]|[C]|\&quot;       [:L :C]          [\&quot;|\&quot; \&quot;|\&quot; \&quot;|\&quot;]\n   \&quot;[L]|[C]|\&quot;       [:L :C]          [\&quot;\&quot; \&quot;|\&quot; \&quot;|\&quot;]\n  \&quot;|[L]|[C]\&quot;        [:L :C]          [\&quot;|\&quot; \&quot;|\&quot; \&quot;\&quot;]\n  \&quot;[L]|[C]\&quot;         [:L :C]          [\&quot;\&quot; \&quot;|\&quot; \&quot;\&quot;]\n  \&quot;|[L][C]|\&quot;       [:L :C]           [\&quot;|\&quot; \&quot;\&quot; \&quot;|\&quot;]\n\n  )&quot;, :offset 604, :ns &quot;string-layout.core-test&quot;} {:command &quot;(defn parse-layout-string [layout-string]\n  {:pre [(not-empty layout-string)]}\n  (let [[_ aligns spaces]\n        (reduce (fn [[in-brace aligns spaces] c]\n                  (cond\n                    (= c \\[) [true aligns spaces]\n                    (= c \\]) [false aligns (conj spaces \&quot;\&quot;)]\n                    in-brace [in-brace (conj aligns (parse-align c)) spaces]\n                    :else [in-brace\n                           aligns\n                           (conj (into [] (butlast spaces)) (str (last spaces) c))]))\n                [false [] [\&quot;\&quot;]]\n                layout-string)]\n    [aligns\n     (mapv #(if (= (.toLowerCase %) \&quot;fill\&quot;) :F %) spaces)]))&quot;, :offset 658, :ns &quot;string-layout.core&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot; \&quot;\&quot; \&quot;\&quot;]\n  \&quot;fill\&quot;            []               [:F])&quot;, :offset 350, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly parse layout strings\&quot;\n        (parse-layout-string ?layout-string) =&gt; [?aligns ?spaces])\n  ?layout-string    ?aligns          ?spaces\n  \&quot; \&quot;               []               [\&quot; \&quot;]\n  \&quot;[L]\&quot;             [:L]             [\&quot;\&quot; \&quot;\&quot;]\n  \&quot;[L][C][R]\&quot;       [:L :C :R]       [\&quot;\&quot; \&quot;\&quot; \&quot;\&quot; \&quot;\&quot;]\n  \&quot;fill\&quot;            []               [:F]\n  \&quot;|[L]|[C]|\&quot;       [:L :R]          [\&quot;|\&quot; \&quot;|\&quot; \&quot;|\&quot;])&quot;, :offset 401, :ns &quot;string-layout.core-test&quot;} {:command &quot;(mapv \n  #(split % #\&quot; \&quot;) \n  (split \&quot;brother bob\\nthe marley\&quot; #\&quot;\\n\&quot;))&quot;, :offset 5, :ns &quot;string-layout.core&quot;} {:command &quot;(doc prn)&quot;, :offset 9, :ns &quot;string-layout.core&quot;} {:command &quot;(doc pr)&quot;, :offset 8, :ns &quot;string-layout.core&quot;} {:command &quot;(pr \&quot;bob\&quot;)&quot;, :offset 10, :ns &quot;string-layout.core&quot;} {:command &quot;(prn \&quot;bob\&quot;)&quot;, :offset 4, :ns &quot;string-layout.core&quot;} {:command &quot;(keep #(if (keyword %) nil (count %))\n      [\&quot;bob\&quot; :F \&quot;marley\&quot;])&quot;, :offset 61, :ns &quot;string-layout.core&quot;} {:command &quot;(keep #(if (keyword? %) nil (count %))\n      [\&quot;bob\&quot; :F \&quot;marley\&quot;])&quot;, :offset 20, :ns &quot;string-layout.core&quot;} {:command &quot;(keep (if (string? %) (count %)) &quot;, :offset 33, :ns &quot;string-layout.core&quot;} {:command &quot;(keep (if (string? %) (count %)) \n      [\&quot;bob\&quot; :F \&quot;marley\&quot;])&quot;, :offset 57, :ns &quot;string-layout.core&quot;} {:command &quot;(keep #(if (string? %) (count %)) \n      [\&quot;bob\&quot; :F \&quot;marley\&quot;])&quot;, :offset 7, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %) spaces))))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))]\n    (map #(second\n            (reduce (fn [[i r] w]\n                      [(inc i) (str r (align w i) (space (inc i)))])\n                    [0 (first spaces)]\n                    %))\n         rows)))&quot;, :offset 1443, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))]\n    (map #(second\n            (reduce (fn [[i r] w]\n                      [(inc i) (str r (align w i) (space (inc i)))])\n                    [0 (first spaces)]\n                    %))\n         rows)))&quot;, :offset 1443, :ns &quot;string-layout.core&quot;} {:command &quot;(if (string? :F) \&quot;marley\&quot;)&quot;, :offset 15, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1541, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prinltn spaces)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1574, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (println spaces)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1574, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1570, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces \&quot;indexed with \&quot; i)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1588, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces \&quot;indexed with \&quot; i (= (nth spaces i) :F))\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1610, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces \&quot;indexed with\&quot; i (= (nth spaces i) :F))\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1609, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces \&quot;indexed with\&quot; i (= (nth spaces i) :F) \&quot;fill-width\&quot; fill-width \&quot;align char\&quot; align-char)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1657, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces \&quot;i\&quot; i (= (nth spaces i) :F) \&quot;fill-width\&quot; fill-width \&quot;align char\&quot; align-char)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1646, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fail (fn [msg] (throw (IllegalArgumentException. ^String msg)))\n\n        align (fn [w i]\n                (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) w))]\n                  (case (nth aligns i)\n                    :L (fmt \&quot;~v,,,vA\&quot;)\n                    :R (fmt \&quot;~v,,,v@A\&quot;)\n                    :C (fmt \&quot;~v,,,v:@&lt;~A~&gt;\&quot;)\n                    ;:W (fmt (str \&quot;~{~&lt;~%~1,\&quot;  \&quot;:;~A~&gt; ~}\&quot;))\n                    (fail (str \&quot;Unsupported alignment operation '\&quot; (nth aligns i)\n                               \&quot;' encountered, index: \&quot; i \&quot;, aligns: \&quot; aligns))))\n\n                )\n        space (fn [i]\n                (prn spaces i (= (nth spaces i) :F) \&quot;fill-width\&quot; fill-width \&quot;align char\&quot; align-char)\n                (if (= (nth spaces i) :F)\n                  (apply str (repeat fill-width align-char))\n                  (nth spaces i)))\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 1642, :ns &quot;string-layout.core&quot;} {:command &quot;(defn layout [rows layout-string layout-config]\n  {:pre [(pos? (count rows))]}\n  (let [{:keys [align-char width]} layout-config\n        [aligns spaces] (parse-layout-string layout-string)\n        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))\n        col-widths (map #(apply max (map count %)) (transpose rows))\n        fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        align (partial align-word aligns col-widths align-char)\n        space (partial expand-fills spaces fill-width align-char)\n        indent-row (fn [row]\n                     (second\n                       (reduce (fn [[i r] w]\n                                 [(inc i) (str r (align w i) (space (inc i)))])\n                               [0 (first spaces)]\n                               row)))]\n    (map indent-row rows)))&quot;, :offset 922, :ns &quot;string-layout.core&quot;} {:command &quot;(tabular\n  (fact \&quot;Should correctly lay out simple expressions\&quot;\n        (let [rows (mapv #(split % #\&quot; \&quot;) (split ?rows #\&quot;\\n\&quot;))]\n          (layout\n            rows\n            ?layout-string\n            {:width ?width :align-char \\space}) =&gt; ?expected-result))\n        ?rows                    ?layout-string   ?width   ?expected-result\n        \&quot;a b\&quot;                    \&quot;[L] [R]\&quot;        20       [\&quot;a b\&quot;]\n        \&quot;a b\&quot;                    \&quot;[L] [R]\&quot;         0       [\&quot;a b\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L] [R]\&quot;        20       [\&quot;a   b\&quot;  \&quot;aa bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L] [R]\&quot;         0       [\&quot;a   b\&quot;  \&quot;aa bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L]  [R]\&quot;       20       [\&quot;a    b\&quot;  \&quot;aa  bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L]  [R]\&quot;        0       [\&quot;a    b\&quot;  \&quot;aa  bb\&quot;]\n        \&quot;a b\&quot;                    \&quot;[L]fill[R]\&quot;     20       [\&quot;a                  b\&quot;]\n        \&quot;a b\&quot;                    \&quot;[L]fill[R]\&quot;      0       [\&quot;ab\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L]fill[R]\&quot;     10       [\&quot;a        b\&quot;  \&quot;aa      bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[L]fill[R]\&quot;      0       [\&quot;a  b\&quot;  \&quot;aabb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;fill[R] [R]\&quot;    10       [\&quot;      a  b\&quot;  \&quot;     aa bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;fill[R] [R]\&quot;     0       [\&quot; a  b\&quot;  \&quot;aa bb\&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[R] [R]fill\&quot;    10       [\&quot; a  b     \&quot;  \&quot;aa bb     \&quot;]\n        \&quot;a b\\naa bb\&quot;             \&quot;[R] [R]fill\&quot;     0       [\&quot; a  b\&quot;  \&quot;aa bb\&quot;])&quot;, :offset 1430, :ns &quot;string-layout.core-test&quot;} {:command &quot;(expand-fills [\&quot;\&quot; :F] 5 \\* 1)&quot;, :offset 28, :ns &quot;string-layout.core&quot;} {:command &quot;(expand-fills [\&quot;\&quot; \&quot;bob\&quot;] 5 \\* 1)&quot;, :offset 22, :ns &quot;string-layout.core&quot;} {:command &quot;(tabular\n  (fact \&quot;Should expands fills\&quot;\n        (expand-fills ?spaces ?fill-width ?align-char ?i) =&gt; [?aligns ?spaces])\n  ?spaces      ?fill-width   ?align-char ?i ?expected-result\n  [\&quot;\&quot;]         10            \\*          0  \&quot;\&quot;\n\n  )&quot;, :offset 232, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should expands fills\&quot;\n        (expand-fills ?spaces ?fill-width ?align-char ?i) =&gt; ?expected-result)\n  ?spaces      ?fill-width   ?align-char ?i ?expected-result\n  [\&quot;\&quot;]         10            \\*          0  \&quot;\&quot;\n\n  )&quot;, :offset 231, :ns &quot;string-layout.core-test&quot;} {:command &quot;(tabular\n  (fact \&quot;Should expands fills\&quot;\n        (expand-fills ?spaces ?fill-width ?align-char ?i) =&gt; ?expected-result)\n  ?spaces      ?fill-width   ?align-char ?i ?expected-result\n  [\&quot;\&quot;]         5             \\*          0  \&quot;\&quot;\n  [\&quot; \&quot;]        5             \\*          0  \&quot; \&quot;\n  [\&quot;-\&quot;]        5             \\*          0  \&quot;-\&quot;\n  [:F]         5             \\*          0  \&quot;*****\&quot;\n  [\&quot; \&quot; :F]     5             \\*          0  \&quot; *****\&quot;\n  [:F \&quot; \&quot;]     5             \\*          0  \&quot;***** \&quot;\n  \n  )&quot;, :offset 487, :ns &quot;string-layout.core-test&quot;} {:command &quot;{:a 0 :b 1 :a 3}&quot;, :offset 15, :ns &quot;string-layout.core&quot;} {:command &quot;(assoc-in [[0 1 2]\n           [10 20 30]]\n          [0 0] 100)&quot;, :offset 61, :ns &quot;string-layout.core&quot;} {:command &quot;(assoc-in [[0 1 2]\n           [10 20 30]]\n          [1 0] 100)&quot;, :offset 54, :ns &quot;string-layout.core&quot;} {:command &quot;(assoc-in [[0 1 2]]\n          [0] 100)&quot;, :offset 31, :ns &quot;string-layout.core&quot;} {:command &quot;(assoc-in [[0 1 2]]\n          [0 0] 100)&quot;, :offset 34, :ns &quot;string-layout.core&quot;} {:command &quot;(assoc-in [0 1 2]\n          [0] 100)&quot;, :offset 30, :ns &quot;string-layout.core&quot;} {:command &quot;(.lastIndexOf :F [0 1 :F 234 \&quot;bob\&quot; :F \&quot;marley\&quot;])&quot;, :offset 45, :ns &quot;string-layout.core&quot;} {:command &quot;(.lastIndexOf [0 1 :F 234 \&quot;bob\&quot; :F \&quot;marley\&quot;] :F)&quot;, :offset 47, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fill-count (count #(keep keyword? spaces))\n        per-width (/ fill-width fill-count)\n        result (replace {:F (str (repeat per-width align-char))})\n        diff (- fill-width (* per-width fill-count))]\n    (if (zero? diff) result\n                     (assoc-in result\n                               [(.lastIndexOf spaces :F)]\n                               (+ per-width diff)))))&quot;, :offset 596, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fill-count (count (keep keyword? spaces))\n        per-width (/ fill-width fill-count)\n        result (replace {:F (str (repeat per-width align-char))})\n        diff (- fill-width (* per-width fill-count))]\n    (if (zero? diff) result\n                     (assoc-in result\n                               [(.lastIndexOf spaces :F)]\n                               (+ per-width diff)))))&quot;, :offset 595, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fill-count (count (keep keyword? spaces))\n        per-width (/ fill-width fill-count)\n        result (replace {:F (str (repeat per-width align-char))} spaces)\n        diff (- fill-width (* per-width fill-count))]\n    (if (zero? diff) result\n                     (assoc-in result\n                               [(.lastIndexOf spaces :F)]\n                               (+ per-width diff)))))&quot;, :offset 602, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [\&quot;\&quot;] 10 [3 3] \\space)&quot;, :offset 29, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fill-count (count (keep keyword? spaces))\n        per-width (/ fill-width fill-count)\n        result (replace {:F (apply str (repeat per-width align-char))} spaces)\n        diff (- fill-width (* per-width fill-count))]\n    (if (zero? diff) result\n                     (assoc-in result\n                               [(.lastIndexOf spaces :F)]\n                               (+ per-width diff)))))&quot;, :offset 608, :ns &quot;string-layout.core&quot;} {:command &quot;(keep keyword? [\&quot;\&quot; :F])&quot;, :offset 23, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        fill-count (count (filter keyword? spaces))\n        per-width (/ fill-width fill-count)\n        result (replace {:F (apply str (repeat per-width align-char))} spaces)\n        diff (- fill-width (* per-width fill-count))]\n    (if (zero? diff) result\n                     (assoc-in result\n                               [(.lastIndexOf spaces :F)]\n                               (+ per-width diff)))))&quot;, :offset 610, :ns &quot;string-layout.core&quot;} {:command &quot;(filter keyword? [\&quot;\&quot; :F])&quot;, :offset 7, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [\&quot;\&quot; :F] 10 [3 3] \\space)&quot;, :offset 14, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [:F \&quot;\&quot; :F] 10 [3 3] \\space)&quot;, :offset 12, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [:F \&quot;\&quot; :F :F] 10 [3 3] \\space)&quot;, :offset 20, :ns &quot;string-layout.core&quot;} {:command &quot;(doc map-indexed)&quot;, :offset 17, :ns &quot;user&quot;} {:command &quot;(take 10 (repeat 4/3))&quot;, :offset 22, :ns &quot;user&quot;} {:command &quot;(defn rep [q i]\n  (reduce + (repeat i q)))&quot;, :offset 42, :ns &quot;string-layout.core&quot;} {:command &quot;(defn rep [q i]\n  (int (reduce + (repeat i q))))&quot;, :offset 48, :ns &quot;string-layout.core&quot;} {:command &quot;(rep 4/3 4)&quot;, :offset 10, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10 \n      ((range 1 10 4/3))&quot;, :offset 34, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10 \n      (range 1 10 4/3))&quot;, :offset 33, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10 \n      (map int (range 1 10 4/3)))&quot;, :offset 43, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10 \n      (map #(- % (int %)) (range 1 10 4/3)))&quot;, :offset 35, :ns &quot;string-layout.core&quot;} {:command &quot;(use 'clojure.repl)&quot;, :offset 19, :ns &quot;string-layout.core&quot;} {:command &quot;(doc zipmap)&quot;, :offset 11, :ns &quot;string-layout.core&quot;} {:command &quot;(zipmap [(range 1 10 4/3) (range 1 10)])&quot;, :offset 38, :ns &quot;string-layout.core&quot;} {:command &quot;(zipmap (range 1 10 4/3) (range 1 10))&quot;, :offset 37, :ns &quot;string-layout.core&quot;} {:command &quot;(zipmap (map int (range 1 10 4/3)) (range 1 10))&quot;, :offset 0, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10\n      (for [x (range 1 10)\n            y (range 1 10 4/3)]\n        (- y x)))&quot;, :offset 85, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10\n      (for [x (range 1 10)\n            y (range 1 10 4/3)]\n        (int (- y x))))&quot;, :offset 91, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10\n      (for [x (range 1 10)\n            :let y (* x 4/3)]\n        (int (- y x))))&quot;, :offset 59, :ns &quot;string-layout.core&quot;} {:command &quot;(take 10\n      (for [x (range 1 10)\n            :let [y (* x 4/3)]]\n        (int (- y x))))&quot;, :offset 66, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      ]\n  (reduce \n    (fn [acc x]\n      (conj acc x))\n    []\n    a))&quot;, :offset 85, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      d (- q (int q))\n      ]\n  (reduce \n    (fn [acc x]\n      (conj acc d))\n    []\n    a))&quot;, :offset 114, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (reduce \n    (fn [[res e t] x]\n      (condp = (int e)\n        0 [(conj res s) (+ e q)]\n        q [(conj res (str s \&quot; \&quot;)) 0]\n    [[] 0]\n    a))))&quot;, :offset 258, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (reduce \n    (fn [[res e t] x]\n      (condp = (int e)\n        0 [(conj res s) (+ e q)]\n        q [(conj res (str s \&quot; \&quot;)) 0]))\n    [[] 0]\n    a))&quot;, :offset 258, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (reduce \n    (fn [[res e t] x]\n      (condp = (int e)\n        0 [(conj res s) (+ e q)]\n        1 [(conj res (str s \&quot; \&quot;)) 0]))\n    [[] 0]\n    a))&quot;, :offset 210, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e t] x]\n        (condp = (int e)\n          0 [(conj res s) (+ e q)]\n          1 [(conj res (str s \&quot; \&quot;)) 0]))\n      [[] 0]\n      a)))&quot;, :offset 281, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e t] x]\n        (condp = (int e)\n          0 [(conj res s) (+ e d)]\n          1 [(conj res (str s \&quot; \&quot;)) 0]))\n      [[] d]\n      a)))&quot;, :offset 269, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e t] x]\n        (condp = (int e)\n          0 [(conj res s) (+ e d)]\n          1 [(conj res (str s \&quot; \&quot;)) 0]))\n      [[] d]\n      a)))&quot;, :offset 32, :ns &quot;string-layout.core&quot;} {:command &quot;0&quot;, :offset 1} {:command &quot;(let [a [:F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e t] x]\n        (condp = (int e)\n          0 [(conj res s) (+ e d)]\n          1 [(conj res (str s \&quot; \&quot;)) 0]))\n      [[] 0]\n      a)))&quot;, :offset 269, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F :F :F]\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e t] x]\n        (condp = (int e)\n          0 [(conj res s) (+ e d)]\n          1 [(conj res (str s \&quot; \&quot;)) 0]))\n      [[] 0]\n      a)))&quot;, :offset 284, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F :F :F]\n      c (dec (count a))\n      q 4/3\n      i (int q)\n      d (- q i)\n      s (apply str (repeat (int q) \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (cond\n          (= i c)       [(conj res s) (+ e d)]\n          (= (int e) 0) [(conj res s) (+ e d) (inc i)]\n          (= (int e) 0) [(conj res (str s (clojure.string/join (repeat i \&quot; \&quot;)))) 0 (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 370, :ns &quot;string-layout.core&quot;} {:command &quot;(clojure.string/join (repeat 10 \\*))&quot;, :offset 34, :ns &quot;string-layout.core&quot;} {:command &quot;(use 'clojure.string)&quot;, :offset 21, :ns &quot;string-layout.core&quot;} {:command &quot;(join (repeat 10 \\*))&quot;, :offset 1, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (or (= i c) (= (int e) 1))\n          [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n          [(conj res s) (+ e d) (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 337, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (or (= i c) (= (int e) 1))\n          [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n          [(conj res s) (+ e d) (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 9, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (or (= i c) (= (int e) 1))\n          [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n          [(conj res s) (+ e d) (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 9, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (= (nth a i) :F)\n          (if (or (= i c) (= (int e) 1))\n            [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n            [(conj res s) (+ e d) (inc i)])\n          [(conj res (nth a i)) e (inc i)]))\n      [[] 0 0]\n      a)))\n&quot;, :offset 408, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F \&quot;bob\&quot; :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (= (nth a i) :F)\n          (if (or (= i c) (= (int e) 1))\n            [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n            [(conj res s) (+ e d) (inc i)])\n          [(conj res (nth a i)) e (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 413, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        len (dec (count spaces))\n        fill-count (count (filter keyword? spaces))\n        width-per (/ fill-width fill-count)\n        int-per (int width-per)\n        diff (- width-per int-per)\n        fill (join (repeat int-per \&quot; \&quot;))]\n    (first\n      (reduce\n        (fn [[res e i] x]\n          (if (= (nth spaces i) :F)\n            (if (or (= i len) (= (int e) 1))\n              [(conj res (str fill \&quot; \&quot;)) 0 (inc i)]\n              [(conj res fill) (+ e diff) (inc i)])\n            [(conj res (nth spaces i)) e (inc i)]))\n        [[] 0 0]\n        spaces))))&quot;, :offset 765, :ns &quot;string-layout.core&quot;} {:command &quot;(let [a [:F :F :F :F :F]\n      c (dec (count a))\n      r 4/3\n      w (int r)\n      d (- r w)\n      s (join (repeat w \&quot; \&quot;))\n      ]\n  (first\n    (reduce\n      (fn [[res e i] x]\n        (if (or (= i c) (= (int e) 1))\n          [(conj res (str s \&quot; \&quot;)) 0 (inc i)]\n          [(conj res s) (+ e d) (inc i)]))\n      [[] 0 0]\n      a)))&quot;, :offset 9, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [:F \&quot;\&quot; :F :F] 10 [2 2 2] \\space)&quot;, :offset 40, :ns &quot;string-layout.core&quot;} {:command &quot;(expand [:F \&quot;\&quot; :F] 10 [2 2 2] \\space)&quot;, :offset 17, :ns &quot;string-layout.core&quot;} {:command &quot;(defn expand [spaces width col-widths align-char]\n  (let [fill-width (max 0 (- width (+ (reduce + col-widths)\n                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))\n        len (dec (count spaces))\n        fill-count (count (filter keyword? spaces))\n        width-per (/ fill-width fill-count)\n        int-per (int width-per)\n        diff (- width-per int-per)\n        fill (join (repeat int-per \&quot; \&quot;))]\n    (first\n      (reduce\n        (fn [[res e i] x]\n          (cond\n            (not= (nth spaces i) :F) [(conj res (nth spaces i)) e (inc i)]\n            (= i len) (if (zero? e)  [(conj res fill) 0 (inc i)]\n                                     [(conj res (str fill \&quot; \&quot;)) 0 (inc i)])               [(conj res (str fill \&quot; \&quot;)) 0 (inc i)]\n            (= (int e) 1)            [(conj res (str fill \&quot; \&quot;)) 0 (inc i)]\n            :else                    [(conj res fill) (+ e diff) (inc i)]))\n        [[] 0 0]\n        spaces))))&quot;, :offset 963, :ns &quot;string-layout.core&quot;}], :remote []}}</component>
+  <component name="ReplState" timestamp="1493303056120">{:repl-history {:ide [], :local [{:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/coll-of (s/alt :col-align-expr ::col-align-expr\n                           :col-padding-char ::col-padding-char)\n                    :kind seq?)))&quot;, :offset 244, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;[x]foobar\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/coll-of (s/alt :col-align-expr ::col-align-expr\n                           :col-padding-char (complement #{\\[ \\]}))\n                    :kind seq?)))&quot;, :offset 247, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;[r]f[oobar\&quot;)&quot;, :offset 33, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;[r]f[o\&quot;)&quot;, :offset 34, :ns &quot;string-layout.spec&quot;} {:command &quot;((complement #{\\[ \\]}) \\a)&quot;, :offset 25, :ns &quot;string-layout.spec&quot;} {:command &quot;((complement #{\\[ \\]}) \\[)&quot;, :offset 25, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/coll-of (s/alt :col-align-expr ::col-align-expr\n                           :col-padding-char (complement #{\\[ \\]})))))&quot;, :offset 216, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-expr ::col-align-expr\n                     :col-padding-char (complement #{\\[ \\]})))))&quot;, :offset 204, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;foo\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;f[o\&quot;)&quot;, :offset 9, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;f[\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;f]\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/exercise ::layout-string 10)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/exercise ::layout-string 100)&quot;, :offset 31, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-char\n                     (complement #{\\[ \\]})))))&quot;, :offset 379, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/exercise ::layout-string 5)&quot;, :offset 29, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align--expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-char\n                     (complement #{\\[ \\]})))))&quot;, :offset 372, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;foo[x]\&quot;)&quot;, :offset 33, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;foobar[x]\&quot;)&quot;, :offset 34, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;fo[obar[x]\&quot;)&quot;, :offset 31, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align--expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 371, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-pad-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 374, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain ::layout-string \&quot;fo]obar[x]\&quot;)&quot;, :offset 31, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 386, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/explain-data ::layout-string \&quot;fo]obar[x]\&quot;)&quot;, :offset 15, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))\n         (s/conformer (partial apply str))))&quot;, :offset 429, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;fo]obar[x]\&quot;)&quot;, :offset 10, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;fo]obar[R]\&quot;)&quot;, :offset 37, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket (complement #{\\[ \\]})))))&quot;, :offset 365, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]})\n                          (s/conformer (partial apply str)))))))&quot;, :offset 452, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/and\n                       (s/+ (complement #{\\[ \\]}))\n                       (s/conformer (partial apply str))))\n                     )))&quot;, :offset 502, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))\n                     (s/conformer (partial apply str))))))&quot;, :offset 447, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))))&quot;, :offset 392, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/con)&quot;, :offset 7} {:command &quot;(s/conform ::layout-string \&quot;foo[R]bar\&quot;)&quot;, :offset 37, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;[R]bar[L]baz[C]bob\&quot;)&quot;, :offset 28, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;foo[R]bar[L]baz[C]bob\&quot;)&quot;, :offset 49, :ns &quot;string-layout.spec&quot;} {:command &quot;(use 'clojure.repl)&quot;, :offset 19, :ns &quot;string-layout.spec&quot;} {:command &quot;(doc s/conform)&quot;, :offset 15, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string2\n  (s/and string?\n         not-empty\n         (s/conformer seq)\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 387, :ns &quot;string-layout.spec&quot;} {:command &quot;(def k (s/conform ::layout-string2 \&quot;foobar[R]\&quot;))&quot;, :offset 48, :ns &quot;string-layout.spec&quot;} {:command &quot;k&quot;, :offset 1, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string2\n  (s/and string?\n         not-empty\n         (s/conformer seq )\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 388, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string2\n  (s/and string?\n         not-empty\n         (s/conformer seq #(^StringSeq .s %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 406, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string2\n  (s/and string?\n         not-empty\n         (s/conformer seq #(.s %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 395, :ns &quot;string-layout.spec&quot;} {:command &quot;(apply str (seq \&quot;bob\&quot;))&quot;, :offset 20, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string2\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (complement #{\\[ \\]})))))&quot;, :offset 402, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/unform ::layout-string2 k)&quot;, :offset 29, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string2 \&quot;foobar[R]\&quot;)&quot;, :offset 27, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;foobar[R]\&quot;)&quot;, :offset 26, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;foobar[R]adf\&quot;)&quot;, :offset 40, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string2 \&quot;foobar[R]adf[C]dfsd[L]df\&quot;)&quot;, :offset 27, :ns &quot;string-layout.spec&quot;} {:command &quot;(def res (s/conform ::layout-string2 \&quot;foobar[R]adf[C]dfsd[L]df\&quot;))&quot;, :offset 65, :ns &quot;string-layout.spec&quot;} {:command &quot;res&quot;, :offset 3, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x])\n  [[] []]\n  res)&quot;, :offset 46, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r [:col-padding-non-bracket padv]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 161, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r [:col-padding-non-bracket (apply str padv)]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 178, :ns &quot;string-layout.spec&quot;} {:command &quot;(doc conj)&quot;, :offset 10, :ns &quot;string-layout.spec&quot;} {:command &quot;(conj [] 1)&quot;, :offset 10, :ns &quot;string-layout.spec&quot;} {:command &quot;(conj [] 1 2)&quot;, :offset 12, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r [:col-padding-non-bracket (apply str padv)] x) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 173, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (:col-align-char x)]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 239, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (get-in x [:col-align-bracket-expr :col-align-char)]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 271, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (get-in x [:col-align-bracket-expr :col-align-char])]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 272, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (:col-align-char (:col-align-bracket-expr x))]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 268, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[r padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [r (conj padv (second x))]\n      [(conj r \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 252, :ns &quot;string-layout.spec&quot;} {:command &quot;(conj [] [1 2 3])&quot;, :offset 15, :ns &quot;string-layout.spec&quot;} {:command &quot;(reduce \n  (fn [[res padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [res (conj padv (second x))]\n      [(conj res \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []])\n    \n    )\n  [[] []]\n  res)&quot;, :offset 129, :ns &quot;string-layout.spec&quot;} {:command &quot;(first (reduce \n  (fn [[res padv ] x]\n    (if (= :col-padding-non-bracket (first x))\n      [res (conj padv (second x))]\n      [(conj res \n             [:col-padding-non-bracket (apply str padv)] \n             [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n  [[] []]\n  res))&quot;, :offset 290, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))\n         (s/conformer \n           (fn [v]\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 910, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))\n         (s/conformer\n           (fn [v]\n             (println \&quot;getting in\&quot; v)\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 947, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))\n         (s/conformer\n           (fn [v]\n             (prn \&quot;getting in\&quot; v)\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 943, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))\n         (s/conformer\n           (fn [v]\n             (prn v)\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 930, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string \&quot;foobar[R]adf[C]dfsd[L]df\&quot;)&quot;, :offset 52, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket\n                     (s/+ (complement #{\\[ \\]}))))))&quot;, :offset 408, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer\n           (fn [v]\n             (prn v)\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 930, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer\n           (fn [v]\n             (prn v)\n             (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket-char (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket-char (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))))))&quot;, :offset 940, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer\n           (fn [v]\n             (prn v)\n             (let [[head tail]\n                   (first (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket-char (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket-char (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v))]\n               (conj head [:col-padding-non-bracket-char (apply str tail)])\n               )))))&quot;, :offset 1071, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer\n           (fn [v]\n             (prn v)\n             (let [[head tail]\n                   (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket-char (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket-char (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v)]\n               (conj head [:col-padding-non-bracket-char (apply str tail)])\n               )))))&quot;, :offset 1063, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;foobar[R]adf[C]dfsd[L]df\&quot;)&quot;, :offset 27, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer\n           (fn [v]\n             (let [[head tail]\n                   (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket-char (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding-non-bracket-char (apply str padv)]\n                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v)]\n               (conj head [:col-padding-non-bracket-char (apply str tail)])\n               )))))&quot;, :offset 1042, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;foobar\&quot;)&quot;, :offset 35, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;f\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;\&quot;)&quot;, :offset 29, :ns &quot;string-layout.spec&quot;} {:command &quot;(not-empty \&quot;\&quot;)&quot;, :offset 14, :ns &quot;string-layout.spec&quot;} {:command &quot;(not-empty \&quot;d\&quot;)&quot;, :offset 13, :ns &quot;string-layout.spec&quot;} {:command &quot;if (not-empty \&quot;\&quot; \&quot;bob\&quot; \&quot;mary\&quot;)&quot;, :offset 30, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (comment (s/conformer\n           (fn [v]\n             (let [[head tail]\n                   (reduce\n                      (fn [[res padv ] x]\n                        (if (= :col-padding-non-bracket-char (first x))\n                          [res (conj padv (second x))]\n                          [(conj res\n                                 [:col-padding (apply str padv)]\n                                 [:col-align (get-in x [1 :col-align-char])]) []]))\n                      [[] []]\n                      v)]\n               if (not(conj head [:col-padding (apply str tail)])\n               )))))))&quot;, :offset 1013, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         ))&quot;, :offset 417, :ns &quot;string-layout.spec&quot;} {:command &quot;(defn char-seq-&gt;str-conformer [v]\n  (let [[head tail]\n        (reduce\n          (fn [[res padv ] x]\n            (if (= :col-padding-non-bracket-char (first x))\n\n              (if (empty? padv)\n                [res (conj padv (second x))]\n                [(conj res\n                       [:col-padding (apply str padv)]\n                       [:col-align (get-in x [1 :col-align-char])]) []]))\n            )\n\n          [[] []]\n          v)]\n    (if (empty? tail)\n      head\n      (conj head [:col-padding (apply str tail)]))))&quot;, :offset 526, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))\n         (s/conformer char-seq-&gt;str-conformer)))&quot;, :offset 454, :ns &quot;string-layout.spec&quot;} {:command &quot;(defn char-seq-&gt;str-conformer [v]\n  (let [[head tail]\n        (reduce\n          (fn [[res padv ] x]\n            (if (= :col-padding-non-bracket-char (first x))\n              [res (conj padv (second x))]\n              (if (empty? padv)\n                [res (conj padv (second x))]\n                [(conj res\n                       [:col-padding (apply str padv)]\n                       [:col-align (get-in x [1 :col-align-char])]) []])))\n\n          [[] []]\n          v)]\n    (if (empty? tail)\n      head\n      (conj head [:col-padding (apply str tail)]))))&quot;, :offset 555, :ns &quot;string-layout.spec&quot;} {:command &quot;(defn char-seq-&gt;str-conformer [v]\n  (let [[head tail]\n        (reduce\n          (fn [[res padv ] x]\n            (if (= :col-padding-non-bracket-char (first x))\n              [res (conj padv (second x))]\n              (let [align [:col-align (get-in x [1 :col-align-char])]]\n                (if (empty? padv)\n                  [(conj res align) padv]\n                  [(conj res\n                         [:col-padding (apply str padv)]\n                         align) []]))))\n          [[] []]\n          v)]\n    (if (empty? tail)\n      head\n      (conj head [:col-padding (apply str tail)]))))&quot;, :offset 593, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;[R]\&quot;)&quot;, :offset 34, :ns &quot;string-layout.spec&quot;} {:command &quot;(defn char-seq-&gt;str-conformer [v]\n  (let [[head tail]\n        (reduce\n          (fn [[res padv] x]\n            (if (= :col-padding-non-bracket-char (first x))\n              [res (conj padv (second x))]\n              (let [align [:col-align (get-in x [1 :col-align-char])]]\n                (if (empty? padv)\n                  [(conj res align) padv]\n                  [(conj res\n                         [:col-padding (apply str padv)]\n                         align) []]))))\n          [[] []]\n          v)]\n    (prn \&quot;head:\&quot; head \&quot;tail:\&quot; tail)\n    (if (empty? tail)\n      head\n      (conj head [:col-padding (apply str tail)]))))&quot;, :offset 628, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/def ::layout-string3\n  (s/and string?\n         not-empty\n         (s/conformer seq #(apply str %))\n         (s/+ (s/alt :col-align-bracket-expr\n                     (s/cat :left-bracket #{\\[}\n                            :col-align-char #{\\L \\C \\R \\l \\c \\r}\n                            :right-bracket #{\\]})\n                     :col-padding-non-bracket-char\n                     (complement #{\\[ \\]})))))&quot;, :offset 407, :ns &quot;string-layout.spec&quot;} {:command &quot;(defn char-seq-&gt;str-conformer [v]\n  (let [[head tail]\n        (reduce\n          (fn [[res padv] x]\n            (if (= :col-padding-non-bracket-char (first x))\n              [res (conj padv (second x))]\n              (let [align [:col-align (get-in x [1 :col-align-char])]]\n                (if (empty? padv)\n                  [(conj res align) padv]\n                  [(conj res [:col-padding (apply str padv)]\n                         align) []]))))\n          [[] []]\n          v)]\n    (prn \&quot;head:\&quot; head \&quot;tail:\&quot; tail)\n    (if (empty? tail)\n      head\n      (conj head [:col-padding (apply str tail)]))))&quot;, :offset 603, :ns &quot;string-layout.spec&quot;} {:command &quot;(s/conform ::layout-string3 \&quot;ff[R]\&quot;)&quot;, :offset 31, :ns &quot;string-layout.spec&quot;} {:command &quot;(merge {:a 2} {:a 3 :b 3})&quot;, :offset 24, :ns &quot;string-layout.spec&quot;} {:command &quot;(merge {:a 2} {:a 3 :b 5})&quot;, :offset 24, :ns &quot;string-layout.spec&quot;}], :remote []}}</component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -463,11 +529,13 @@
       <workItem from="1493043394755" duration="1196000" />
       <workItem from="1493048681622" duration="1925000" />
       <workItem from="1493050691187" duration="1231000" />
+      <workItem from="1493191484430" duration="20695000" />
+      <workItem from="1493304461955" duration="873000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19013000" />
+    <option name="totallyTimeSpent" value="60102000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -479,58 +547,41 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <frame x="-1" y="-11" width="2562" height="1612" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="REPL" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.47261906" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" x="424" y="0" width="832" height="1046" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39809525" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="REPL" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.49085122" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" x="424" y="0" width="832" height="1046" />
+      <window_info id="REPL" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.52187747" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" x="424" y="0" width="832" height="1046" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30983052" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Leiningen" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24936387" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39626417" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24936387" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39626417" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32955304" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -582,7 +633,7 @@
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="9" />
+      <option name="time" value="11" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -591,6 +642,61 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/test/string_layout/core_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="3" column="29" lean-forward="false" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/midje/midje/1.8.3/midje-1.8.3.jar!/midje/sweet.clj" />
+    <entry file="file://$PROJECT_DIR$/src/string_layout/core.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1800">
+          <caret line="60" column="15" lean-forward="false" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.8.0/clojure-1.8.0.jar!/clojure/pprint/cl_format.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/midje/midje/1.8.3/midje-1.8.3.jar!/midje/sweet.clj" />
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.8.0/clojure-1.8.0.jar!/clojure/string.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="305" column="16" lean-forward="true" selection-start-line="305" selection-start-column="16" selection-end-line="305" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/string_layout/core_test.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1920">
+          <caret line="64" column="35" lean-forward="false" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="7" column="53" lean-forward="false" selection-start-line="7" selection-start-column="53" selection-end-line="7" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/string_layout/core.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="14" column="55" lean-forward="true" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/string_layout/core.clj">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="924">
@@ -782,674 +888,85 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="7" column="53" lean-forward="false" selection-start-line="7" selection-start-column="53" selection-end-line="7" selection-end-column="53" />
+        <state relative-caret-position="270">
+          <caret line="9" column="52" lean-forward="false" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/lang/ISeq.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/lang/IndexedSeq.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="7" column="38" lean-forward="false" selection-start-line="7" selection-start-column="38" selection-end-line="7" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/CharSequence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="58" column="17" lean-forward="false" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/lang/StringSeq.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="7" column="54" lean-forward="false" selection-start-line="7" selection-start-column="54" selection-end-line="7" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/core.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="492" column="10" lean-forward="false" selection-start-line="492" selection-start-column="10" selection-end-line="492" selection-end-column="10" />
-          <folding>
-            <marker date="1492520982000" expanded="true" signature="464:549" ph="(ns clojure.core ...)" />
-            <marker date="1492520982000" expanded="true" signature="589:735" ph="(def list ...)" />
-            <marker date="1492520982000" expanded="true" signature="737:950" ph="(def cons ...)" />
-            <marker date="1492520982000" expanded="true" signature="1035:1128" ph="(def let ...)" />
-            <marker date="1492520982000" expanded="true" signature="1130:1223" ph="(def loop ...)" />
-            <marker date="1492520982000" expanded="true" signature="1225:1408" ph="(def fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="1410:1650" ph="(def first ...)" />
-            <marker date="1492520982000" expanded="true" signature="1652:1924" ph="(def next ...)" />
-            <marker date="1492520982000" expanded="true" signature="1926:2171" ph="(def rest ...)" />
-            <marker date="1492520982000" expanded="true" signature="2173:2702" ph="(def conj ...)" />
-            <marker date="1492520982000" expanded="true" signature="2704:2847" ph="(def second ...)" />
-            <marker date="1492520982000" expanded="true" signature="2849:2994" ph="(def ffirst ...)" />
-            <marker date="1492520982000" expanded="true" signature="2996:3139" ph="(def nfirst ...)" />
-            <marker date="1492520982000" expanded="true" signature="3141:3282" ph="(def fnext ...)" />
-            <marker date="1492520982000" expanded="true" signature="3284:3423" ph="(def nnext ...)" />
-            <marker date="1492520982000" expanded="true" signature="3425:3979" ph="(def seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="3981:4187" ph="(def instance? ...)" />
-            <marker date="1492520982000" expanded="true" signature="4189:4351" ph="(def seq? ...)" />
-            <marker date="1492520982000" expanded="true" signature="4353:4508" ph="(def char? ...)" />
-            <marker date="1492520982000" expanded="true" signature="4510:4663" ph="(def string? ...)" />
-            <marker date="1492520982000" expanded="true" signature="4665:4847" ph="(def map? ...)" />
-            <marker date="1492520982000" expanded="true" signature="4849:5043" ph="(def vector? ...)" />
-            <marker date="1492520982000" expanded="true" signature="5045:5815" ph="(def assoc ...)" />
-            <marker date="1492520982000" expanded="true" signature="5872:6126" ph="(def meta ...)" />
-            <marker date="1492520982000" expanded="true" signature="6128:6396" ph="(def with-meta ...)" />
-            <marker date="1492520982000" expanded="true" signature="6398:6468" ph="(def assert-valid-fdecl ...)" />
-            <marker date="1492520982000" expanded="true" signature="6470:8183" ph="(def sigs ...)" />
-            <marker date="1492520982000" expanded="true" signature="8186:8401" ph="(def last ...)" />
-            <marker date="1492520982000" expanded="true" signature="8403:8708" ph="(def butlast ...)" />
-            <marker date="1492520982000" expanded="true" signature="8710:11262" ph="(def defn ...)" />
-            <marker date="1492520982000" expanded="true" signature="11291:11550" ph="(defn to-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="11552:11694" ph="(defn cast ...)" />
-            <marker date="1492520982000" expanded="true" signature="11697:12067" ph="(defn vector ...)" />
-            <marker date="1492520982000" expanded="true" signature="12069:12447" ph="(defn vec ...)" />
-            <marker date="1492520982000" expanded="true" signature="12449:12725" ph="(defn hash-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="12727:12956" ph="(defn hash-set ...)" />
-            <marker date="1492520982000" expanded="true" signature="12958:13224" ph="(defn sorted-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="13226:13550" ph="(defn sorted-map-by ...)" />
-            <marker date="1492520982000" expanded="true" signature="13552:13774" ph="(defn sorted-set ...)" />
-            <marker date="1492520982000" expanded="true" signature="13776:14057" ph="(defn sorted-set-by ...)" />
-            <marker date="1492520982000" expanded="true" signature="14082:14293" ph="(defn nil? ...)" />
-            <marker date="1492520982000" expanded="true" signature="14295:16362" ph="(def defmacro ...)" />
-            <marker date="1492520982000" expanded="true" signature="16396:16549" ph="(defmacro when ...)" />
-            <marker date="1492520982000" expanded="true" signature="16551:16715" ph="(defmacro when-not ...)" />
-            <marker date="1492520982000" expanded="true" signature="16717:16883" ph="(defn false? ...)" />
-            <marker date="1492520982000" expanded="true" signature="16885:17048" ph="(defn true? ...)" />
-            <marker date="1492520982000" expanded="true" signature="17050:17144" ph="(defn boolean? ...)" />
-            <marker date="1492520982000" expanded="true" signature="17146:17286" ph="(defn not ...)" />
-            <marker date="1492520982000" expanded="true" signature="17288:17421" ph="(defn some? ...)" />
-            <marker date="1492520982000" expanded="true" signature="17423:17515" ph="(defn any? ...)" />
-            <marker date="1492520982000" expanded="true" signature="17517:18062" ph="(defn str ...)" />
-            <marker date="1492520982000" expanded="true" signature="18065:18185" ph="(defn symbol? ...)" />
-            <marker date="1492520982000" expanded="true" signature="18187:18310" ph="(defn keyword? ...)" />
-            <marker date="1492520982000" expanded="true" signature="18312:18563" ph="(defn symbol ...)" />
-            <marker date="1492520982000" expanded="true" signature="18565:18921" ph="(defn gensym ...)" />
-            <marker date="1492520982000" expanded="true" signature="18923:19513" ph="(defmacro cond ...)" />
-            <marker date="1492520982000" expanded="true" signature="19515:19972" ph="(defn keyword ...)" />
-            <marker date="1492520982000" expanded="true" signature="19974:20568" ph="(defn find-keyword ...)" />
-            <marker date="1492520982000" expanded="true" signature="20571:20764" ph="(defn spread ...)" />
-            <marker date="1492520982000" expanded="true" signature="20766:21140" ph="(defn list* ...)" />
-            <marker date="1492520982000" expanded="true" signature="21142:21671" ph="(defn apply ...)" />
-            <marker date="1492520982000" expanded="true" signature="21673:21887" ph="(defn vary-meta ...)" />
-            <marker date="1492520982000" expanded="true" signature="21889:22253" ph="(defmacro lazy-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="22259:22389" ph="(defn chunk-buffer ...)" />
-            <marker date="1492520982000" expanded="true" signature="22391:22464" ph="(defn chunk-append ...)" />
-            <marker date="1492520982000" expanded="true" signature="22466:22551" ph="(defn chunk ...)" />
-            <marker date="1492520982000" expanded="true" signature="22553:22673" ph="(defn chunk-first ...)" />
-            <marker date="1492520982000" expanded="true" signature="22675:22788" ph="(defn chunk-rest ...)" />
-            <marker date="1492520982000" expanded="true" signature="22790:22903" ph="(defn chunk-next ...)" />
-            <marker date="1492520982000" expanded="true" signature="22905:23063" ph="(defn chunk-cons ...)" />
-            <marker date="1492520982000" expanded="true" signature="23067:23140" ph="(defn chunked-seq? ...)" />
-            <marker date="1492520982000" expanded="true" signature="23142:24041" ph="(defn concat ...)" />
-            <marker date="1492520982000" expanded="true" signature="24135:24490" ph="(defmacro delay ...)" />
-            <marker date="1492520982000" expanded="true" signature="24492:24629" ph="(defn delay? ...)" />
-            <marker date="1492520982000" expanded="true" signature="24631:24806" ph="(defn force ...)" />
-            <marker date="1492520982000" expanded="true" signature="24808:25056" ph="(defmacro if-not ...)" />
-            <marker date="1492520982000" expanded="true" signature="25058:25266" ph="(defn identical? ...)" />
-            <marker date="1492520982000" expanded="true" signature="25281:25911" ph="(defn = ...)" />
-            <marker date="1492520982000" expanded="true" signature="26484:26659" ph="(defn not= ...)" />
-            <marker date="1492520982000" expanded="true" signature="26663:27098" ph="(defn compare ...)" />
-            <marker date="1492520982000" expanded="true" signature="27100:27474" ph="(defmacro and ...)" />
-            <marker date="1492520982000" expanded="true" signature="27476:27845" ph="(defmacro or ...)" />
-            <marker date="1492520982000" expanded="true" signature="27905:28082" ph="(defn zero? ...)" />
-            <marker date="1492520982000" expanded="true" signature="28084:28346" ph="(defn count ...)" />
-            <marker date="1492520982000" expanded="true" signature="28348:28532" ph="(defn int ...)" />
-            <marker date="1492520982000" expanded="true" signature="28534:29019" ph="(defn nth ...)" />
-            <marker date="1492520982000" expanded="true" signature="29021:29406" ph="(defn &lt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="29408:29621" ph="(defn inc' ...)" />
-            <marker date="1492520982000" expanded="true" signature="29623:29896" ph="(defn inc ...)" />
-            <marker date="1492520982000" expanded="true" signature="29958:30422" ph="(defn reduce1 ...)" />
-            <marker date="1492520982000" expanded="true" signature="30424:30574" ph="(defn reverse ...)" />
-            <marker date="1492520982000" expanded="true" signature="30589:31128" ph="(defn nary-inline ...)" />
-            <marker date="1492520982000" expanded="true" signature="31241:31536" ph="(defn +' ...)" />
-            <marker date="1492520982000" expanded="true" signature="31538:31868" ph="(defn + ...)" />
-            <marker date="1492520982000" expanded="true" signature="31870:32179" ph="(defn *' ...)" />
-            <marker date="1492520982000" expanded="true" signature="32181:32530" ph="(defn * ...)" />
-            <marker date="1492520982000" expanded="true" signature="32532:32841" ph="(defn / ...)" />
-            <marker date="1492520982000" expanded="true" signature="32843:33217" ph="(defn -' ...)" />
-            <marker date="1492520982000" expanded="true" signature="33219:33630" ph="(defn - ...)" />
-            <marker date="1492520982000" expanded="true" signature="33632:34026" ph="(defn &lt;= ...)" />
-            <marker date="1492520982000" expanded="true" signature="34028:34413" ph="(defn &gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="34415:34809" ph="(defn &gt;= ...)" />
-            <marker date="1492520982000" expanded="true" signature="34811:35215" ph="(defn == ...)" />
-            <marker date="1492520982000" expanded="true" signature="35217:35439" ph="(defn max ...)" />
-            <marker date="1492520982000" expanded="true" signature="35441:35660" ph="(defn min ...)" />
-            <marker date="1492520982000" expanded="true" signature="35662:35872" ph="(defn dec' ...)" />
-            <marker date="1492520982000" expanded="true" signature="35874:36144" ph="(defn dec ...)" />
-            <marker date="1492520982000" expanded="true" signature="36146:36414" ph="(defn unchecked-inc-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="36416:36672" ph="(defn unchecked-inc ...)" />
-            <marker date="1492520982000" expanded="true" signature="36674:36939" ph="(defn unchecked-dec-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="36941:37194" ph="(defn unchecked-dec ...)" />
-            <marker date="1492520982000" expanded="true" signature="37196:37463" ph="(defn unchecked-negate-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="37465:37718" ph="(defn unchecked-negate ...)" />
-            <marker date="1492520982000" expanded="true" signature="37720:37990" ph="(defn unchecked-add-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="37992:38251" ph="(defn unchecked-add ...)" />
-            <marker date="1492520982000" expanded="true" signature="38253:38545" ph="(defn unchecked-subtract-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="38547:38822" ph="(defn unchecked-subtract ...)" />
-            <marker date="1492520982000" expanded="true" signature="38824:39113" ph="(defn unchecked-multiply-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="39115:39393" ph="(defn unchecked-multiply ...)" />
-            <marker date="1492520982000" expanded="true" signature="39395:39680" ph="(defn unchecked-divide-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="39682:39989" ph="(defn unchecked-remainder-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="39991:40178" ph="(defn pos? ...)" />
-            <marker date="1492520982000" expanded="true" signature="40180:40364" ph="(defn neg? ...)" />
-            <marker date="1492520982000" expanded="true" signature="40366:40588" ph="(defn quot ...)" />
-            <marker date="1492520982000" expanded="true" signature="40590:40812" ph="(defn rem ...)" />
-            <marker date="1492520982000" expanded="true" signature="40814:40956" ph="(defn rationalize ...)" />
-            <marker date="1492520982000" expanded="true" signature="40969:41115" ph="(defn bit-not ...)" />
-            <marker date="1492520982000" expanded="true" signature="41118:41326" ph="(defn bit-and ...)" />
-            <marker date="1492520982000" expanded="true" signature="41328:41523" ph="(defn bit-or ...)" />
-            <marker date="1492520982000" expanded="true" signature="41525:41735" ph="(defn bit-xor ...)" />
-            <marker date="1492520982000" expanded="true" signature="41737:41988" ph="(defn bit-and-not ...)" />
-            <marker date="1492520982000" expanded="true" signature="41991:42111" ph="(defn bit-clear ...)" />
-            <marker date="1492520982000" expanded="true" signature="42113:42227" ph="(defn bit-set ...)" />
-            <marker date="1492520982000" expanded="true" signature="42229:42346" ph="(defn bit-flip ...)" />
-            <marker date="1492520982000" expanded="true" signature="42348:42465" ph="(defn bit-test ...)" />
-            <marker date="1492520982000" expanded="true" signature="42468:42642" ph="(defn bit-shift-left ...)" />
-            <marker date="1492520982000" expanded="true" signature="42644:42822" ph="(defn bit-shift-right ...)" />
-            <marker date="1492520982000" expanded="true" signature="42824:43052" ph="(defn unsigned-bit-shift-right ...)" />
-            <marker date="1492520982000" expanded="true" signature="43054:43320" ph="(defn integer? ...)" />
-            <marker date="1492520982000" expanded="true" signature="43322:43616" ph="(defn even? ...)" />
-            <marker date="1492520982000" expanded="true" signature="43618:43757" ph="(defn odd? ...)" />
-            <marker date="1492520982000" expanded="true" signature="43759:43958" ph="(defn int? ...)" />
-            <marker date="1492520982000" expanded="true" signature="43960:44092" ph="(defn pos-int? ...)" />
-            <marker date="1492520982000" expanded="true" signature="44094:44226" ph="(defn neg-int? ...)" />
-            <marker date="1492520982000" expanded="true" signature="44228:44370" ph="(defn nat-int? ...)" />
-            <marker date="1492520982000" expanded="true" signature="44372:44463" ph="(defn double? ...)" />
-            <marker date="1492520982000" expanded="true" signature="44465:44574" ph="(defn bigdec? ...)" />
-            <marker date="1492520982000" expanded="true" signature="44580:44892" ph="(defn complement ...)" />
-            <marker date="1492520982000" expanded="true" signature="44894:45039" ph="(defn constantly ...)" />
-            <marker date="1492520982000" expanded="true" signature="45041:45123" ph="(defn identity ...)" />
-            <marker date="1492520982000" expanded="true" signature="45158:45385" ph="(defn peek ...)" />
-            <marker date="1492520982000" expanded="true" signature="45387:45695" ph="(defn pop ...)" />
-            <marker date="1492520982000" expanded="true" signature="45710:45821" ph="(defn map-entry? ...)" />
-            <marker date="1492520982000" expanded="true" signature="45823:46275" ph="(defn contains? ...)" />
-            <marker date="1492520982000" expanded="true" signature="46277:46592" ph="(defn get ...)" />
-            <marker date="1492520982000" expanded="true" signature="46594:46939" ph="(defn dissoc ...)" />
-            <marker date="1492520982000" expanded="true" signature="46941:47317" ph="(defn disj ...)" />
-            <marker date="1492520982000" expanded="true" signature="47319:47472" ph="(defn find ...)" />
-            <marker date="1492520982000" expanded="true" signature="47474:47881" ph="(defn select-keys ...)" />
-            <marker date="1492520982000" expanded="true" signature="47883:48040" ph="(defn keys ...)" />
-            <marker date="1492520982000" expanded="true" signature="48042:48201" ph="(defn vals ...)" />
-            <marker date="1492520982000" expanded="true" signature="48203:48330" ph="(defn key ...)" />
-            <marker date="1492520982000" expanded="true" signature="48332:48463" ph="(defn val ...)" />
-            <marker date="1492520982000" expanded="true" signature="48465:48705" ph="(defn rseq ...)" />
-            <marker date="1492520982000" expanded="true" signature="48707:48889" ph="(defn name ...)" />
-            <marker date="1492520982000" expanded="true" signature="48891:49086" ph="(defn namespace ...)" />
-            <marker date="1492520982000" expanded="true" signature="49088:49198" ph="(defn ident? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49200:49345" ph="(defn simple-ident? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49347:49490" ph="(defn qualified-ident? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49492:49628" ph="(defn simple-symbol? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49630:49764" ph="(defn qualified-symbol? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49766:49905" ph="(defn simple-keyword? ...)" />
-            <marker date="1492520982000" expanded="true" signature="49907:50044" ph="(defn qualified-keyword? ...)" />
-            <marker date="1492520982000" expanded="true" signature="50046:50340" ph="(defmacro locking ...)" />
-            <marker date="1492520982000" expanded="true" signature="50342:50821" ph="(defmacro .. ...)" />
-            <marker date="1492520982000" expanded="true" signature="50823:51376" ph="(defmacro -&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="51378:51911" ph="(defmacro -&gt;&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="51924:52335" ph="(defn check-valid-options ...)" />
-            <marker date="1492520982000" expanded="true" signature="52376:54693" ph="(defmacro defmulti ...)" />
-            <marker date="1492520982000" expanded="true" signature="54695:54949" ph="(defmacro defmethod ...)" />
-            <marker date="1492520982000" expanded="true" signature="54951:55108" ph="(defn remove-all-methods ...)" />
-            <marker date="1492520982000" expanded="true" signature="55110:55318" ph="(defn remove-method ...)" />
-            <marker date="1492520982000" expanded="true" signature="55320:55606" ph="(defn prefer-method ...)" />
-            <marker date="1492520982000" expanded="true" signature="55608:55789" ph="(defn methods ...)" />
-            <marker date="1492520982000" expanded="true" signature="55791:56062" ph="(defn get-method ...)" />
-            <marker date="1492520982000" expanded="true" signature="56064:56252" ph="(defn prefers ...)" />
-            <marker date="1492520982000" expanded="true" signature="56275:56604" ph="(defmacro assert-args ...)" />
-            <marker date="1492520982000" expanded="true" signature="56606:57208" ph="(defmacro if-let ...)" />
-            <marker date="1492520982000" expanded="true" signature="57210:57650" ph="(defmacro when-let ...)" />
-            <marker date="1492520982000" expanded="true" signature="57652:58267" ph="(defmacro if-some ...)" />
-            <marker date="1492520982000" expanded="true" signature="58269:58735" ph="(defmacro when-some ...)" />
-            <marker date="1492520982000" expanded="true" signature="58737:59281" ph="(defn push-thread-bindings ...)" />
-            <marker date="1492520982000" expanded="true" signature="59283:59504" ph="(defn pop-thread-bindings ...)" />
-            <marker date="1492520982000" expanded="true" signature="59506:59703" ph="(defn get-thread-bindings ...)" />
-            <marker date="1492520982000" expanded="true" signature="59705:60689" ph="(defmacro binding ...)" />
-            <marker date="1492520982000" expanded="true" signature="60691:61108" ph="(defn with-bindings* ...)" />
-            <marker date="1492520982000" expanded="true" signature="61110:61439" ph="(defmacro with-bindings ...)" />
-            <marker date="1492520982000" expanded="true" signature="61441:61886" ph="(defn bound-fn* ...)" />
-            <marker date="1492520982000" expanded="true" signature="61888:62238" ph="(defmacro bound-fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="62240:62431" ph="(defn find-var ...)" />
-            <marker date="1492520982000" expanded="true" signature="62433:63029" ph="(defn binding-conveyor-fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="63104:63351" ph="(defn setup-reference ...)" />
-            <marker date="1492520982000" expanded="true" signature="63353:64596" ph="(defn agent ...)" />
-            <marker date="1492520982000" expanded="true" signature="64598:64759" ph="(defn set-agent-send-executor! ...)" />
-            <marker date="1492520982000" expanded="true" signature="64761:64928" ph="(defn set-agent-send-off-executor! ...)" />
-            <marker date="1492520982000" expanded="true" signature="64930:65294" ph="(defn send-via ...)" />
-            <marker date="1492520982000" expanded="true" signature="65296:65647" ph="(defn send ...)" />
-            <marker date="1492520982000" expanded="true" signature="65649:66012" ph="(defn send-off ...)" />
-            <marker date="1492520982000" expanded="true" signature="66014:66519" ph="(defn release-pending-sends ...)" />
-            <marker date="1492520982000" expanded="true" signature="66521:67492" ph="(defn add-watch ...)" />
-            <marker date="1492520982000" expanded="true" signature="67494:67670" ph="(defn remove-watch ...)" />
-            <marker date="1492520982000" expanded="true" signature="67672:67908" ph="(defn agent-error ...)" />
-            <marker date="1492520982000" expanded="true" signature="67910:68692" ph="(defn restart-agent ...)" />
-            <marker date="1492520982000" expanded="true" signature="68694:69049" ph="(defn set-error-handler! ...)" />
-            <marker date="1492520982000" expanded="true" signature="69051:69245" ph="(defn error-handler ...)" />
-            <marker date="1492520982000" expanded="true" signature="69247:70040" ph="(defn set-error-mode! ...)" />
-            <marker date="1492520982000" expanded="true" signature="70042:70198" ph="(defn error-mode ...)" />
-            <marker date="1492520982000" expanded="true" signature="70200:70442" ph="(defn agent-errors ...)" />
-            <marker date="1492520982000" expanded="true" signature="70444:70720" ph="(defn clear-agent-errors ...)" />
-            <marker date="1492520982000" expanded="true" signature="70722:70958" ph="(defn shutdown-agents ...)" />
-            <marker date="1492520982000" expanded="true" signature="70960:72230" ph="(defn ref ...)" />
-            <marker date="1492520982000" expanded="true" signature="72232:72536" ph="(defn deref-future ...)" />
-            <marker date="1492520982000" expanded="true" signature="72543:73597" ph="(defn deref ...)" />
-            <marker date="1492520982000" expanded="true" signature="73599:74185" ph="(defn atom ...)" />
-            <marker date="1492520982000" expanded="true" signature="74187:74669" ph="(defn swap! ...)" />
-            <marker date="1492520982000" expanded="true" signature="74671:74968" ph="(defn compare-and-set! ...)" />
-            <marker date="1492520982000" expanded="true" signature="74970:75166" ph="(defn reset! ...)" />
-            <marker date="1492520982000" expanded="true" signature="75168:75736" ph="(defn set-validator! ...)" />
-            <marker date="1492520982000" expanded="true" signature="75738:75894" ph="(defn get-validator ...)" />
-            <marker date="1492520982000" expanded="true" signature="75896:76158" ph="(defn alter-meta! ...)" />
-            <marker date="1492520982000" expanded="true" signature="76160:76358" ph="(defn reset-meta! ...)" />
-            <marker date="1492520982000" expanded="true" signature="76360:76932" ph="(defn commute ...)" />
-            <marker date="1492520982000" expanded="true" signature="76934:77221" ph="(defn alter ...)" />
-            <marker date="1492520982000" expanded="true" signature="77223:77397" ph="(defn ref-set ...)" />
-            <marker date="1492520982000" expanded="true" signature="77399:77548" ph="(defn ref-history-count ...)" />
-            <marker date="1492520982000" expanded="true" signature="77550:77781" ph="(defn ref-min-history ...)" />
-            <marker date="1492520982000" expanded="true" signature="77783:78014" ph="(defn ref-max-history ...)" />
-            <marker date="1492520982000" expanded="true" signature="78016:78321" ph="(defn ensure ...)" />
-            <marker date="1492520982000" expanded="true" signature="78323:78836" ph="(defmacro sync ...)" />
-            <marker date="1492520982000" expanded="true" signature="78839:79347" ph="(defmacro io! ...)" />
-            <marker date="1492520982000" expanded="true" signature="79349:79516" ph="(defn volatile! ...)" />
-            <marker date="1492520982000" expanded="true" signature="79518:79707" ph="(defn vreset! ...)" />
-            <marker date="1492520982000" expanded="true" signature="79709:79999" ph="(defmacro vswap! ...)" />
-            <marker date="1492520982000" expanded="true" signature="80001:80115" ph="(defn volatile? ...)" />
-            <marker date="1492520982000" expanded="true" signature="80176:80698" ph="(defn comp ...)" />
-            <marker date="1492520982000" expanded="true" signature="80700:81993" ph="(defn juxt ...)" />
-            <marker date="1492520982000" expanded="true" signature="81995:82938" ph="(defn partial ...)" />
-            <marker date="1492520982000" expanded="true" signature="82999:83978" ph="(defn sequence ...)" />
-            <marker date="1492520982000" expanded="true" signature="83980:84234" ph="(defn every? ...)" />
-            <marker date="1492520982000" expanded="true" signature="84236:84418" ph="(def not-every? ...)" />
-            <marker date="1492520982000" expanded="true" signature="84420:84787" ph="(defn some ...)" />
-            <marker date="1492520982000" expanded="true" signature="84789:84965" ph="(def not-any? ...)" />
-            <marker date="1492520982000" expanded="true" signature="85006:85398" ph="(defmacro dotimes ...)" />
-            <marker date="1492520982000" expanded="true" signature="85400:87082" ph="(defn map ...)" />
-            <marker date="1492520982000" expanded="true" signature="87084:87289" ph="(defmacro declare ...)" />
-            <marker date="1492520982000" expanded="true" signature="87306:87626" ph="(defn mapcat ...)" />
-            <marker date="1492520982000" expanded="true" signature="87628:88551" ph="(defn filter ...)" />
-            <marker date="1492520982000" expanded="true" signature="88554:88869" ph="(defn remove ...)" />
-            <marker date="1492520982000" expanded="true" signature="88871:89008" ph="(defn reduced ...)" />
-            <marker date="1492520982000" expanded="true" signature="89010:89214" ph="(defn reduced? ...)" />
-            <marker date="1492520982000" expanded="true" signature="89216:89361" ph="(defn ensure-reduced ...)" />
-            <marker date="1492520982000" expanded="true" signature="89363:89490" ph="(defn unreduced ...)" />
-            <marker date="1492520982000" expanded="true" signature="89492:90285" ph="(defn take ...)" />
-            <marker date="1492520982000" expanded="true" signature="90287:90877" ph="(defn take-while ...)" />
-            <marker date="1492520982000" expanded="true" signature="90879:91585" ph="(defn drop ...)" />
-            <marker date="1492520982000" expanded="true" signature="91587:91777" ph="(defn drop-last ...)" />
-            <marker date="1492520982000" expanded="true" signature="91779:92092" ph="(defn take-last ...)" />
-            <marker date="1492520982000" expanded="true" signature="92094:92936" ph="(defn drop-while ...)" />
-            <marker date="1492520982000" expanded="true" signature="92938:93108" ph="(defn cycle ...)" />
-            <marker date="1492520982000" expanded="true" signature="93110:93257" ph="(defn split-at ...)" />
-            <marker date="1492520982000" expanded="true" signature="93259:93447" ph="(defn split-with ...)" />
-            <marker date="1492520982000" expanded="true" signature="93449:93649" ph="(defn repeat ...)" />
-            <marker date="1492520982000" expanded="true" signature="93651:93802" ph="(defn replicate ...)" />
-            <marker date="1492520982000" expanded="true" signature="93804:93981" ph="(defn iterate ...)" />
-            <marker date="1492520982000" expanded="true" signature="93983:94797" ph="(defn range ...)" />
-            <marker date="1492520982000" expanded="true" signature="94799:95128" ph="(defn merge ...)" />
-            <marker date="1492520982000" expanded="true" signature="95130:95740" ph="(defn merge-with ...)" />
-            <marker date="1492520982000" expanded="true" signature="95744:96075" ph="(defn zipmap ...)" />
-            <marker date="1492520982000" expanded="true" signature="96077:96350" ph="(defn line-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="96352:96545" ph="(defn comparator ...)" />
-            <marker date="1492520982000" expanded="true" signature="96547:97084" ph="(defn sort ...)" />
-            <marker date="1492520982000" expanded="true" signature="97086:97662" ph="(defn sort-by ...)" />
-            <marker date="1492520982000" expanded="true" signature="97664:98181" ph="(defn dorun ...)" />
-            <marker date="1492520982000" expanded="true" signature="98183:98684" ph="(defn doall ...)" />
-            <marker date="1492520982000" expanded="true" signature="98686:98907" ph="(defn nthnext ...)" />
-            <marker date="1492520982000" expanded="true" signature="98909:99133" ph="(defn nthrest ...)" />
-            <marker date="1492520982000" expanded="true" signature="99135:100022" ph="(defn partition ...)" />
-            <marker date="1492520982000" expanded="true" signature="100039:100204" ph="(defn eval ...)" />
-            <marker date="1492520982000" expanded="true" signature="100206:103186" ph="(defmacro doseq ...)" />
-            <marker date="1492520982000" expanded="true" signature="103188:103833" ph="(defn await ...)" />
-            <marker date="1492520982000" expanded="true" signature="103835:103936" ph="(defn await1 ...)" />
-            <marker date="1492520982000" expanded="true" signature="103938:104669" ph="(defn await-for ...)" />
-            <marker date="1492520982000" expanded="true" signature="104671:105174" ph="(defmacro dotimes ...)" />
-            <marker date="1492520982000" expanded="true" signature="105507:105697" ph="(defn transient ...)" />
-            <marker date="1492520982000" expanded="true" signature="105699:106000" ph="(defn persistent! ...)" />
-            <marker date="1492520982000" expanded="true" signature="106002:106292" ph="(defn conj! ...)" />
-            <marker date="1492520982000" expanded="true" signature="106294:106784" ph="(defn assoc! ...)" />
-            <marker date="1492520982000" expanded="true" signature="106786:107110" ph="(defn dissoc! ...)" />
-            <marker date="1492520982000" expanded="true" signature="107112:107326" ph="(defn pop! ...)" />
-            <marker date="1492520982000" expanded="true" signature="107329:107708" ph="(defn disj! ...)" />
-            <marker date="1492520982000" expanded="true" signature="107741:108037" ph="(defn into1 ...)" />
-            <marker date="1492520982000" expanded="true" signature="108039:108828" ph="(defmacro import ...)" />
-            <marker date="1492520982000" expanded="true" signature="108830:109338" ph="(defn into-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="109340:109404" ph="(defn array ...)" />
-            <marker date="1492520982000" expanded="true" signature="109406:109532" ph="(defn class ...)" />
-            <marker date="1492520982000" expanded="true" signature="109534:109681" ph="(defn type ...)" />
-            <marker date="1492520982000" expanded="true" signature="109683:109841" ph="(defn num ...)" />
-            <marker date="1492520982000" expanded="true" signature="109843:109989" ph="(defn long ...)" />
-            <marker date="1492520982000" expanded="true" signature="109991:110185" ph="(defn float ...)" />
-            <marker date="1492520982000" expanded="true" signature="110187:110341" ph="(defn double ...)" />
-            <marker date="1492520982000" expanded="true" signature="110343:110537" ph="(defn short ...)" />
-            <marker date="1492520982000" expanded="true" signature="110539:110728" ph="(defn byte ...)" />
-            <marker date="1492520982000" expanded="true" signature="110730:110915" ph="(defn char ...)" />
-            <marker date="1492520982000" expanded="true" signature="110917:111071" ph="(defn boolean ...)" />
-            <marker date="1492520982000" expanded="true" signature="111073:111283" ph="(defn unchecked-byte ...)" />
-            <marker date="1492520982000" expanded="true" signature="111285:111499" ph="(defn unchecked-short ...)" />
-            <marker date="1492520982000" expanded="true" signature="111501:111707" ph="(defn unchecked-char ...)" />
-            <marker date="1492520982000" expanded="true" signature="111709:111915" ph="(defn unchecked-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="111917:112127" ph="(defn unchecked-long ...)" />
-            <marker date="1492520982000" expanded="true" signature="112129:112329" ph="(defn unchecked-float ...)" />
-            <marker date="1492520982000" expanded="true" signature="112331:112535" ph="(defn unchecked-double ...)" />
-            <marker date="1492520982000" expanded="true" signature="112538:112648" ph="(defn number? ...)" />
-            <marker date="1492520982000" expanded="true" signature="112650:112872" ph="(defn mod ...)" />
-            <marker date="1492520982000" expanded="true" signature="112874:112992" ph="(defn ratio? ...)" />
-            <marker date="1492520982000" expanded="true" signature="112994:113148" ph="(defn numerator ...)" />
-            <marker date="1492520982000" expanded="true" signature="113150:113310" ph="(defn denominator ...)" />
-            <marker date="1492520982000" expanded="true" signature="113312:113429" ph="(defn decimal? ...)" />
-            <marker date="1492520982000" expanded="true" signature="113431:113586" ph="(defn float? ...)" />
-            <marker date="1492520982000" expanded="true" signature="113588:113731" ph="(defn rational? ...)" />
-            <marker date="1492520982000" expanded="true" signature="113733:114240" ph="(defn bigint ...)" />
-            <marker date="1492520982000" expanded="true" signature="114242:114718" ph="(defn biginteger ...)" />
-            <marker date="1492520982000" expanded="true" signature="114720:115223" ph="(defn bigdec ...)" />
-            <marker date="1492520982000" expanded="true" signature="115283:115435" ph="(defmulti print-method ...)" />
-            <marker date="1492520982000" expanded="true" signature="115484:115606" ph="(defn pr-on ...)" />
-            <marker date="1492520982000" expanded="true" signature="115608:116066" ph="(defn pr ...)" />
-            <marker date="1492520982000" expanded="true" signature="116068:116149" ph="(def system-newline ...)" />
-            <marker date="1492520982000" expanded="true" signature="116151:116297" ph="(defn newline ...)" />
-            <marker date="1492520982000" expanded="true" signature="116299:116446" ph="(defn flush ...)" />
-            <marker date="1492520982000" expanded="true" signature="116448:116646" ph="(defn prn ...)" />
-            <marker date="1492520982000" expanded="true" signature="116648:116904" ph="(defn print ...)" />
-            <marker date="1492520982000" expanded="true" signature="116906:117064" ph="(defn println ...)" />
-            <marker date="1492520982000" expanded="true" signature="117066:118108" ph="(defn read ...)" />
-            <marker date="1492520982000" expanded="true" signature="118110:118409" ph="(defn read-line ...)" />
-            <marker date="1492520982000" expanded="true" signature="118411:118834" ph="(defn read-string ...)" />
-            <marker date="1492520982000" expanded="true" signature="118836:119269" ph="(defn subvec ...)" />
-            <marker date="1492520982000" expanded="true" signature="119271:120088" ph="(defmacro with-open ...)" />
-            <marker date="1492520982000" expanded="true" signature="120090:120595" ph="(defmacro doto ...)" />
-            <marker date="1492520982000" expanded="true" signature="120597:121082" ph="(defmacro memfn ...)" />
-            <marker date="1492520982000" expanded="true" signature="121084:121371" ph="(defmacro time ...)" />
-            <marker date="1492520982000" expanded="true" signature="121412:121617" ph="(defn alength ...)" />
-            <marker date="1492520982000" expanded="true" signature="121619:121820" ph="(defn aclone ...)" />
-            <marker date="1492520982000" expanded="true" signature="121822:122190" ph="(defn aget ...)" />
-            <marker date="1492520982000" expanded="true" signature="122192:122539" ph="(defn aset ...)" />
-            <marker date="1492520982000" expanded="true" signature="122541:122882" ph="(defmacro def-aset ...)" />
-            <marker date="1492520982000" expanded="true" signature="122884:123019" ph="(def-aset aset-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="123021:123160" ph="(def-aset aset-long ...)" />
-            <marker date="1492520982000" expanded="true" signature="123162:123313" ph="(def-aset aset-boolean ...)" />
-            <marker date="1492520982000" expanded="true" signature="123315:123458" ph="(def-aset aset-float ...)" />
-            <marker date="1492520982000" expanded="true" signature="123460:123607" ph="(def-aset aset-double ...)" />
-            <marker date="1492520982000" expanded="true" signature="123609:123752" ph="(def-aset aset-short ...)" />
-            <marker date="1492520982000" expanded="true" signature="123754:123893" ph="(def-aset aset-byte ...)" />
-            <marker date="1492520982000" expanded="true" signature="123895:124034" ph="(def-aset aset-char ...)" />
-            <marker date="1492520982000" expanded="true" signature="124036:124720" ph="(defn make-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="124722:125214" ph="(defn to-array-2d ...)" />
-            <marker date="1492520982000" expanded="true" signature="125216:125409" ph="(defn macroexpand-1 ...)" />
-            <marker date="1492520982000" expanded="true" signature="125411:125756" ph="(defn macroexpand ...)" />
-            <marker date="1492520982000" expanded="true" signature="125758:125922" ph="(defn create-struct ...)" />
-            <marker date="1492520982000" expanded="true" signature="125924:126078" ph="(defmacro defstruct ...)" />
-            <marker date="1492520982000" expanded="true" signature="126080:126445" ph="(defn struct-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="126447:126749" ph="(defn struct ...)" />
-            <marker date="1492520982000" expanded="true" signature="126751:127166" ph="(defn accessor ...)" />
-            <marker date="1492520982000" expanded="true" signature="127168:127347" ph="(defn load-reader ...)" />
-            <marker date="1492520982000" expanded="true" signature="127349:127611" ph="(defn load-string ...)" />
-            <marker date="1492520982000" expanded="true" signature="127613:127753" ph="(defn set? ...)" />
-            <marker date="1492520982000" expanded="true" signature="127755:128094" ph="(defn set ...)" />
-            <marker date="1492520982000" expanded="true" signature="128096:128371" ph="(defn filter-key ...)" />
-            <marker date="1492520982000" expanded="true" signature="128373:128536" ph="(defn find-ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="128538:128781" ph="(defn create-ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="128783:128991" ph="(defn remove-ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="128993:129115" ph="(defn all-ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="129117:129461" ph="(defn the-ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="129463:129591" ph="(defn ns-name ...)" />
-            <marker date="1492520982000" expanded="true" signature="129593:129732" ph="(defn ns-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="129734:129880" ph="(defn ns-unmap ...)" />
-            <marker date="1492520982000" expanded="true" signature="129973:130330" ph="(defn ns-publics ...)" />
-            <marker date="1492520982000" expanded="true" signature="130332:130506" ph="(defn ns-imports ...)" />
-            <marker date="1492520982000" expanded="true" signature="130508:130811" ph="(defn ns-interns ...)" />
-            <marker date="1492520982000" expanded="true" signature="130813:132479" ph="(defn refer ...)" />
-            <marker date="1492520982000" expanded="true" signature="132481:132785" ph="(defn ns-refers ...)" />
-            <marker date="1492520982000" expanded="true" signature="132787:133134" ph="(defn alias ...)" />
-            <marker date="1492520982000" expanded="true" signature="133136:133273" ph="(defn ns-aliases ...)" />
-            <marker date="1492520982000" expanded="true" signature="133275:133426" ph="(defn ns-unalias ...)" />
-            <marker date="1492520982000" expanded="true" signature="133428:133994" ph="(defn take-nth ...)" />
-            <marker date="1492520982000" expanded="true" signature="133996:134548" ph="(defn interleave ...)" />
-            <marker date="1492520982000" expanded="true" signature="134550:134670" ph="(defn var-get ...)" />
-            <marker date="1492520982000" expanded="true" signature="134672:134847" ph="(defn var-set ...)" />
-            <marker date="1492520982000" expanded="true" signature="134849:135603" ph="(defmacro with-local-vars ...)" />
-            <marker date="1492520982000" expanded="true" signature="135605:136059" ph="(defn ns-resolve ...)" />
-            <marker date="1492520982000" expanded="true" signature="136061:136250" ph="(defn resolve ...)" />
-            <marker date="1492520982000" expanded="true" signature="136252:136546" ph="(defn array-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="136592:141939" ph="(defn destructure ...)" />
-            <marker date="1492520982000" expanded="true" signature="141941:142417" ph="(defmacro let ...)" />
-            <marker date="1492520982000" expanded="true" signature="142419:142984" ph="(defn maybe-destructured ...)" />
-            <marker date="1492520982000" expanded="true" signature="143042:145888" ph="(defmacro fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="145890:146946" ph="(defmacro loop ...)" />
-            <marker date="1492520982000" expanded="true" signature="146948:147359" ph="(defmacro when-first ...)" />
-            <marker date="1492520982000" expanded="true" signature="147361:147684" ph="(defmacro lazy-cat ...)" />
-            <marker date="1492520982000" expanded="true" signature="147686:152703" ph="(defmacro for ...)" />
-            <marker date="1492520982000" expanded="true" signature="152705:152780" ph="(defmacro comment ...)" />
-            <marker date="1492520982000" expanded="true" signature="152782:153074" ph="(defmacro with-out-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="153076:153373" ph="(defmacro with-in-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="153375:153516" ph="(defn pr-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="153518:153658" ph="(defn prn-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="153660:153810" ph="(defn print-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="153812:153968" ph="(defn println-str ...)" />
-            <marker date="1492520982000" expanded="true" signature="154034:154276" ph="(defn ex-info ...)" />
-            <marker date="1492520982000" expanded="true" signature="154278:154478" ph="(defn ex-data ...)" />
-            <marker date="1492520982000" expanded="true" signature="154480:154876" ph="(defmacro assert ...)" />
-            <marker date="1492520982000" expanded="true" signature="154878:155100" ph="(defn test ...)" />
-            <marker date="1492520982000" expanded="true" signature="155102:155374" ph="(defn re-pattern ...)" />
-            <marker date="1492520982000" expanded="true" signature="155376:155595" ph="(defn re-matcher ...)" />
-            <marker date="1492520982000" expanded="true" signature="155597:156113" ph="(defn re-groups ...)" />
-            <marker date="1492520982000" expanded="true" signature="156115:156475" ph="(defn re-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="156477:156780" ph="(defn re-matches ...)" />
-            <marker date="1492520982000" expanded="true" signature="156783:157133" ph="(defn re-find ...)" />
-            <marker date="1492520982000" expanded="true" signature="157135:157323" ph="(defn rand ...)" />
-            <marker date="1492520982000" expanded="true" signature="157325:157464" ph="(defn rand-int ...)" />
-            <marker date="1492520982000" expanded="true" signature="157466:157633" ph="(defmacro defn- ...)" />
-            <marker date="1492520982000" expanded="true" signature="157635:158272" ph="(defn tree-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="158274:158486" ph="(defn file-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="158488:158672" ph="(defn xml-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="158674:158831" ph="(defn special-symbol? ...)" />
-            <marker date="1492520982000" expanded="true" signature="158833:158964" ph="(defn var? ...)" />
-            <marker date="1492520982000" expanded="true" signature="158966:159250" ph="(defn subs ...)" />
-            <marker date="1492520982000" expanded="true" signature="159252:159478" ph="(defn max-key ...)" />
-            <marker date="1492520982000" expanded="true" signature="159480:159703" ph="(defn min-key ...)" />
-            <marker date="1492520982000" expanded="true" signature="159705:160539" ph="(defn distinct ...)" />
-            <marker date="1492520982000" expanded="true" signature="160543:161154" ph="(defn replace ...)" />
-            <marker date="1492520982000" expanded="true" signature="161156:161549" ph="(defmacro dosync ...)" />
-            <marker date="1492520982000" expanded="true" signature="161551:162214" ph="(defmacro with-precision ...)" />
-            <marker date="1492520982000" expanded="true" signature="162216:162364" ph="(defn mk-bound-fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="162366:163085" ph="(defn subseq ...)" />
-            <marker date="1492520982000" expanded="true" signature="163087:163816" ph="(defn rsubseq ...)" />
-            <marker date="1492520982000" expanded="true" signature="163818:164093" ph="(defn repeatedly ...)" />
-            <marker date="1492520982000" expanded="true" signature="164095:164343" ph="(defn add-classpath ...)" />
-            <marker date="1492520982000" expanded="true" signature="164347:164611" ph="(defn hash ...)" />
-            <marker date="1492520982000" expanded="true" signature="164614:165082" ph="(defn mix-collection-hash ...)" />
-            <marker date="1492520982000" expanded="true" signature="165084:165373" ph="(defn hash-ordered-coll ...)" />
-            <marker date="1492520982000" expanded="true" signature="165375:165780" ph="(defn hash-unordered-coll ...)" />
-            <marker date="1492520982000" expanded="true" signature="165782:166408" ph="(defn interpose ...)" />
-            <marker date="1492520982000" expanded="true" signature="166410:166910" ph="(defmacro definline ...)" />
-            <marker date="1492520982000" expanded="true" signature="166912:167150" ph="(defn empty ...)" />
-            <marker date="1492520982000" expanded="true" signature="167152:167627" ph="(defmacro amap ...)" />
-            <marker date="1492520982000" expanded="true" signature="167629:168032" ph="(defmacro areduce ...)" />
-            <marker date="1492520982000" expanded="true" signature="168034:168348" ph="(defn float-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="168350:168674" ph="(defn boolean-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="168676:168985" ph="(defn byte-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="168987:169296" ph="(defn char-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="169298:169612" ph="(defn short-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="169614:169933" ph="(defn double-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="169935:170151" ph="(defn object-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="170153:170457" ph="(defn int-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="170459:170768" ph="(defn long-array ...)" />
-            <marker date="1492520982000" expanded="true" signature="170770:170876" ph="(definline booleans ...)" />
-            <marker date="1492520982000" expanded="true" signature="170878:170976" ph="(definline bytes ...)" />
-            <marker date="1492520982000" expanded="true" signature="170978:171076" ph="(definline chars ...)" />
-            <marker date="1492520982000" expanded="true" signature="171078:171179" ph="(definline shorts ...)" />
-            <marker date="1492520982000" expanded="true" signature="171181:171281" ph="(definline floats ...)" />
-            <marker date="1492520982000" expanded="true" signature="171283:171377" ph="(definline ints ...)" />
-            <marker date="1492520982000" expanded="true" signature="171379:171482" ph="(definline doubles ...)" />
-            <marker date="1492520982000" expanded="true" signature="171484:171581" ph="(definline longs ...)" />
-            <marker date="1492520982000" expanded="true" signature="171583:171737" ph="(defn bytes? ...)" />
-            <marker date="1492520982000" expanded="true" signature="171807:173825" ph="(defn seque ...)" />
-            <marker date="1492520982000" expanded="true" signature="173827:173945" ph="(defn class? ...)" />
-            <marker date="1492520982000" expanded="true" signature="173947:174053" ph="(defn- is-annotation? ...)" />
-            <marker date="1492520982000" expanded="true" signature="174055:174333" ph="(defn- is-runtime-annotation? ...)" />
-            <marker date="1492520982000" expanded="true" signature="174430:175326" ph="(defn- add-annotation ...)" />
-            <marker date="1492520982000" expanded="true" signature="175328:175471" ph="(defn- process-annotation ...)" />
-            <marker date="1492520982000" expanded="true" signature="175473:176183" ph="(defn- add-annotations ...)" />
-            <marker date="1492520982000" expanded="true" signature="176185:176393" ph="(defn alter-var-root ...)" />
-            <marker date="1492520982000" expanded="true" signature="176395:176698" ph="(defn bound? ...)" />
-            <marker date="1492520982000" expanded="true" signature="176700:177003" ph="(defn thread-bound? ...)" />
-            <marker date="1492520982000" expanded="true" signature="177005:177170" ph="(defn make-hierarchy ...)" />
-            <marker date="1492520982000" expanded="true" signature="177172:177233" ph="(def global-hierarchy ...)" />
-            <marker date="1492520982000" expanded="true" signature="177235:177361" ph="(defn not-empty ...)" />
-            <marker date="1492520982000" expanded="true" signature="177363:177600" ph="(defn bases ...)" />
-            <marker date="1492520982000" expanded="true" signature="177602:177921" ph="(defn supers ...)" />
-            <marker date="1492520982000" expanded="true" signature="177923:178843" ph="(defn isa? ...)" />
-            <marker date="1492520982000" expanded="true" signature="178845:179322" ph="(defn parents ...)" />
-            <marker date="1492520982000" expanded="true" signature="179324:179977" ph="(defn ancestors ...)" />
-            <marker date="1492520982000" expanded="true" signature="179979:180513" ph="(defn descendants ...)" />
-            <marker date="1492520982000" expanded="true" signature="180515:182111" ph="(defn derive ...)" />
-            <marker date="1492520982000" expanded="true" signature="182132:182905" ph="(defn underive ...)" />
-            <marker date="1492520982000" expanded="true" signature="182908:183262" ph="(defn distinct? ...)" />
-            <marker date="1492520982000" expanded="true" signature="183264:184112" ph="(defn resultset-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="184114:184484" ph="(defn iterator-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="184486:184633" ph="(defn enumeration-seq ...)" />
-            <marker date="1492520982000" expanded="true" signature="184635:184845" ph="(defn format ...)" />
-            <marker date="1492520982000" expanded="true" signature="184847:184985" ph="(defn printf ...)" />
-            <marker date="1492520982000" expanded="true" signature="185008:185350" ph="(defmacro with-loading-context ...)" />
-            <marker date="1492520982000" expanded="true" signature="185352:188122" ph="(defmacro ns ...)" />
-            <marker date="1492520982000" expanded="true" signature="188124:188273" ph="(defmacro refer-clojure ...)" />
-            <marker date="1492520982000" expanded="true" signature="188275:188518" ph="(defmacro defonce ...)" />
-            <marker date="1492520982000" expanded="true" signature="188604:188747" ph="(defonce *loaded-libs* ...)" />
-            <marker date="1492520982000" expanded="true" signature="188749:188875" ph="(defonce *pending-paths* ...)" />
-            <marker date="1492520982000" expanded="true" signature="188877:188992" ph="(defonce *loading-verbosely* ...)" />
-            <marker date="1492520982000" expanded="true" signature="188994:189633" ph="(defn- throw-if ...)" />
-            <marker date="1492520982000" expanded="true" signature="189635:189815" ph="(defn- libspec? ...)" />
-            <marker date="1492520982000" expanded="true" signature="189817:189941" ph="(defn- prependss ...)" />
-            <marker date="1492520982000" expanded="true" signature="189943:190122" ph="(defn- root-resource ...)" />
-            <marker date="1492520982000" expanded="true" signature="190124:190267" ph="(defn- root-directory ...)" />
-            <marker date="1492520982000" expanded="true" signature="190300:190754" ph="(defn- load-one ...)" />
-            <marker date="1492520982000" expanded="true" signature="190756:191227" ph="(defn- load-all ...)" />
-            <marker date="1492520982000" expanded="true" signature="191229:192919" ph="(defn- load-lib ...)" />
-            <marker date="1492520982000" expanded="true" signature="192921:193862" ph="(defn- load-libs ...)" />
-            <marker date="1492520982000" expanded="true" signature="193864:194457" ph="(defn- check-cyclic-dependency ...)" />
-            <marker date="1492520982000" expanded="true" signature="194470:197126" ph="(defn require ...)" />
-            <marker date="1492520982000" expanded="true" signature="197128:197553" ph="(defn use ...)" />
-            <marker date="1492520982000" expanded="true" signature="197555:197679" ph="(defn loaded-libs ...)" />
-            <marker date="1492520982000" expanded="true" signature="197681:198426" ph="(defn load ...)" />
-            <marker date="1492520982000" expanded="true" signature="198428:198817" ph="(defn compile ...)" />
-            <marker date="1492520982000" expanded="true" signature="198869:199390" ph="(defn get-in ...)" />
-            <marker date="1492520982000" expanded="true" signature="199392:199734" ph="(defn assoc-in ...)" />
-            <marker date="1492520982000" expanded="true" signature="199736:200328" ph="(defn update-in ...)" />
-            <marker date="1492520982000" expanded="true" signature="200330:200895" ph="(defn update ...)" />
-            <marker date="1492520982000" expanded="true" signature="200897:201095" ph="(defn empty? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201097:201252" ph="(defn coll? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201254:201397" ph="(defn list? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201399:201519" ph="(defn seqable? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201521:201708" ph="(defn ifn? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201710:201860" ph="(defn fn? ...)" />
-            <marker date="1492520982000" expanded="true" signature="201863:202011" ph="(defn associative? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202013:202158" ph="(defn sequential? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202160:202294" ph="(defn sorted? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202296:202448" ph="(defn counted? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202450:202596" ph="(defn reversible? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202598:202758" ph="(defn indexed? ...)" />
-            <marker date="1492520982000" expanded="true" signature="202760:202862" ph="(def *1 ...)" />
-            <marker date="1492520982000" expanded="true" signature="202864:202973" ph="(def *2 ...)" />
-            <marker date="1492520982000" expanded="true" signature="202975:203083" ph="(def *3 ...)" />
-            <marker date="1492520982000" expanded="true" signature="203085:203202" ph="(def *e ...)" />
-            <marker date="1492520982000" expanded="true" signature="203204:203819" ph="(defn trampoline ...)" />
-            <marker date="1492520982000" expanded="true" signature="203821:204421" ph="(defn intern ...)" />
-            <marker date="1492520982000" expanded="true" signature="204423:204669" ph="(defmacro while ...)" />
-            <marker date="1492520982000" expanded="true" signature="204671:205194" ph="(defn memoize ...)" />
-            <marker date="1492520982000" expanded="true" signature="205196:206803" ph="(defmacro condp ...)" />
-            <marker date="1492520982000" expanded="true" signature="207016:207146" ph="(defmacro add-doc-and-meta ...)" />
-            <marker date="1492520982000" expanded="true" signature="207148:207315" ph="(add-doc-and-meta *file* ...)" />
-            <marker date="1492520982000" expanded="true" signature="207317:207458" ph="(add-doc-and-meta *command-line-args* ...)" />
-            <marker date="1492520982000" expanded="true" signature="207460:207668" ph="(add-doc-and-meta *warn-on-reflection* ...)" />
-            <marker date="1492520982000" expanded="true" signature="207670:207887" ph="(add-doc-and-meta *compile-path* ...)" />
-            <marker date="1492520982000" expanded="true" signature="207889:207995" ph="(add-doc-and-meta *compile-files* ...)" />
-            <marker date="1492520982000" expanded="true" signature="207997:208299" ph="(add-doc-and-meta *unchecked-math* ...)" />
-            <marker date="1492520982000" expanded="true" signature="208301:208672" ph="(add-doc-and-meta *compiler-options* ...)" />
-            <marker date="1492520982000" expanded="true" signature="208674:208786" ph="(add-doc-and-meta *ns* ...)" />
-            <marker date="1492520982000" expanded="true" signature="208788:208972" ph="(add-doc-and-meta *in* ...)" />
-            <marker date="1492520982000" expanded="true" signature="208974:209154" ph="(add-doc-and-meta *out* ...)" />
-            <marker date="1492520982000" expanded="true" signature="209156:209327" ph="(add-doc-and-meta *err* ...)" />
-            <marker date="1492520982000" expanded="true" signature="209329:209480" ph="(add-doc-and-meta *flush-on-newline* ...)" />
-            <marker date="1492520982000" expanded="true" signature="209482:209688" ph="(add-doc-and-meta *print-meta* ...)" />
-            <marker date="1492520982000" expanded="true" signature="209690:209870" ph="(add-doc-and-meta *print-dup* ...)" />
-            <marker date="1492520982000" expanded="true" signature="209872:210096" ph="(add-doc-and-meta *print-readably* ...)" />
-            <marker date="1492520982000" expanded="true" signature="210098:211276" ph="(add-doc-and-meta *read-eval* ...)" />
-            <marker date="1492520982000" expanded="true" signature="211278:211407" ph="(defn future? ...)" />
-            <marker date="1492520982000" expanded="true" signature="211409:211545" ph="(defn future-done? ...)" />
-            <marker date="1492520982000" expanded="true" signature="211548:212078" ph="(defmacro letfn ...)" />
-            <marker date="1492520982000" expanded="true" signature="212080:213060" ph="(defn fnil ...)" />
-            <marker date="1492520982000" expanded="true" signature="213090:213171" ph="(defn- shift-mask ...)" />
-            <marker date="1492520982000" expanded="true" signature="213278:213644" ph="(defn- maybe-min-hash ...)" />
-            <marker date="1492520982000" expanded="true" signature="213646:214035" ph="(defn- case-map ...)" />
-            <marker date="1492520982000" expanded="true" signature="214037:214247" ph="(defn- fits-table? ...)" />
-            <marker date="1492520982000" expanded="true" signature="214249:214992" ph="(defn- prep-ints ...)" />
-            <marker date="1492520982000" expanded="true" signature="214994:216589" ph="(defn- merge-hash-collisions ...)" />
-            <marker date="1492520982000" expanded="true" signature="216591:218116" ph="(defn- prep-hashes ...)" />
-            <marker date="1492520982000" expanded="true" signature="218119:220994" ph="(defmacro case ...)" />
-            <marker date="1492520982000" expanded="true" signature="221349:221387" ph="(defprotocol Inst ...)" />
-            <marker date="1492520982000" expanded="true" signature="221389:221480" ph="(extend-protocol Inst ...)" />
-            <marker date="1492520982000" expanded="true" signature="221528:221635" ph="(try ...)" />
-            <marker date="1492520982000" expanded="true" signature="221637:221769" ph="(defn inst-ms ...)" />
-            <marker date="1492520982000" expanded="true" signature="221771:221864" ph="(defn inst? ...)" />
-            <marker date="1492520982000" expanded="true" signature="221881:221986" ph="(defn uuid? ...)" />
-            <marker date="1492520982000" expanded="true" signature="221988:222944" ph="(defn reduce ...)" />
-            <marker date="1492520982000" expanded="true" signature="222946:223246" ph="(extend-protocol clojure.core.protocols/IKVReduce ...)" />
-            <marker date="1492520982000" expanded="true" signature="223248:223734" ph="(defn reduce-kv ...)" />
-            <marker date="1492520982000" expanded="true" signature="223736:224058" ph="(defn completing ...)" />
-            <marker date="1492520982000" expanded="true" signature="224060:224911" ph="(defn transduce ...)" />
-            <marker date="1492520982000" expanded="true" signature="224913:225484" ph="(defn into ...)" />
-            <marker date="1492520982000" expanded="true" signature="225486:226105" ph="(defn mapv ...)" />
-            <marker date="1492520982000" expanded="true" signature="226107:226404" ph="(defn filterv ...)" />
-            <marker date="1492520982000" expanded="true" signature="226444:226645" ph="(defn- normalize-slurp-opts ...)" />
-            <marker date="1492520982000" expanded="true" signature="226647:227034" ph="(defn slurp ...)" />
-            <marker date="1492520982000" expanded="true" signature="227036:227300" ph="(defn spit ...)" />
-            <marker date="1492520982000" expanded="true" signature="227374:228377" ph="(defn future-call ...)" />
-            <marker date="1492520982000" expanded="true" signature="228381:228801" ph="(defmacro future ...)" />
-            <marker date="1492520982000" expanded="true" signature="228804:228946" ph="(defn future-cancel ...)" />
-            <marker date="1492520982000" expanded="true" signature="228948:229099" ph="(defn future-cancelled? ...)" />
-            <marker date="1492520982000" expanded="true" signature="229101:230068" ph="(defn pmap ...)" />
-            <marker date="1492520982000" expanded="true" signature="230070:230227" ph="(defn pcalls ...)" />
-            <marker date="1492520982000" expanded="true" signature="230229:230425" ph="(defmacro pvalues ...)" />
-            <marker date="1492520982000" expanded="true" signature="230507:231496" ph="(let ...)" />
-            <marker date="1492520982000" expanded="true" signature="231498:231845" ph="(add-doc-and-meta *clojure-version* ...)" />
-            <marker date="1492520982000" expanded="true" signature="231847:232263" ph="(defn clojure-version ...)" />
-            <marker date="1492520982000" expanded="true" signature="232265:233207" ph="(defn promise ...)" />
-            <marker date="1492520982000" expanded="true" signature="233209:233429" ph="(defn deliver ...)" />
-            <marker date="1492520982000" expanded="true" signature="233433:233745" ph="(defn flatten ...)" />
-            <marker date="1492520982000" expanded="true" signature="233747:234141" ph="(defn group-by ...)" />
-            <marker date="1492520982000" expanded="true" signature="234143:235549" ph="(defn partition-by ...)" />
-            <marker date="1492520982000" expanded="true" signature="235551:235824" ph="(defn frequencies ...)" />
-            <marker date="1492520982000" expanded="true" signature="235826:236305" ph="(defn reductions ...)" />
-            <marker date="1492520982000" expanded="true" signature="236307:236545" ph="(defn rand-nth ...)" />
-            <marker date="1492520982000" expanded="true" signature="236547:237617" ph="(defn partition-all ...)" />
-            <marker date="1492520982000" expanded="true" signature="237619:237860" ph="(defn shuffle ...)" />
-            <marker date="1492520982000" expanded="true" signature="237862:239015" ph="(defn map-indexed ...)" />
-            <marker date="1492520982000" expanded="true" signature="239017:239979" ph="(defn keep ...)" />
-            <marker date="1492520982000" expanded="true" signature="239981:241333" ph="(defn keep-indexed ...)" />
-            <marker date="1492520982000" expanded="true" signature="241335:241635" ph="(defn bounded-count ...)" />
-            <marker date="1492520982000" expanded="true" signature="241637:243379" ph="(defn every-pred ...)" />
-            <marker date="1492520982000" expanded="true" signature="243381:244926" ph="(defn some-fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="244928:245929" ph="(defn- assert-valid-fdecl ...)" />
-            <marker date="1492520982000" expanded="true" signature="245931:246719" ph="(defn with-redefs-fn ...)" />
-            <marker date="1492520982000" expanded="true" signature="246721:247375" ph="(defmacro with-redefs ...)" />
-            <marker date="1492520982000" expanded="true" signature="247377:247548" ph="(defn realized? ...)" />
-            <marker date="1492520982000" expanded="true" signature="247550:248171" ph="(defmacro cond-&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="248173:248799" ph="(defmacro cond-&gt;&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="248801:249192" ph="(defmacro as-&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="249194:249618" ph="(defmacro some-&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="249620:250047" ph="(defmacro some-&gt;&gt; ...)" />
-            <marker date="1492520982000" expanded="true" signature="250049:250174" ph="(defn preserving-reduced ...)" />
-            <marker date="1492520982000" expanded="true" signature="250176:250476" ph="(defn cat ...)" />
-            <marker date="1492520982000" expanded="true" signature="250478:251403" ph="(defn halt-when ...)" />
-            <marker date="1492520982000" expanded="true" signature="251405:251894" ph="(defn dedupe ...)" />
-            <marker date="1492520982000" expanded="true" signature="251896:252172" ph="(defn random-sample ...)" />
-            <marker date="1492520982000" expanded="true" signature="252174:252516" ph="(deftype Eduction ...)" />
-            <marker date="1492520982000" expanded="true" signature="252518:252887" ph="(defn eduction ...)" />
-            <marker date="1492520982000" expanded="true" signature="252889:253040" ph="(defmethod print-method ...)" />
-            <marker date="1492520982000" expanded="true" signature="253042:253250" ph="(defn run! ...)" />
-            <marker date="1492520982000" expanded="true" signature="253253:253425" ph="(defn tagged-literal? ...)" />
-            <marker date="1492520982000" expanded="true" signature="253427:253634" ph="(defn tagged-literal ...)" />
-            <marker date="1492520982000" expanded="true" signature="253636:253820" ph="(defn reader-conditional? ...)" />
-            <marker date="1492520982000" expanded="true" signature="253822:254061" ph="(defn reader-conditional ...)" />
-            <marker date="1492520982000" expanded="true" signature="254131:254372" ph="(def default-data-readers ...)" />
-            <marker date="1492520982000" expanded="true" signature="254374:255480" ph="(def *data-readers* ...)" />
-            <marker date="1492520982000" expanded="true" signature="255482:255800" ph="(def *default-data-reader-fn* ...)" />
-            <marker date="1492520982000" expanded="true" signature="255802:256028" ph="(defn- data-reader-urls ...)" />
-            <marker date="1492520982000" expanded="true" signature="256030:256137" ph="(defn- data-reader-var ...)" />
-            <marker date="1492520982000" expanded="true" signature="256139:257371" ph="(defn- load-data-reader-file ...)" />
-            <marker date="1492520982000" expanded="true" signature="257373:257578" ph="(defn- load-data-readers ...)" />
-            <marker date="1492520982000" expanded="true" signature="257580:257664" ph="(try ...)" />
-            <marker date="1492520982000" expanded="true" signature="257666:257766" ph="(defn uri? ...)" />
-          </folding>
+        <state relative-caret-position="7950">
+          <caret line="265" column="16" lean-forward="false" selection-start-line="265" selection-start-column="16" selection-end-line="265" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/target/classes/string_layout/core$matias_test_zero.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="27" column="38" lean-forward="true" selection-start-line="27" selection-start-column="38" selection-end-line="27" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/classes/string_layout/core$matias_test_one.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/string_layout/string_layout/spec.clj" />
     <entry file="file://$PROJECT_DIR$/src/string_layout/core.clj">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="14" column="60" lean-forward="false" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
+        <state relative-caret-position="1410">
+          <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.9.0-alpha15/clojure-1.9.0-alpha15.jar!/clojure/spec.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4410">
+          <caret line="147" column="39" lean-forward="false" selection-start-line="147" selection-start-column="39" selection-end-line="147" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/string_layout/spec.clj">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="48" column="80" lean-forward="false" selection-start-line="48" selection-start-column="80" selection-end-line="48" selection-end-column="80" />
           <folding />
         </state>
       </provider>
