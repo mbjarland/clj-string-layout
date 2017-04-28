@@ -1,5 +1,4 @@
 (ns string-layout.core-test
-
   (:require [midje.sweet :refer :all]
             [midje.repl :as m]
             [string-layout.core :refer :all]

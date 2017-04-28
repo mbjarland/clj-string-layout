@@ -15,7 +15,24 @@
 ;         not-empty
 ;         (s/conformer seq)
 ;         (s/+ (s/alt :col-align-expr ::col-align-expr
-;                     :col-padding-expr ::col-padding-expr))))
+;                    :col-padding-expr ::col-padding-expr))))
+
+(defn char-seq->str-conformer [v]
+  (let [[head tail]
+        (reduce
+          (fn [[res padv] [k v]]
+            (if (= k :col-padding-non-bracket-char)
+              [res (conj padv v)]
+              (let [align [:col-align (:col-align-char v)]
+                    padding [:col-padding (apply str padv)]]
+                (if (empty? padv)
+                  [(conj res align) []]
+                  [(conj res padding align) []]))))
+          [[] []]
+          v)]
+    (if (empty? tail)
+      head
+      (conj head [:col-padding (apply str tail)]))))
 
 (s/def ::layout-string
   (s/and string?
@@ -25,63 +42,9 @@
                      (s/cat :left-bracket #{\[}
                             :col-align-char #{\L \C \R \l \c \r}
                             :right-bracket #{\]})
-                     :col-padding-non-bracket
-                     (s/+ (complement #{\[ \]}))))
-         (s/conformer
-           (fn [v]
-             (prn v)
-             (first (reduce
-                      (fn [[res padv ] x]
-                        (if (= :col-padding-non-bracket (first x))
-                          [res (conj padv (second x))]
-                          [(conj res
-                                 [:col-padding-non-bracket (apply str padv)]
-                                 [:col-align-bracket-expr (get-in x [1 :col-align-char])]) []]))
-                      [[] []]
-                      v))))))
-  
-(defn char-seq->str-conformer [v]
-  (let [[head tail]
-        (reduce
-          (fn [[res padv] x]
-            (if (= :col-padding-non-bracket-char (first x))
-              [res (conj padv (second x))]
-              (let [align [:col-align (get-in x [1 :col-padding-non-bracket-char])]]
-                (if (empty? padv)
-                  [(conj res align) padv]
-                  [(conj res [:col-padding (apply str padv)]
-                         align) []]))))
-          [[] []]
-          v)]
-    (prn "head:" head "tail:" tail)
-    (if (empty? tail)
-      head
-      (conj head [:col-padding (apply str tail)]))))
-
-(s/def ::layout-string3
-  (s/and string?
-         not-empty
-         (s/conformer seq #(apply str %))
-         (s/+ (s/alt :col-align-bracket-expr
-                     (s/cat :left-bracket #{\[}
-                            :col-align-char #{\L \C \R \l \c \r}
-                            :right-bracket #{\]})
                      :col-padding-non-bracket-char
                      (complement #{\[ \]})))
-         (s/conformer char-seq->str-conformer)
-         ))
-
-
-(s/def ::layout-string2
-  (s/and string?
-         not-empty
-         (s/conformer seq #(apply str %))
-         (s/+ (s/alt :col-align-bracket-expr
-                     (s/cat :left-bracket #{\[}
-                            :col-align-char #{\L \C \R \l \c \r}
-                            :right-bracket #{\]})
-                     :col-padding-non-bracket
-                     (complement #{\[ \]})))))
+         (s/conformer char-seq->str-conformer)))
 
 ;; parsed 
 (s/def ::parsed-spaces
@@ -92,7 +55,8 @@
 
 
 (s/def ::stmt-fist-line
-  (s/cat :
+  (s/cat
+    
     ))
 
 (comment
