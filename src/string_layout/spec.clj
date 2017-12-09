@@ -1,8 +1,8 @@
 (ns string-layout.spec
-  (:require [clojure.spec :as s]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen])
-  (:import (clojure.lang StringSeq)))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.gen.alpha :as gen])
+  (:import [clojure.lang StringSeq]))
 
 (defn check [type data]
   (if (s/valid? type data)
