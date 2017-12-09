@@ -1,11 +1,11 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
-            [clojure.spec :as s]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen]
-            [string-layout.spec :refer :all])
-  (:import (clojure.lang StringSeq)))
+            [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.gen.alpha :as gen]
+            [string-layout.spec])
+  (:import [clojure.lang StringSeq]))
 
 (defn parse-align [^Character c]
   (case (Character/toUpperCase c)
@@ -18,44 +18,44 @@
 (defn valid-layout-string? [s]
   (re-matches #".*" s))                                     ;;TODO: regex for layout string
 
-
 (defn expand-fills
   "expands the 'f' formatting specifiers in the 'spaces' vector
-  to the appropriate number fo 'align-char' characters"
+  to the appropriate number of 'align-char' characters"
   [spaces width col-widths align-char]
-  (when (pos? (count (filter keyword? spaces)))
-    (let [fill-count (count (filter keyword? spaces))
-          fill-width (max 0 (- width (+ (reduce + col-widths)
-                                        (reduce + (keep #(if (string? %) (count %)) spaces)))))
-          int-per (int (/ fill-width fill-count))
-          doubles (- fill-width (* fill-count int-per))
-          fills (mapv
-                  #(join (repeat % align-char))
-                  (mapv +
-                        (repeat fill-count int-per)
-                        (concat (repeat doubles 1)
-                                (repeat (- fill-count doubles) 0))))
-          spaces (first
-                   (reduce
-                     (fn [[res i f] x]
-                       (if (= (nth spaces i) :F)
-                         [(conj res (nth fills f)) (inc i) (inc f)]
-                         [(conj res x) (inc i) f]))
-                     [[] 0 0]
-                     spaces))]))
-  spaces)
+  (let [fill-kws (filter #(= :F %) spaces)]
+    (if (empty? fill-kws)
+      spaces
+      (let [fill-count (count fill-kws)
+            fill-width (max 0 (- width (+ (reduce + col-widths)
+                                          (reduce + (keep #(if (string? %) (count %)) spaces)))))
+            int-per    (int (/ fill-width fill-count))
+            doubles    (- fill-width (* fill-count int-per))
+            fills      (mapv
+                         #(join (repeat % align-char))
+                         (mapv +
+                               (repeat fill-count int-per)
+                               (concat (repeat doubles 1)
+                                       (repeat (- fill-count doubles) 0))))]
+        (first
+          (reduce
+            (fn [[res i f] x]
+              (if (= (nth spaces i) :F)
+                [(conj res (nth fills f)) (inc i) (inc f)]
+                [(conj res x) (inc i) f]))
+            [[] 0 0]
+            spaces))))))
 
 
 (declare parse-layout-string)
 (s/fdef parse-layout-string
-        :args ::layout-string
-        :ret (s/cat :aligns ::parsed-aligns
-                    :spaces ::parsed-spaces))
+        :args :string-layout.spec/layout-string
+        :ret (s/cat :aligns :string-layout.spec/parsed-aligns
+                    :spaces :string-layout.spec/parsed-spaces))
 
 (defn parse-layout-string
   "parses a col-layout string"
   [layout-string]
-  {:pre [(check ::layout-string layout-string)]}
+  {:pre [(string-layout.spec/check :string-layout.spec/layout-string layout-string)]}
   (let [[_ aligns spaces]
         (reduce (fn [[in-brace aligns spaces] c]
                   (cond
@@ -129,7 +129,7 @@
 (defn normalize-rows [col-count rows]
   "Add empty elements to any rows which have fewer elements
   col-count"
-  (map (fn [row]
+  (mapv (fn [row]
          (let [c (count row)
                d (- col-count c)]
            (cond
@@ -175,24 +175,45 @@
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
-(defn layout [rows layout-string layout-config]
+(defn layout
+  "Lays out rows of text in columns. The first argument can either
+  be a string with spaces between 'words' and newlines between each
+  row _or_ a vector of vector of strings representing the rows
+  and the words (columns) within the rows. The second
+  argument is a layout string on the form ' [L]f[R] [R] ' and
+  the third argument is a layout config on the form
+  {:width 80 :align-char \\space :raw false} where width is the
+  total width of the row (any 'f' specifiers between columns will
+  fill the row out to this width), the align-char is the character to
+  use when filling to width, and raw (default false) will, if true,
+  return rows as vectors of indented columns and column spacings instead of
+  returning rows as already joined strings. The raw format can be useful
+  if you need to do some post processing like adding ansi colors to
+  certain columns before outputting to terminal etc."
+  [rows layout-string layout-config]
   {:pre [(pos? (count rows))]}
-  (let [{:keys [align-char width]} layout-config
+  (let [{:keys [align-char width] :or {raw false}} layout-config
         [aligns spaces] (parse-layout-string layout-string)
-        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))
+        rows       (if (instance? String rows) (mapv #(split % #" ") (split rows #"\n"))
+                                               (normalize-rows (count aligns) rows))
         col-widths (map #(apply max (map count %)) (transpose rows))
-        fill-width (max 0 (- width (+ (reduce + col-widths)
-                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))
-        align (partial align-word aligns col-widths align-char)
-        spaces (expand-fills spaces width col-widths align-char)
-        space (partial expand-fills spaces fill-width align-char)
+          align      (partial align-word aligns col-widths align-char)
+        spaces     (expand-fills spaces width col-widths align-char)
+        ;_          (prn "spaces:" spaces)
+        ;_          (prn "col-widths:" col-widths)
+        ;_          (prn "fill-width:" fill-width)
+        ;_          (prn "aligns:" aligns)
+        ;_          (prn "spaces:" spaces)
+        ;_          (prn "rows:" rows)
+        ;
         indent-row (fn [row]
                      (second
                        (reduce (fn [[i r] w]
-                                 [(inc i) (str r (align w i) (space (inc i)))])
-                               [0 (first spaces)]
-                               row)))]
-    (map indent-row rows)))
+                                 [(inc i) (conj r (align w i) (nth spaces (inc i)))])
+                               [0 [(first spaces)]]
+                               row)))
+        result (mapv indent-row rows)]
+    (mapv join result)))
 
 ;  rows.collect { List<String> row ->
 ;    // can not use

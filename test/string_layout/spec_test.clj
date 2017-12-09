@@ -2,13 +2,13 @@
   (:require [midje.sweet :refer [fact tabular]]
             [midje.repl :as m]
             [string-layout.spec :as sls]
-            [clojure.spec :as s]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen]))
+            [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.spec.gen.alpha :as gen]))
 
 (tabular
   (fact "Should correctly conform layout strings"
-        (s/conform ::sls/layout-string ?layout-string) => ?expected-value)
+        (s/conform :string-layout.spec/layout-string ?layout-string) => ?expected-value)
   ?layout-string    ?expected-value
   " "               [[:col-padding " "]]
   "foo"             [[:col-padding "foo"]]
