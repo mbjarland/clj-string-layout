@@ -22,6 +22,7 @@
     <orderEntry type="library" name="Leiningen: environ:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: fipp:0.6.6" level="project" />
     <orderEntry type="library" name="Leiningen: flare:0.2.9" level="project" />
+    <orderEntry type="library" name="Leiningen: instaparse:1.4.8" level="project" />
     <orderEntry type="library" name="Leiningen: io.aviso/pretty:0.1.34" level="project" />
     <orderEntry type="library" name="Leiningen: joda-time:2.9.7" level="project" />
     <orderEntry type="library" name="Leiningen: marick/clojure-commons:3.0.0" level="project" />
