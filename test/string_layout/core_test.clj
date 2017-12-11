@@ -4,8 +4,17 @@
             [string-layout.core :refer :all]
             [clojure.string :refer [split]]))
 
-(fact "Should throw exception on empty layout string"
-      (parse-layout-string "") => (throws AssertionError))
+(tabular
+  (fact "Should throw exception on invalid layout string"
+        (parse-layout-string ?layout-string) => (throws Exception))
+  ?layout-string
+  ""
+  " "
+  "bogus"
+  "[]"
+  "[x]"
+  "[l][c][x]"
+  )
 
 ;class StringLayoutSpecification extends Specification {
 ;  @Unroll
@@ -41,29 +50,27 @@
   (fact "Should correctly parse layout strings"
         (parse-layout-string ?layout-string) => [?aligns ?spaces])
   ?layout-string    ?aligns          ?spaces
-  " "               []               [" "]
   "[L]"             [:L]             ["" ""]
   "[L][C][R]"       [:L :C :R]       ["" "" "" ""]
-  "f"               []               [:F]
   "|[L]|[C]|"       [:L :C]          ["|" "|" "|"]
    "[L]|[C]|"       [:L :C]          ["" "|" "|"]
   "|[L]|[C]"        [:L :C]          ["|" "|" ""]
   "[L]|[C]"         [:L :C]          ["" "|" ""]
   "|[L][C]|"        [:L :C]          ["|" "" "|"])
 
-
-
 (tabular
   (fact "Should expands fills"
-        (expand-fills ?spaces ?fill-width ?align-char ?i) => ?expected-result)
-  ?spaces      ?fill-width   ?align-char ?i ?expected-result
-  [""]         5             \*          0  ""
-  [" "]        5             \*          0  " "
-  ["-"]        5             \*          0  "-"
-  [:F]         5             \*          0  "*****"
-  [" " :F]     5             \*          0  " *****"
-  [:F " "]     5             \*          0  "***** "
-
+        (expand-fills ?spaces ?fill-width ?col-widths ?align-char) => ?expected-result)
+  ?spaces      ?fill-width   ?col-widths ?align-char ?expected-result
+  [""]         5             [0 0]       \*          [""]
+  [" "]        5             [0 0]       \*          [" "]
+  ["-"]        5             [0 0]       \*          ["-"]
+  [:F]         5             [0 0]       \*          ["*****"]
+  [:F]         5             [1 1]       \*          ["***"]
+  [" " :F]     5             [0 0]       \*          [" " "****"]
+  [" " :F]     5             [1 1]       \*          [" " "**"]
+  [:F " "]     5             [0 0]       \*          ["****" " "]
+  [:F " "]     5             [1 1]       \*          ["**" " "]
   )
 
 (tabular
