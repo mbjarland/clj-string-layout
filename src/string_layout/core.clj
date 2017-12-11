@@ -1,74 +1,111 @@
 (ns string-layout.core
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
-            [clojure.spec :as s]
-            [clojure.spec.test :as stest]
-            [clojure.spec.gen :as gen]
-            [string-layout.spec :refer :all])
-  (:import (clojure.lang StringSeq)))
+            [clojure.spec.alpha :as s]
+            [instaparse.core :as insta]
+            [instaparse.failure :as fail]))
 
-(defn parse-align [^Character c]
-  (case (Character/toUpperCase c)
-    \L :L
-    \R :R
-    \C :C
-    (throw (IllegalArgumentException. "invalid align char: " c)))) ;; TODO: figure out x
+(comment
+  (def layout-config
+    {:align-char \space
+     :width      10
+     :borders    border-markdown
+     :raw? false
+     })
 
+  )
 
-(defn valid-layout-string? [s]
-  (re-matches #".*" s))                                     ;;TODO: regex for layout string
+(defn make-layout-parser-internal []
+  (insta/parser
+    "layout-string = col-delim (col-align col-delim)+
+     col-delim    = (col-fill | col-padding)
+     col-fill     = ('F' | 'f')
+     col-padding  = #'[^\\[\\]fF]*'
+     col-align    = <'['> ('L' | 'l' | 'C' | 'c' | 'R' | 'r') <']'>"))
 
+(def make-layout-parser (memoize make-layout-parser-internal))
+
+(defn transform-parsed [p]
+  "transforms the parse tree returned from instaparse
+  to two vectors 'aligns' and 'spaces'"
+  (let [t (insta/transform
+            {:layout-string vector
+             :col-fill      (fn [_] :F)
+             :col-padding   identity
+             :col-align     (fn [a]
+                              [:col-align (-> a .toUpperCase keyword)])}
+            p)]
+    (reduce (fn [[aligns spaces] [k v]]
+              (cond
+                (= k :col-delim) [aligns (conj spaces (if (nil? v) "" v))]
+                (= k :col-align) [(conj aligns v) spaces]
+              :else [aligns spaces]))
+            [[] []]
+            t)))
+
+(defn throw-parse-error [parsed s]
+  (let [msg (with-out-str (fail/pprint-failure parsed))]
+    (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
+                    {:failure (insta/get-failure parsed)}))))
+
+(defn parse-layout-string [s]
+  (let [parser (make-layout-parser)
+        parsed (parser s)]
+    (if (insta/failure? parsed)
+      (throw-parse-error parsed s)
+      (transform-parsed parsed))))
 
 (defn expand-fills
   "expands the 'f' formatting specifiers in the 'spaces' vector
-  to the appropriate number fo 'align-char' characters"
+  to the appropriate number of 'align-char' characters"
   [spaces width col-widths align-char]
-  (when (pos? (count (filter keyword? spaces)))
-    (let [fill-count (count (filter keyword? spaces))
-          fill-width (max 0 (- width (+ (reduce + col-widths)
-                                        (reduce + (keep #(if (string? %) (count %)) spaces)))))
-          int-per (int (/ fill-width fill-count))
-          doubles (- fill-width (* fill-count int-per))
-          fills (mapv
-                  #(join (repeat % align-char))
-                  (mapv +
-                        (repeat fill-count int-per)
-                        (concat (repeat doubles 1)
-                                (repeat (- fill-count doubles) 0))))
-          spaces (first
-                   (reduce
-                     (fn [[res i f] x]
-                       (if (= (nth spaces i) :F)
-                         [(conj res (nth fills f)) (inc i) (inc f)]
-                         [(conj res x) (inc i) f]))
-                     [[] 0 0]
-                     spaces))]))
-  spaces)
+  (let [fill-kws (filter #(= :F %) spaces)]
+    (if (empty? fill-kws)
+      spaces
+      (let [fill-count (count fill-kws)
+            fill-width (max 0 (- width (+ (reduce + col-widths)
+                                          (reduce + (keep #(if (string? %) (count %)) spaces)))))
+            int-per    (int (/ fill-width fill-count))
+            doubles    (- fill-width (* fill-count int-per))
+            fills      (mapv
+                         #(join (repeat % align-char))
+                         (mapv +
+                               (repeat fill-count int-per)
+                               (concat (repeat doubles 1)
+                                       (repeat (- fill-count doubles) 0))))]
+        (first
+          (reduce
+            (fn [[res i f] x]
+              (if (= (nth spaces i) :F)
+                [(conj res (nth fills f)) (inc i) (inc f)]
+                [(conj res x) (inc i) f]))
+            [[] 0 0]
+            spaces))))))
 
 
-(declare parse-layout-string)
-(s/fdef parse-layout-string
-        :args ::layout-string
-        :ret (s/cat :aligns ::parsed-aligns
-                    :spaces ::parsed-spaces))
-
-(defn parse-layout-string
-  "parses a col-layout string"
-  [layout-string]
-  {:pre [(check ::layout-string layout-string)]}
-  (let [[_ aligns spaces]
-        (reduce (fn [[in-brace aligns spaces] c]
-                  (cond
-                    (= c \[) [true aligns spaces]
-                    (= c \]) [false aligns (conj spaces "")]
-                    in-brace [in-brace (conj aligns (parse-align c)) spaces]
-                    :else [in-brace
-                           aligns
-                           (conj (into [] (butlast spaces)) (str (last spaces) c))]))
-                [false [] [""]]
-                layout-string)
-        spaces (mapv #(if (= (.toLowerCase %) "f") :F %) spaces)]
-    [aligns spaces]))
+;(declare parse-layout-string)
+;(s/fdef parse-layout-string
+;        :args :string-layout.spec/layout-string
+;        :ret (s/cat :aligns :string-layout.spec/parsed-aligns
+;                    :spaces :string-layout.spec/parsed-spaces))
+;
+;(defn parse-layout-string
+;  "parses a col-layout string"
+;  [layout-string]
+;  {:pre [(string-layout.spec/check :string-layout.spec/layout-string layout-string)]}
+;  (let [[_ aligns spaces]
+;        (reduce (fn [[in-brace aligns spaces] c]
+;                  (cond
+;                    (= c \[) [true aligns spaces]
+;                    (= c \]) [false aligns (conj spaces "")]
+;                    in-brace [in-brace (conj aligns (parse-align c)) spaces]
+;                    :else [in-brace
+;                           aligns
+;                           (conj (into [] (butlast spaces)) (str (last spaces) c))]))
+;                [false [] [""]]
+;                layout-string)
+;        spaces (mapv #(if (= (.toLowerCase %) "f") :F %) spaces)]
+;    [aligns spaces]))
 
 (s/fdef expand-fills
         :args (s/and (s/cat :spaces (s/cat :layout-element
@@ -103,40 +140,40 @@
    :outer  ["┌─┐"
             "│ │"
             "└─┘"]
-   :inner  ["│─"]
+   :h-inner "╳"
+   :v-inner "│"
    :header ["┌─┐"
             "│ │"
             "┝━┥"]
    })
 
+; | Tables        | Are           | Cool  |
+; | ------------- |:-------------:| -----:|
+; | col 3 is      | right-aligned | $1600 |
+; | col 2 is      | centered      |   $12 |
+; | zebra stripes | are neat      |    $1 |
 (def border-markdown
-  {
-   :outer  [nil
+  {:outer  ["╳╳╳"
             "| |"
-            nil]
-   :inner  ["|x"]
-   :header [nil
+            "╳╳╳"]
+   :h-inner "-"
+   :v-inner "|"
+   :header ["╳╳╳"
             "│ │"
             "|-|"]
    })
 
-(def layout-config
-  {:align-char \space
-   :width      10
-   :borders    border-markdown
-   })
-
 (defn normalize-rows [col-count rows]
   "Add empty elements to any rows which have fewer elements
-  col-count"
-  (map (fn [row]
-         (let [c (count row)
-               d (- col-count c)]
-           (cond
-             (zero? d) row
-             (pos? d) (into [] (concat row (repeat d "")))
-             :else (subvec row 0 col-count))))
-       rows))
+  than col-count"
+  (mapv (fn [row]
+          (let [c (count row)
+                d (- col-count c)]
+            (cond
+              (zero? d) row
+              (pos? d) (into [] (concat row (repeat d "")))
+              :else (subvec row 0 col-count))))
+        rows))
 
 (defn align-word [aligns col-widths align-char word i]
   (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) word))]
@@ -150,93 +187,45 @@
                           "' encountered, index: " i ", aligns: " aligns))))))
 
 
-; [1 1 1 1]
-; [2 1 1 1]
-; [2 2 1 1]
-; [2 2 2 1]
-; [2 2 2 2] - not needed
-;
-; in the below
-; 7 is the fill-width, 1 is (int width-per),
-;
-; (some #(if (= (reduce + %) 7) %)
-;       (into [] (for [a [1 2]
-;                      b [1 2]
-;                      c [1 2]
-;                      d [1 2] :when (>= a b c d)]
-;                  [a b c d])))
-;
-;  => [2 2 2 1
-;
-;
-;
-(defn rep [q i]
-  (int (reduce + (repeat i q))))
+(defn parse-rows [rows aligns]
+  (let [r (if (instance? String rows) (mapv #(split % #" ") (split rows #"\n"))
+                                      rows)]
+  (normalize-rows (count aligns) r)))
+
+(defn calculate-col-widths [rows]
+  (map #(apply max (map count %)) (transpose rows)))
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
-(defn layout [rows layout-string layout-config]
+(defn layout
+  "Lays out rows of text in columns. The first argument can either
+  be a string with spaces between 'words' and newlines between each
+  row _or_ a vector of vector of strings representing the rows
+  and the words (columns) within the rows. The second
+  argument is a layout string on the form ' [L]f[R] [R] ' and
+  the third argument is a layout config on the form
+  {:width 80 :align-char \\space :raw? false} where width is the
+  total width of the row (any 'f' specifiers between columns will
+  fill the row out to this width), the align-char is the character to
+  use when filling to width, and raw? (default false) will, if true,
+  return rows as vectors of indented columns and column spacings instead of
+  returning rows as already joined strings. The raw format can be useful
+  if you need to do some post processing like adding ansi colors to
+  certain columns before outputting to terminal etc."
+  [rows layout-string layout-config]
   {:pre [(pos? (count rows))]}
-  (let [{:keys [align-char width]} layout-config
+  (let [{:keys [align-char width raw?] :or {raw? false}} layout-config
         [aligns spaces] (parse-layout-string layout-string)
-        rows (if (instance? String rows) [] (normalize-rows (count aligns) rows))
-        col-widths (map #(apply max (map count %)) (transpose rows))
-        fill-width (max 0 (- width (+ (reduce + col-widths)
-                                      (reduce + (keep #(if (string? %) (count %)) spaces)))))
-        align (partial align-word aligns col-widths align-char)
-        spaces (expand-fills spaces width col-widths align-char)
-        space (partial expand-fills spaces fill-width align-char)
+        rows       (parse-rows rows aligns)
+        col-widths (calculate-col-widths rows)
+        align      (partial align-word aligns col-widths align-char)
+        spaces     (expand-fills spaces width col-widths align-char)
         indent-row (fn [row]
                      (second
                        (reduce (fn [[i r] w]
-                                 [(inc i) (str r (align w i) (space (inc i)))])
-                               [0 (first spaces)]
-                               row)))]
-    (map indent-row rows)))
+                                 [(inc i) (conj r (align w i) (nth spaces (inc i)))])
+                               [0 [(first spaces)]]
+                               row)))
+        result     (mapv indent-row rows)]
+    (if raw? result (mapv join result))))
 
-;  rows.collect { List<String> row ->
-;    // can not use
-;    // row.indexed().inject(space(0)) { rowResult, wi, String word
-;    // as indexed() is a groovy 2.4.x feature
-;    def wi = -1
-;    row.inject(space(0)) { rowResult, String word ->
-;      wi++
-;      rowResult << align(word, wi) << space(wi+1)
-;    } as String
-
-;public List<String> layout(List<List<String>> rows) {
-;  if (rows.size() == 0) return []
-;
-;  def (aligns, spaces) = layoutStringParsed
-;
-;  def colWidths = rows.transpose().collect { List<String> col ->
-;    col.max { String word -> word.length() }.length()
-;  }
-;
-;  def align = { String word, int wi ->
-;    switch(aligns[wi]) {
-;      case Align.LEFT:  return word.padRight(colWidths[wi], alignChar)
-;      case Align.RIGHT: return word.padLeft(colWidths[wi], alignChar)
-;      default: throw new RuntimeException("Unsupported alignment operation '${aligns[wi]}' encountered, index: $wi, aligns: $aligns!")
-;    }
-;  }
-;
-;
-;  int fillWidth = width - (colWidths.sum() + spaces.collect { s -> s == 'fill' ? 0 : s.length() }.sum())
-;  if (fillWidth < 0) fillWidth = 0
-;
-;  def space = { int wi ->
-;    spaces[wi] == 'fill' ? (alignChar*fillWidth) : spaces[wi]
-;  }
-;
-;  rows.collect { List<String> row ->
-;    // can not use
-;    // row.indexed().inject(space(0)) { rowResult, wi, String word
-;    // as indexed() is a groovy 2.4.x feature
-;    def wi = -1
-;    row.inject(space(0)) { rowResult, String word ->
-;      wi++
-;      rowResult << align(word, wi) << space(wi+1)
-;    } as String
-;  }
-;}
