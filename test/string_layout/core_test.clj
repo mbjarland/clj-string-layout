@@ -69,6 +69,29 @@
   "[L]|[C]"         [:L :C]          ["" "|" ""]
   "|[L][C]|"        [:L :C]          ["|" "" "|"])
 
+
+(tabular
+  (fact "Should calculate fills correctly"
+        (calculate-fills ?fill-width ?fill-count ?align-char) => ?expected-result)
+  ?fill-width  ?fill-count   ?align-char ?expected-result
+  0            1             \*          [""]
+  1            1             \*          ["*"]
+  2            1             \*          ["**"]
+  2            2             \*          ["*" "*"]
+  3            2             \*          ["*" "**"]
+  4            2             \*          ["**" "**"]
+  3            3             \*          ["*"   "*"   "*"]
+  4            3             \*          ["*"   "*"   "**"]
+  5            3             \*          ["*"   "**"  "**"]
+  6            3             \*          ["**"  "**"  "**"]
+  7            3             \*          ["**"  "**"  "***"]
+  8            3             \*          ["**"  "***" "***"]
+  9            3             \*          ["***" "***" "***"]
+  10           3             \*          ["***" "***" "****"]
+  7            2             \*          ["***" "****"]
+  20           6             \*          ["***" "***" "****" "***" "***" "****"]
+)
+
 (tabular
   (fact "Should expands fills correctly"
         (expand-fills ?spaces ?fill-width ?col-widths ?align-char) => ?expected-result)
@@ -99,7 +122,7 @@
         "a b"                    "[R] [L]"        20       ["a b"]
         "a b"                    "[R] [L]"         0       ["a b"]
         "a b"                    "[R]f[L]"        20       ["a                  b"]
-        "a b"                    "f[R] [L]f"      20       ["         a b        "]
+        "a b"                    "f[R] [L]f"      20       ["        a b         "]
         "a b\naa bb"             "[L] [R]"        20       ["a   b"  "aa bb"]
         "a b\naa bb"             "[L] [R]"         0       ["a   b"  "aa bb"]
         "a b\naa bb"             "[L]  [R]"       20       ["a    b"  "aa  bb"]
