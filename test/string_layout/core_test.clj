@@ -4,8 +4,17 @@
             [string-layout.core :refer :all]
             [clojure.string :refer [split]]))
 
-(fact "Should throw exception on empty layout string"
-      (parse-layout-string "") => (throws Exception))
+(tabular
+  (fact "Should throw exception on invalid layout string"
+        (parse-layout-string ?layout-string) => (throws Exception))
+  ?layout-string
+  ""
+  " "
+  "bogus"
+  "[]"
+  "[x]"
+  "[l][c][x]"
+  )
 
 ;class StringLayoutSpecification extends Specification {
 ;  @Unroll
@@ -41,17 +50,13 @@
   (fact "Should correctly parse layout strings"
         (parse-layout-string ?layout-string) => [?aligns ?spaces])
   ?layout-string    ?aligns          ?spaces
-  ;" "               []               [" "]
   "[L]"             [:L]             ["" ""]
   "[L][C][R]"       [:L :C :R]       ["" "" "" ""]
-  ;"f"               []               [:F]
   "|[L]|[C]|"       [:L :C]          ["|" "|" "|"]
    "[L]|[C]|"       [:L :C]          ["" "|" "|"]
   "|[L]|[C]"        [:L :C]          ["|" "|" ""]
   "[L]|[C]"         [:L :C]          ["" "|" ""]
   "|[L][C]|"        [:L :C]          ["|" "" "|"])
-
-
 
 (tabular
   (fact "Should expands fills"

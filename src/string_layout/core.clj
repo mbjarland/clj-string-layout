@@ -140,26 +140,32 @@
    :outer  ["┌─┐"
             "│ │"
             "└─┘"]
-   :inner  ["│─"]
+   :h-inner "╳"
+   :v-inner "│"
    :header ["┌─┐"
             "│ │"
             "┝━┥"]
    })
 
+; | Tables        | Are           | Cool  |
+; | ------------- |:-------------:| -----:|
+; | col 3 is      | right-aligned | $1600 |
+; | col 2 is      | centered      |   $12 |
+; | zebra stripes | are neat      |    $1 |
 (def border-markdown
-  {
-   :outer  [nil
+  {:outer  ["╳╳╳"
             "| |"
-            nil]
-   :inner  ["|x"]
-   :header [nil
+            "╳╳╳"]
+   :h-inner "-"
+   :v-inner "|"
+   :header ["╳╳╳"
             "│ │"
             "|-|"]
    })
 
 (defn normalize-rows [col-count rows]
   "Add empty elements to any rows which have fewer elements
-  col-count"
+  than col-count"
   (mapv (fn [row]
           (let [c (count row)
                 d (- col-count c)]
