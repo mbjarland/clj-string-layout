@@ -10,7 +10,7 @@
     {:align-char \space
      :width      10
      :borders    border-markdown
-     :raw? false
+     :raw?       false
      })
 
   )
@@ -39,7 +39,7 @@
               (cond
                 (= k :col-delim) [aligns (conj spaces (if (nil? v) "" v))]
                 (= k :col-align) [(conj aligns v) spaces]
-              :else [aligns spaces]))
+                :else [aligns spaces]))
             [[] []]
             t)))
 
@@ -59,53 +59,16 @@
   "expands the 'f' formatting specifiers in the 'spaces' vector
   to the appropriate number of 'align-char' characters"
   [spaces width col-widths align-char]
-  (let [fill-kws (filter #(= :F %) spaces)]
-    (if (empty? fill-kws)
+  (let [f? (partial = :F)]
+    (if (not-any? f? spaces)
       spaces
-      (let [fill-count (count fill-kws)
+      (let [fill-count (count (filter f? spaces))
             fill-width (max 0 (- width (+ (reduce + col-widths)
-                                          (reduce + (keep #(if (string? %) (count %)) spaces)))))
-            int-per    (int (/ fill-width fill-count))
-            doubles    (- fill-width (* fill-count int-per))
-            fills      (mapv
-                         #(join (repeat % align-char))
-                         (mapv +
-                               (repeat fill-count int-per)
-                               (concat (repeat doubles 1)
-                                       (repeat (- fill-count doubles) 0))))]
-        (first
-          (reduce
-            (fn [[res i f] x]
-              (if (= (nth spaces i) :F)
-                [(conj res (nth fills f)) (inc i) (inc f)]
-                [(conj res x) (inc i) f]))
-            [[] 0 0]
-            spaces))))))
-
-
-;(declare parse-layout-string)
-;(s/fdef parse-layout-string
-;        :args :string-layout.spec/layout-string
-;        :ret (s/cat :aligns :string-layout.spec/parsed-aligns
-;                    :spaces :string-layout.spec/parsed-spaces))
-;
-;(defn parse-layout-string
-;  "parses a col-layout string"
-;  [layout-string]
-;  {:pre [(string-layout.spec/check :string-layout.spec/layout-string layout-string)]}
-;  (let [[_ aligns spaces]
-;        (reduce (fn [[in-brace aligns spaces] c]
-;                  (cond
-;                    (= c \[) [true aligns spaces]
-;                    (= c \]) [false aligns (conj spaces "")]
-;                    in-brace [in-brace (conj aligns (parse-align c)) spaces]
-;                    :else [in-brace
-;                           aligns
-;                           (conj (into [] (butlast spaces)) (str (last spaces) c))]))
-;                [false [] [""]]
-;                layout-string)
-;        spaces (mapv #(if (= (.toLowerCase %) "f") :F %) spaces)]
-;    [aligns spaces]))
+                                          (reduce + (keep #(when (string? %) (count %)) spaces)))))
+            fills      (map #(join (repeat % align-char))
+                            (map int (reductions + (repeat fill-count (/ fill-width fill-count)))))
+            i          (atom -1)]
+        (mapv #(if (f? %) (nth fills (swap! i inc)) %) spaces)))))
 
 (s/fdef expand-fills
         :args (s/and (s/cat :spaces (s/cat :layout-element
@@ -125,26 +88,16 @@
                            (reduce + col-widths))
                         width))))
 
-(defn transpose [vs]
-  (into []
-        (comp
-          (map (fn [i]
-                 (into [] (comp (filter #(contains? % i))
-                                (map #(nth % i)))
-                       vs)))
-          (take-while seq))
-        (range)))
-
 (def border-ascii-box
   {
-   :outer  ["┌─┐"
-            "│ │"
-            "└─┘"]
+   :outer   ["┌─┐"
+             "│ │"
+             "└─┘"]
    :h-inner "╳"
    :v-inner "│"
-   :header ["┌─┐"
-            "│ │"
-            "┝━┥"]
+   :header  ["┌─┐"
+             "│ │"
+             "┝━┥"]
    })
 
 ; | Tables        | Are           | Cool  |
@@ -153,47 +106,40 @@
 ; | col 2 is      | centered      |   $12 |
 ; | zebra stripes | are neat      |    $1 |
 (def border-markdown
-  {:outer  ["╳╳╳"
-            "| |"
-            "╳╳╳"]
+  {:outer   ["╳╳╳"
+             "| |"
+             "╳╳╳"]
    :h-inner "-"
    :v-inner "|"
-   :header ["╳╳╳"
-            "│ │"
-            "|-|"]
+   :header  ["╳╳╳"
+             "│ │"
+             "|-|"]
    })
 
-(defn normalize-rows [col-count rows]
+(defn normalize-row-lens [col-count rows]
   "Add empty elements to any rows which have fewer elements
   than col-count"
-  (mapv (fn [row]
-          (let [c (count row)
-                d (- col-count c)]
-            (cond
-              (zero? d) row
-              (pos? d) (into [] (concat row (repeat d "")))
-              :else (subvec row 0 col-count))))
+  (mapv #(into [] (take col-count (concat % (repeat ""))))
         rows))
 
-(defn align-word [aligns col-widths align-char word i]
-  (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths i) word))]
-    (case (nth aligns i)
+(defn normalize-rows [rows aligns]
+  (let [r (if (instance? String rows) (mapv #(split % #" ") (split rows #"\n"))
+                                      rows)]
+    (normalize-row-lens (count aligns) r)))
+
+(defn calculate-col-widths [rows]
+  (apply mapv #(apply max (map count %&)) rows))
+
+(defn align-word [aligns col-widths align-char word col]
+  (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths col) word))]
+    (case (nth aligns col)
       :L (fmt "~v,,,vA")
       :R (fmt "~v,,,v@A")
       :C (fmt "~v,,,v:@<~A~>")
       ;:W (fmt (str "~{~<~%~1,"  ":;~A~> ~}"))
       :else (throw (IllegalArgumentException.
-                     (str "Unsupported alignment operation '" (nth aligns i)
-                          "' encountered, index: " i ", aligns: " aligns))))))
-
-
-(defn parse-rows [rows aligns]
-  (let [r (if (instance? String rows) (mapv #(split % #" ") (split rows #"\n"))
-                                      rows)]
-  (normalize-rows (count aligns) r)))
-
-(defn calculate-col-widths [rows]
-  (map #(apply max (map count %)) (transpose rows)))
+                     (str "Unsupported alignment operation '" (nth aligns col)
+                          "' encountered at align index: " col " in " aligns))))))
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
@@ -216,16 +162,13 @@
   {:pre [(pos? (count rows))]}
   (let [{:keys [align-char width raw?] :or {raw? false}} layout-config
         [aligns spaces] (parse-layout-string layout-string)
-        rows       (parse-rows rows aligns)
+        rows       (normalize-rows rows aligns)
         col-widths (calculate-col-widths rows)
         align      (partial align-word aligns col-widths align-char)
         spaces     (expand-fills spaces width col-widths align-char)
-        indent-row (fn [row]
-                     (second
-                       (reduce (fn [[i r] w]
-                                 [(inc i) (conj r (align w i) (nth spaces (inc i)))])
-                               [0 [(first spaces)]]
-                               row)))
-        result     (mapv indent-row rows)]
+        layout-row (fn [row] (str (join (interleave spaces
+                                                    (map-indexed #(align %2 %1) row)))
+                                  (last spaces)))
+        result     (mapv layout-row rows)]
     (if raw? result (mapv join result))))
 

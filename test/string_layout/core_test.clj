@@ -51,6 +51,17 @@
         (parse-layout-string ?layout-string) => [?aligns ?spaces])
   ?layout-string    ?aligns          ?spaces
   "[L]"             [:L]             ["" ""]
+  "[C]"             [:C]             ["" ""]
+  "[R]"             [:R]             ["" ""]
+  "[l]"             [:L]             ["" ""]
+  "[c]"             [:C]             ["" ""]
+  "[r]"             [:R]             ["" ""]
+  "a[L]b"           [:L]             ["a" "b"]
+  "a[C]b"           [:C]             ["a" "b"]
+  "a[R]b"           [:R]             ["a" "b"]
+  "a[l]b"           [:L]             ["a" "b"]
+  "a[c]b"           [:C]             ["a" "b"]
+  "a[r]b"           [:R]             ["a" "b"]
   "[L][C][R]"       [:L :C :R]       ["" "" "" ""]
   "|[L]|[C]|"       [:L :C]          ["|" "|" "|"]
    "[L]|[C]|"       [:L :C]          ["" "|" "|"]
@@ -59,7 +70,7 @@
   "|[L][C]|"        [:L :C]          ["|" "" "|"])
 
 (tabular
-  (fact "Should expands fills"
+  (fact "Should expands fills correctly"
         (expand-fills ?spaces ?fill-width ?col-widths ?align-char) => ?expected-result)
   ?spaces      ?fill-width   ?col-widths ?align-char ?expected-result
   [""]         5             [0 0]       \*          [""]
@@ -71,18 +82,24 @@
   [" " :F]     5             [1 1]       \*          [" " "**"]
   [:F " "]     5             [0 0]       \*          ["****" " "]
   [:F " "]     5             [1 1]       \*          ["**" " "]
+  [:F " " :F]  5             [1 1]       \*          ["*" " " "*"]
+  [:F " " :F]  9             [1 1]       \*          ["***" " " "***"]
+  [:F " " :F]  10            [1 1]       \*          ["***" " " "****"]
   )
 
 (tabular
   (fact "Should correctly lay out simple expressions"
-        (let [rows (mapv #(split % #" ") (split ?rows #"\n"))]
-          (layout
-            rows
-            ?layout-string
-            {:width ?width :align-char \space}) => ?expected-result))
+    (layout
+        ?rows
+        ?layout-string
+        {:width ?width :align-char \space}) => ?expected-result)
         ?rows                    ?layout-string   ?width   ?expected-result
         "a b"                    "[L] [R]"        20       ["a b"]
         "a b"                    "[L] [R]"         0       ["a b"]
+        "a b"                    "[R] [L]"        20       ["a b"]
+        "a b"                    "[R] [L]"         0       ["a b"]
+        "a b"                    "[R]f[L]"        20       ["a                  b"]
+        "a b"                    "f[R] [L]f"      20       ["         a b        "]
         "a b\naa bb"             "[L] [R]"        20       ["a   b"  "aa bb"]
         "a b\naa bb"             "[L] [R]"         0       ["a   b"  "aa bb"]
         "a b\naa bb"             "[L]  [R]"       20       ["a    b"  "aa  bb"]
@@ -94,4 +111,6 @@
         "a b\naa bb"             "f[R] [R]"       10       ["      a  b"  "     aa bb"]
         "a b\naa bb"             "f[R] [R]"        0       [" a  b"  "aa bb"]
         "a b\naa bb"             "[R] [R]f"       10       [" a  b     "  "aa bb     "]
-        "a b\naa bb"             "[R] [R]f"        0       [" a  b"  "aa bb"])
+        "a b\naa bb"             "[R] [R]f"        0       [" a  b"  "aa bb"]
+
+  )
