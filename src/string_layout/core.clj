@@ -55,20 +55,44 @@
       (throw-parse-error parsed s)
       (transform-parsed parsed))))
 
+; 10 6 -- 5 3 -> rest 2 -> 2/3
+;   ["*"  "**" "**" "*"  "**" "**"]
+;   ["*"  "*"  "*"  "*"  "*"  "*"]
+;   [ 1    2    3    4    5    6]
+;   [ 2/3  4/3  6/3  8/3  10/3 12/3]
+; - [ 0    1    2    2    3    4] ;(int above)
+;   [ 0    1    1    0    1    1] ;when changes
+(defn calculate-fills
+  "given a fill width (say 7), a fill count (say 2) and an
+  align char (say *), returns strings suitable for replacing
+  :F values with (in this case ['***', '****'] or vice versa)
+  Note that there is an ambiguity here, we could as well have
+  returned ['****', '***']"
+  [fill-width fill-count align-char]
+  (let [[q sr] ((juxt quot rem) fill-width fill-count)
+        r (/ sr fill-count)
+        v (map int (iterate #(+ r %) r)) ; 0 1 2 2 3 4
+        n (join (repeat q align-char))]
+    (first (reduce
+             (fn [[a l] x]
+               [(conj a (if (= l x) n (str n align-char))) x])
+             [[] 0]
+             (take fill-count v)))))
+
 (defn expand-fills
-  "expands the 'f' formatting specifiers in the 'spaces' vector
-  to the appropriate number of 'align-char' characters"
+  "expands the :F formatting specifiers in the spaces vector
+  to the appropriate number of align-char characters"
   [spaces width col-widths align-char]
   (let [f? (partial = :F)]
     (if (not-any? f? spaces)
       spaces
       (let [fill-count (count (filter f? spaces))
-            fill-width (max 0 (- width (+ (reduce + col-widths)
-                                          (reduce + (keep #(when (string? %) (count %)) spaces)))))
-            fills      (map #(join (repeat % align-char))
-                            (map int (reductions + (repeat fill-count (/ fill-width fill-count)))))
-            i          (atom -1)]
-        (mapv #(if (f? %) (nth fills (swap! i inc)) %) spaces)))))
+            sum-cols   (reduce + col-widths)
+            sum-spaces (reduce + (keep #(when (string? %) (count %)) spaces))
+            fill-width (max 0 (- width (+ sum-cols sum-spaces)))
+            fills      (calculate-fills fill-width fill-count align-char)
+            fill-idx   (atom -1)]
+        (mapv #(if (f? %) (nth fills (swap! fill-idx inc)) %) spaces)))))
 
 (s/fdef expand-fills
         :args (s/and (s/cat :spaces (s/cat :layout-element
