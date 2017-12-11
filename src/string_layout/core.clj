@@ -18,7 +18,7 @@
 (defn make-layout-parser-internal []
   (insta/parser
     "layout-string = col-delim (col-align col-delim)+
-     col-delim    = (col-fill | col-padding)
+     col-delim    = (col-fill | col-padding)*
      col-fill     = ('F' | 'f')
      col-padding  = #'[^\\[\\]fF]*'
      col-align    = <'['> ('L' | 'l' | 'C' | 'c' | 'R' | 'r') <']'>"))
@@ -35,10 +35,10 @@
              :col-align     (fn [a]
                               [:col-align (-> a .toUpperCase keyword)])}
             p)]
-    (reduce (fn [[aligns spaces] [k v]]
+    (reduce (fn [[aligns spaces] [k & v]]
               (cond
-                (= k :col-delim) [aligns (conj spaces (if (nil? v) "" v))]
-                (= k :col-align) [(conj aligns v) spaces]
+                (= k :col-delim) [aligns (conj spaces (if (nil? v) [] (into [] v)))]
+                (= k :col-align) [(conj aligns (first v)) spaces]
                 :else [aligns spaces]))
             [[] []]
             t)))
@@ -71,28 +71,31 @@
   [fill-width fill-count align-char]
   (let [[q sr] ((juxt quot rem) fill-width fill-count)
         r (/ sr fill-count)
-        v (map int (iterate #(+ r %) r)) ; 0 1 2 2 3 4
+        s (map int (iterate #(+ r %) r)) ; 0 1 2 2 3 4
         n (join (repeat q align-char))]
     (first (reduce
              (fn [[a l] x]
                [(conj a (if (= l x) n (str n align-char))) x])
              [[] 0]
-             (take fill-count v)))))
+             (take fill-count s)))))
 
 (defn expand-fills
   "expands the :F formatting specifiers in the spaces vector
   to the appropriate number of align-char characters"
   [spaces width col-widths align-char]
-  (let [f? (partial = :F)]
-    (if (not-any? f? spaces)
+  (let [f? (partial = :F)
+        fs (flatten spaces)]
+    (if (not-any? f? fs)
       spaces
-      (let [fill-count (count (filter f? spaces))
+      (let [fill-count (count (filter f? fs))
             sum-cols   (reduce + col-widths)
-            sum-spaces (reduce + (keep #(when (string? %) (count %)) spaces))
+            sum-spaces (reduce + (keep #(when (string? %) (count %)) fs))
             fill-width (max 0 (- width (+ sum-cols sum-spaces)))
             fills      (calculate-fills fill-width fill-count align-char)
             fill-idx   (atom -1)]
-        (mapv #(if (f? %) (nth fills (swap! fill-idx inc)) %) spaces)))))
+        (mapv (fn [v]
+                (mapv #(if (f? %) (nth fills (swap! fill-idx inc)) %) v))
+              spaces)))))
 
 (s/fdef expand-fills
         :args (s/and (s/cat :spaces (s/cat :layout-element
@@ -190,9 +193,9 @@
         col-widths (calculate-col-widths rows)
         align      (partial align-word aligns col-widths align-char)
         spaces     (expand-fills spaces width col-widths align-char)
-        layout-row (fn [row] (str (join (interleave spaces
+        layout-row (fn [row] (str (join (interleave (map join spaces)
                                                     (map-indexed #(align %2 %1) row)))
-                                  (last spaces)))
+                                  (join (last spaces))))
         result     (mapv layout-row rows)]
     (if raw? result (mapv join result))))
 
