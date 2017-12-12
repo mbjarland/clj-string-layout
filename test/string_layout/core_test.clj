@@ -120,25 +120,27 @@
     (layout
         ?rows
         ?layout-string
-        {:width ?width :align-char \space}) => ?expected-result)
-        ?rows                    ?layout-string   ?width   ?expected-result
-        "a b"                    "[L] [R]"        20       ["a b"]
-        "a b"                    "[L] [R]"         0       ["a b"]
-        "a b"                    "[R] [L]"        20       ["a b"]
-        "a b"                    "[R] [L]"         0       ["a b"]
-        "a b"                    "[R]f[L]"        20       ["a                  b"]
-        "a b"                    "f[R] [L]f"      20       ["        a b         "]
-        "a b\naa bb"             "[L] [R]"        20       ["a   b"  "aa bb"]
-        "a b\naa bb"             "[L] [R]"         0       ["a   b"  "aa bb"]
-        "a b\naa bb"             "[L]  [R]"       20       ["a    b"  "aa  bb"]
-        "a b\naa bb"             "[L]  [R]"        0       ["a    b"  "aa  bb"]
-        "a b"                    "[L]f[R]"        20       ["a                  b"]
-        "a b"                    "[L]f[R]"         0       ["ab"]
-        "a b\naa bb"             "[L]f[R]"        10       ["a        b"  "aa      bb"]
-        "a b\naa bb"             "[L]f[R]"         0       ["a  b"  "aabb"]
-        "a b\naa bb"             "f[R] [R]"       10       ["      a  b"  "     aa bb"]
-        "a b\naa bb"             "f[R] [R]"        0       [" a  b"  "aa bb"]
-        "a b\naa bb"             "[R] [R]f"       10       [" a  b     "  "aa bb     "]
-        "a b\naa bb"             "[R] [R]f"        0       [" a  b"  "aa bb"]
-
+        {:width ?width :align-char ?align-c :split-char ?split-c}) => ?expected-result)
+        ?rows        ?align-c ?split-c ?layout-string  ?width ?expected-result
+        "a b"        \space   \space   "[L] [R]"       20     ["a b"]
+        "a b"        \space   \space   "[L] [R]"        0     ["a b"]
+        "a b"        \space   \space   "[R] [L]"       20     ["a b"]
+        "a b"        \space   \space   "[R] [L]"        0     ["a b"]
+        "a b"        \space   \space   "[R]f[L]"       20     ["a                  b"]
+        "a b"        \space   \space   "f[R] [L]f"     20     ["        a b         "]
+        "a b\naa bb" \space   \space   "[L] [R]"       20     ["a   b"  "aa bb"]
+        "a b\naa bb" \space   \space   "[L] [R]"        0     ["a   b"  "aa bb"]
+        "a b\naa bb" \space   \space   "[L]  [R]"      20     ["a    b"  "aa  bb"]
+        "a b\naa bb" \space   \space   "[L]  [R]"       0     ["a    b"  "aa  bb"]
+        "a b"        \space   \space   "[L]f[R]"       20     ["a                  b"]
+        "a b"        \space   \space   "[L]f[R]"        0     ["ab"]
+        "a b\naa bb" \space   \space   "[L]f[R]"       10     ["a        b"  "aa      bb"]
+        "a b\naa bb" \space   \space   "[L]f[R]"        0     ["a  b"  "aabb"]
+        "a b\naa bb" \space   \space   "f[R] [R]"      10     ["      a  b"  "     aa bb"]
+        "a b\naa bb" \space   \space   "f[R] [R]"       0     [" a  b"  "aa bb"]
+        "a b\naa bb" \space   \space   "[R] [R]f"      10     [" a  b     "  "aa bb     "]
+        "a b\naa bb" \space   \space   "[R] [R]f"       0     [" a  b"  "aa bb"]
+        "a b\naa bb" \space   \space   "[l]-f-f-[r]"    0     ["a --- b"  "aa---bb"]
+        "a b\naa bb" \space   \space   "[l]-f-f-[r]"    0     ["a --- b"  "aa---bb"]
+        "a*b\naa*bb" \*       \*       "[l]*f*f*[r]"    0     ["a*****b"  "aa***bb"]
   )
