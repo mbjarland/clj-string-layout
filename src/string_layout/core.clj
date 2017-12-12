@@ -5,16 +5,6 @@
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))
 
-(comment
-  (def layout-config
-    {:align-char \space
-     :width      10
-     :borders    border-markdown
-     :raw?       false
-     })
-
-  )
-
 (defn make-layout-parser-internal []
   (insta/parser
     "layout-string = col-delim (col-align col-delim)+
@@ -127,21 +117,58 @@
              "┝━┥"]
    })
 
-; | Tables        | Are           | Cool  |
-; | ------------- |:-------------:| -----:|
-; | col 3 is      | right-aligned | $1600 |
-; | col 2 is      | centered      |   $12 |
-; | zebra stripes | are neat      |    $1 |
-(def border-markdown
-  {:outer   ["╳╳╳"
-             "| |"
-             "╳╳╳"]
-   :h-inner "-"
-   :v-inner "|"
-   :header  ["╳╳╳"
-             "│ │"
-             "|-|"]
-   })
+(comment
+  ; ↓               ↓               ↓       ↓
+  ; ┌───────────────┬───────────────┬───────┐
+  ; │ Tables        │ Are           │ Cool  │
+  ; ├───────────────┼───────────────┼───────┤
+  ; │ col 3 is      │ right-aligned │ $1600 │
+  ; │ col 2 is      │   centered    │   $12 │
+  ; │ zebra stripes │ are neat      │    $1 │
+  ; └───────────────┴───────────────┴───────┘
+
+  {:valign  ["─"
+             "r"
+             "─"
+             "f"
+             "─"
+             "f"
+             "─"]
+   :corners [["┌" "┬" "┐"]
+             ["├" "┼" "┼"]
+             ["└" "┴" "┘"]]}
+
+  ; abbbbbbbbbbbbbbbc
+  ; | Tables        | Are           | Cool  |
+  ; | ------------- |:-------------:| -----:|
+  ; | col 3 is      | right-aligned | $1600 |
+  ; | col 2 is      | centered      |   $12 |
+  ; | zebra stripes | are neat      |    $1 |
+
+  {:col-layout "bob"
+   :row-layout [nil
+                "[]"
+                "-"
+                "[]"
+                nil
+                "f"
+                nil]
+   :corners    [[nil nil nil]
+                ["|" "|" "|"]
+                [nil nil nil]]}
+
+  (def border-markdown
+    {:outer   ["╳╳╳"
+               "| |"
+               "╳╳╳"]
+     :h-inner nil
+     :v-inner "|"
+     :header  ["╳╳╳"
+               "│ │"
+               "|-|"]
+     })
+
+  )
 
 (defn normalize-row-lens [col-count rows]
   "Add empty elements to any rows which have fewer elements
@@ -149,8 +176,9 @@
   (mapv #(into [] (take col-count (concat % (repeat ""))))
         rows))
 
-(defn normalize-rows [rows aligns]
-  (let [r (if (instance? String rows) (mapv #(split % #" ") (split rows #"\n"))
+(defn normalize-rows [rows aligns split-char]
+  (let [p (re-pattern (str \\ split-char))
+        r (if (instance? String rows) (mapv #(split % p) (split rows #"\n"))
                                       rows)]
     (normalize-row-lens (count aligns) r)))
 
@@ -167,6 +195,14 @@
       :else (throw (IllegalArgumentException.
                      (str "Unsupported alignment operation '" (nth aligns col)
                           "' encountered at align index: " col " in " aligns))))))
+
+(def default-layout-config
+  {
+   :align-char \space
+   :split-char \space
+   :width      80
+   :raw?       false
+   })
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
@@ -187,9 +223,10 @@
   certain columns before outputting to terminal etc."
   [rows layout-string layout-config]
   {:pre [(pos? (count rows))]}
-  (let [{:keys [align-char width raw?] :or {raw? false}} layout-config
+  (let [config     (merge default-layout-config layout-config)
+        {:keys [align-char split-char width raw?]} config
         [aligns spaces] (parse-layout-string layout-string)
-        rows       (normalize-rows rows aligns)
+        rows       (normalize-rows rows aligns split-char)
         col-widths (calculate-col-widths rows)
         align      (partial align-word aligns col-widths align-char)
         spaces     (expand-fills spaces width col-widths align-char)
