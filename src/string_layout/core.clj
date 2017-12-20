@@ -2,6 +2,7 @@
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
             [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))
 
@@ -38,6 +39,7 @@
     (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
                     {:failure (insta/get-failure parsed)}))))
 
+
 (defn parse-layout-string [s]
   (let [parser (make-layout-parser)
         parsed (parser s)]
@@ -61,7 +63,7 @@
   [fill-width fill-count align-char]
   (let [[q sr] ((juxt quot rem) fill-width fill-count)
         r (/ sr fill-count)
-        s (map int (iterate #(+ r %) r)) ; 0 1 2 2 3 4
+        s (map int (iterate #(+ r %) r))                    ; 0 1 2 2 3 4
         n (join (repeat q align-char))]
     (first (reduce
              (fn [[a l] x]
@@ -105,69 +107,83 @@
                            (reduce + col-widths))
                         width))))
 
-(def border-ascii-box
-  {
-   :outer   ["┌─┐"
-             "│ │"
-             "└─┘"]
-   :h-inner "╳"
-   :v-inner "│"
-   :header  ["┌─┐"
-             "│ │"
-             "┝━┥"]
-   })
-
 (comment
+  ; row-layout
+  ; 2 elements - assumes top and bottom, no middle delims
+  ; 3 elements - assumes top middle bottom and that
+  ;              middle is always applied
+  ; more       - applies middles with first matching predicate
+
+
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐
   ; │ Tables        │ Are           │ Cool  │
-  ; ├───────────────┼───────────────┼───────┤
+  ; ├───────────────┼───────────────┼───────┤ 🡐 0
+  ; │ col 3 is      │ right-aligned │ $1600 │
+  ; ├───────────────┼───────────────┼───────┤ 🡐 1
+  ; │ col 2 is      │   centered    │   $12 │
+  ; ├───────────────┼───────────────┼───────┤ 🡐 2
+  ; │ zebra stripes │ are neat      │    $1 │
+  ; └───────────────┴───────────────┴───────┘
+  {:col-layout   "│ [L] │ [C] │ [R] │"
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"]
+                ["├─[─]─┼─[─]─┼─[─]─┤"]
+                ["└─[─]─┴─[─]─┴─[─]─┘"]]}
+
+
+  ; ↓               ↓               ↓       ↓
+  ; ┌───────────────┬───────────────┬───────┐
+  ; │ Tables        │ Are           │ Cool  │
+  ; │ col 3 is      │ right-aligned │ $1600 │
+  ; │ col 2 is      │   centered    │   $12 │
+  ; │ zebra stripes │ are neat      │    $1 │
+  ; └───────────────┴───────────────┴───────┘
+  {:col-layout   "│ [L] │ [C] │ [R] │"
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"]
+                ["└─[─]─┴─[─]─┴─[─]─┘"]]}
+
+  ; ↓               ↓               ↓       ↓
+  ; ┌───────────────┬───────────────┬───────┐
+  ; │ Tables        │ Are           │ Cool  │
+  ; ├───────────────┼───────────────┼───────┤ 🡐 0
   ; │ col 3 is      │ right-aligned │ $1600 │
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘
 
-  {:valign  ["─"
-             "r"
-             "─"
-             "f"
-             "─"
-             "f"
-             "─"]
-   :corners [["┌" "┬" "┐"]
-             ["├" "┼" "┼"]
-             ["└" "┴" "┘"]]}
+  {:col-layout   "│ [L] │ [C] │ [R] │"
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"]
+                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when zero?]
+                ["└─[─]─┴─[─]─┴─[─]─┘"]]}
 
-  ; abbbbbbbbbbbbbbbc
+  ; ↓               ↓               ↓       ↓
+  ; ┌───────────────┬───────────────┬───────┐
+  ; │ Tables        │     Are       │  Cool │
+  ; ┝━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━┿━━━━━━━┥ 🡐 0
+  ; │ col 3 is      │   centered    │ $1600 │
+  ; ├───────────────┼───────────────┼───────┤ 🡐 1
+  ; │ col 2 is      │   centered    │   $12 │
+  ; ┝━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━┿━━━━━━━┥ 🡐 2
+  ; │ col 2 is      │   centered    │   $12 │
+  ; ├───────────────┼───────────────┼───────┤ 🡐 3
+  ; │ zebra stripes │   are neat    │    $1 │
+  ; └───────────────┴───────────────┴───────┘
+  {:col-layout   "│ [L] │ [C] │ [R] │"
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"]
+                ["┝━[━]━┿━[━]━┿━[━]━┥" :apply-when even?]
+                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when odd?]
+                ["└─[─]─┴─[─]─┴─[─]─┘"]]}
+  
   ; | Tables        | Are           | Cool  |
   ; | ------------- |:-------------:| -----:|
   ; | col 3 is      | right-aligned | $1600 |
   ; | col 2 is      | centered      |   $12 |
   ; | zebra stripes | are neat      |    $1 |
 
-  {:col-layout "bob"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [nil
-                "[]"
-                "-"
-                "[]"
-                nil
-                "f"
-                nil]
-   :corners    [[nil nil nil]
-                ["|" "|" "|"]
-                [nil nil nil]]}
-
-  (def border-markdown
-    {:outer   ["╳╳╳"
-               "| |"
-               "╳╳╳"]
-     :h-inner nil
-     :v-inner "|"
-     :header  ["╳╳╳"
-               "│ │"
-               "|-|"]
-     })
-
+                ["| [-] |:[-]:| [-]:|" :apply-when zero?]
+                nil]}
   )
 
 (defn normalize-row-lens [col-count rows]
@@ -204,6 +220,33 @@
    :raw?       false
    })
 
+(comment 
+(s/def ::rows-to-layout)
+)
+(s/def ::layout-string (s/and string? not-empty))
+(s/def ::width pos-int?)
+(s/def ::align-char char?)
+(s/def ::split-char char?)
+(s/def ::raw boolean?)
+
+(s/def ::bob (s/cat :rows-to-layout (s/or :string-with-newlines (s/and string? not-empty)
+                                          :nested-vector-of-words (s/coll-of (s/coll-of string? :kind vector?) :kind vector?))
+                    :layout-string (s/and string? not-empty)
+                    :layout-config (s/keys :opt [::width
+                                                 ::align-char
+                                                 ::split-char
+                                                 ::raw?])))
+
+(s/fdef layout
+        :args (s/cat :rows-to-layout (s/or :string-with-newlines (s/and string? not-empty)
+                                           :nested-vector-of-words (s/coll-of (s/coll-of string? :kind vector?) :kind vector?))
+                     :layout-string (s/and string? not-empty)
+                     :layout-config (s/keys :opt [::width
+                                                  ::align-char
+                                                  ::split-char
+                                                  ::raw?]))
+        :ret (s/cat ::layout-element (s/coll-of string? :kind vector?)))
+
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
 (defn layout
@@ -235,4 +278,6 @@
                                   (join (last spaces))))
         result     (mapv layout-row rows)]
     (if raw? result (mapv join result))))
+
+(stest/instrument `why layout)
 

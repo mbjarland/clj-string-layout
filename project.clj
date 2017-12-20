@@ -8,6 +8,6 @@
                  ;;[org.clojure/spec.alpha "0.1.143"]]
                  ;;[clojure-future-spec "1.9.0-alpha15"]]
   :profiles {:dev {:dependencies
-                   [[midje "1.9.0"]
+                   [[midje "1.9.1"]
                     [org.clojure/test.check "0.9.0"]]
                    :plugins [[lein-midje "3.2.1"]]}})
