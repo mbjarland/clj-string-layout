@@ -107,14 +107,14 @@
                            (reduce + col-widths))
                         width))))
 
-(defn first-row? [row-index _] (zero? row-index))
+(defn first-row? [[idx _]] (zero? idx))
 (defn not-first? (complement first-row?))
-(defn second? [row-index _] (= row-index 1))
+(defn second? [[idx _]] (= idx 1))
 
-(defn last-row? [row-index last-row-index]
-  (= row-index last-row-index))
+(defn last-row? [[idx cnt]]
+  (= idx cnt))
 (defn not-last-row? (complement last-row?))
-(defn always? (fn [_ _] true))
+(defn always? (fn [[_ _]] true))
 
 (comment
   ; row-layout
@@ -134,7 +134,7 @@
   ; ├───────────────┼───────────────┼───────┤ 🡐 3
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ 🡐 4
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when not-last-row?]
                 ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
@@ -146,10 +146,6 @@
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ 🡐 4
-  {:col-layout "│ [L] │ [C] │ [R] │"
-   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"]
-                ["└─[─]─┴─[─]─┴─[─]─┘"]]}
-
   {:col-layout "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
                 ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]}
