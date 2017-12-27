@@ -6,7 +6,7 @@
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))
 
-(defn make-layout-parser-internal []
+(defn make-col-layout-parser-internal []
   (insta/parser
     "layout-string = col-delim (col-align col-delim)+
      col-delim    = (col-fill | col-padding)*
@@ -14,7 +14,16 @@
      col-padding  = #'[^\\[\\]fF]*'
      col-align    = <'['> ('L' | 'l' | 'C' | 'c' | 'R' | 'r') <']'>"))
 
-(def make-layout-parser (memoize make-layout-parser-internal))
+(defn make-row-layout-parser-internal []
+  (insta/parser
+    "layout-string = col-delim (col-align col-delim)+
+     col-delim    = (col-fill | col-padding)*
+     col-fill     = ('F' | 'f')
+     col-padding  = #'[^\\[\\]fF]*'
+     col-align    = <'['> #'[^]]' <']'>"))
+
+(def make-col-layout-parser (memoize make-col-layout-parser-internal))
+(def make-row-layout-parser (memoize make-row-layout-parser-internal))
 
 (defn transform-parsed [p]
   "transforms the parse tree returned from instaparse
@@ -41,7 +50,7 @@
 
 
 (defn parse-layout-string [s]
-  (let [parser (make-layout-parser)
+  (let [parser (make-row-layout-parser)
         parsed (parser s)]
     (if (insta/failure? parsed)
       (throw-parse-error parsed s)
@@ -108,22 +117,15 @@
                         width))))
 
 (defn first-row? [[idx _]] (zero? idx))
-(defn not-first? (complement first-row?))
+(def not-first? (complement first-row?))
 (defn second? [[idx _]] (= idx 1))
 
 (defn last-row? [[idx cnt]]
   (= idx cnt))
-(defn not-last-row? (complement last-row?))
-(defn always? (fn [[_ _]] true))
+(def not-last-row? (complement last-row?))
+(defn always? [[_ _]] true)
 
 (comment
-  ; row-layout
-  ; 2 elements - assumes top and bottom, no middle delims
-  ; 3 elements - assumes top middle bottom and that
-  ;              middle is always applied
-  ; more       - applies middles with first matching predicate
-
-
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐ 🡐 0
   ; │ Tables        │ Are           │ Cool  │
@@ -146,9 +148,33 @@
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ 🡐 4
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
                 ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]}
+
+
+  ; ↓               ↓               ↓       ↓
+  ; ┌───────────────┬───────────────┬───────┐ 🡐 0
+  ; │ Tables        │ Are           │ Cool  │
+  ; │ col 3 is      │ right-aligned │ $1600 │
+  ; │ col 2 is      │   centered    │   $12 │
+  ; │ zebra stripes │ are neat      │    $1 │
+  ; └───────────────┴───────────────┴───────┘ 🡐 4
+  {:col-layout   "│ [L] │f[C]f│ [R] │"
+   :row-layout [["┌─[─]─┬f[─]f┬─[─]─┐" :apply-when first-row? :fill-char \-]
+                ["└─[─]─┴f[─]f┴─[─]─┘" :apply-when last-row?]]}
+
+  ; ↓             ↓               ↓       ↓
+  ; ┌─────────────────────────────────────┐ 🡐 0
+  ; │ Tables         Are            Cool  │
+  ; │ col 3 is       right-aligned  $1600 │
+  ; │ col 2 is         centered       $12 │
+  ; │ zebra stripes  are neat          $1 │
+  ; └─────────────────────────────────────┘ 🡐 4
+
+  {:col-layout   "│ [L]f[C]f[R] │"
+   :row-layout [["┌─[─]f[─]f[─]─┐" :apply-when first-row? :fill-chars [\- \-]]
+                ["└─[─]f[─]f[─]─┘" :apply-when last-row?]]}
 
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐
@@ -159,7 +185,7 @@
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘
 
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when second-row?]
                 ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
@@ -176,7 +202,7 @@
   ; ├───────────────┼───────────────┼───────┤ 🡐 3
   ; │ zebra stripes │   are neat    │    $1 │
   ; └───────────────┴───────────────┴───────┘
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
                 ["┝━[━]━┿━[━]━┿━[━]━┥" :apply-when (every-pred not-last-row? even-row?)]
                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when (every-pred not-last-row? odd-row?)]
@@ -188,8 +214,11 @@
   ; | col 2 is      | centered      |   $12 |
   ; | zebra stripes | are neat      |    $1 |
 
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["| [-] |:[-]:| [-]:|" :apply-when second-row?]]}
+
+  
+
   )
 
 (defn normalize-row-lens [col-count rows]
@@ -275,10 +304,13 @@
   (let [config     (merge default-layout-config layout-config)
         {:keys [align-char split-char width raw?]} config
         [aligns spaces] (parse-layout-string layout-string)
+        _ (prn "aligns:" aligns "spaces:" spaces)
         rows       (normalize-rows rows aligns split-char)
         col-widths (calculate-col-widths rows)
         align      (partial align-word aligns col-widths align-char)
         spaces     (expand-fills spaces width col-widths align-char)
+        _ (prn "aligns:" aligns "spaces:" spaces)
+        _ (prn "col-widths:" col-widths)
         layout-row (fn [row] (str (join (interleave (map join spaces)
                                                     (map-indexed #(align %2 %1) row)))
                                   (join (last spaces))))
