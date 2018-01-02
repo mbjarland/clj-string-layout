@@ -2,7 +2,8 @@
   (:require [clojure.pprint :refer [cl-format]]
             [clojure.string :refer [split join]]
             [instaparse.core :as insta]
-            [instaparse.failure :as fail]))
+            [instaparse.failure :as fail]
+            [com.rpl.specter :refer [pred= ALL transform select]]))
 
 (defn count-by [pred coll]
   (count (keep pred coll)))
@@ -46,12 +47,13 @@
     (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
                     {:failure (insta/get-failure parsed)}))))
 
-(defn parse-layout-string [s]
-  (let [parser (make-col-layout-parser)
-        parsed (parser s)]
+(defn parse-layout-string [layout-string row-layout?]
+  (let [parser (if row-layout? (make-row-layout-parser)
+                               (make-col-layout-parser))
+        parsed (parser layout-string)]
     (if (insta/failure? parsed)
-      (throw-parse-error parsed s)
-      (transform-parsed parsed false))))
+      (throw-parse-error parsed layout-string)
+      (transform-parsed parsed row-layout?))))
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
@@ -95,11 +97,15 @@
              [[] 0 0]
              (take fill-count s)))))
 
-(defn expand-fills
+; best way (natahan marz)
+;(count (select [ALL :delim ALL (pred= :F)] data))
+; most performant way
+;(transduce (map (constantly 1)) + (traverse [ALL :delim ALL (pred= :F)] data))
+(defn expand-fills2
   "expands the :F formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [layout width col-widths fill-chars]
-  (let [spaces (keep :delim layout)
+  (let [spaces (into [] (keep :delim layout))
         f?     (partial = :F)
         fs     (flatten spaces)]
     (if (not-any? f? fs)
@@ -114,14 +120,35 @@
                 (mapv #(if (f? %) (nth fills (swap! fill-idx inc)) %) v))
               spaces)))))
 
+;(transform [ALL :delim ALL (pred= :F)]
+(defn expand-fills
+  "expands the :F formatting specifiers in the layout vector
+  to the appropriate number of align-char characters"
+  [layout width col-widths fill-chars]
+  (let [f-path [ALL :delim ALL (pred= :F)]
+        fs     (select f-path layout)
+        ss     (select [ALL :delim ALL string?] layout)]
+    (if (empty? fs)
+      layout
+      (let [fill-count  (count fs)
+            sum-cols    (reduce + col-widths)
+            sum-strings (reduce + (map count ss))
+            fill-width  (max 0 (- width (+ sum-cols sum-strings)))
+            fills       (calculate-fills fill-width fill-count fill-chars)
+            fill-idx    (atom -1)]
+        (transform f-path
+                   (fn [_] (nth fills (swap! fill-idx inc)))
+                   layout)))))
+
+
 (defn normalize-row-lens [col-count rows]
   "Add empty elements to any rows which have fewer elements
   than col-count"
   (mapv #(into [] (take col-count (concat % (repeat ""))))
         rows))
 
-(defn normalize-rows [rows layout split-char]
-  (let [align-count (count-by :align layout)
+(defn normalize-rows [rows col-layout split-char]
+  (let [align-count (count-by :align col-layout)
         p           (re-pattern (str \\ split-char))
         r           (if (instance? String rows) (mapv #(split % p) (split rows #"\n"))
                                                 rows)]
@@ -142,17 +169,23 @@
                        (str "Unsupported alignment operation '" (nth aligns col)
                             "' encountered at align index: " col " in " aligns)))))))
 
-(def default-layout-config
+(def default-layout
   {
    :align-char \space
+   :fill-char  \space
    :split-char \space
    :width      80
    :raw?       false
+   ;:col-layout "│ [L] │ [C] │ [R] │"
+   ;:row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
+   ;             ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]
    })
 
-
-(comment
-  )
+(defn merge-default-layout [layout]
+  (let [{:keys [align-char]} layout
+        layout (transform [:fill-char] (fnil identity align-char) layout)
+        layout (merge default-layout layout)]
+    layout))
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
@@ -171,15 +204,17 @@
   returning rows as already joined strings. The raw format can be useful
   if you need to do some post processing like adding ansi colors to
   certain columns before outputting to terminal etc."
-  [rows layout-string layout-config]
+  [rows layout]
   {:pre [(pos? (count rows))]}                              ;TODO: replace predicate with spec
-  (let [config     (merge default-layout-config layout-config)
-        {:keys [align-char split-char width raw?]} config
-        [layout] (parse-layout-string layout-string)
-        rows       (normalize-rows rows layout split-char)
+  (let [layout     (merge-default-layout layout)
+        {:keys [align-char fill-char split-char width raw?]} layout
+        col-layout (parse-layout-string (:col-layout layout) false)
+        rows       (normalize-rows rows col-layout split-char)
         col-widths (calculate-col-widths rows)
-        align      (partial align-word layout col-widths align-char)
-        delims     (expand-fills layout width col-widths align-char)
+        fill-chars (repeat (count col-widths) fill-char)
+        col-layout (expand-fills col-layout width col-widths fill-chars)
+        delims     (keep :delim col-layout)
+        align      (partial align-word col-layout col-widths align-char)
         layout-row (fn [row] (str (join (interleave (map join delims)
                                                     (map-indexed #(align %2 %1) row)))
                                   (join (last delims))))

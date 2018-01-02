@@ -47,81 +47,81 @@
 
 
 (tabular
-  (fact "Should correctly parse layout strings"
-        (parse-layout-string ?layout-string) => [?aligns ?spaces])
-  ?layout-string      ?aligns          ?spaces
-  "[L]"               [:L]             [[] []]
-  "[C]"               [:C]             [[] []]
-  "[R]"               [:R]             [[] []]
-  "[l]"               [:L]             [[] []]
-  "[c]"               [:C]             [[] []]
-  "[r]"               [:R]             [[] []]
-  "a[L]b"             [:L]             [["a"] ["b"]]
-  "a[C]b"             [:C]             [["a"] ["b"]]
-  "a[R]b"             [:R]             [["a"] ["b"]]
-  "a[l]b"             [:L]             [["a"] ["b"]]
-  "a[c]b"             [:C]             [["a"] ["b"]]
-  "a[r]b"             [:R]             [["a"] ["b"]]
-  "[L][C][R]"         [:L :C :R]       [[] [] [] []]
-  "|[L]|[C]|"         [:L :C]          [["|"] ["|"] ["|"]]
-   "[L]|[C]|"         [:L :C]          [[] ["|"] ["|"]]
-  "|[L]|[C]"          [:L :C]          [["|"] ["|"] []]
-  "[L]|[C]"           [:L :C]          [[] ["|"] []]
-  "|[L][C]|"          [:L :C]          [["|"] [] ["|"]]
-  "-[l]-f-[r]-"       [:L :R]          [["-"] ["-" :F "-"] ["-"]]
-  "--[l]--f--[r]--"   [:L :R]          [["--"] ["--" :F "--"] ["--"]]
-  "--[l]f--f--f[r]--" [:L :R]          [["--"] [:F "--" :F "--" :F] ["--"]]
+  (fact "Should correctly parse col layout strings"
+        (parse-layout-string ?layout-string false) => ?layout)
+  ?layout-string      ?layout
+  "[L]"               [{:delim []} {:align :L} {:delim []}]
+  "[C]"               [{:delim []} {:align :C} {:delim []}]
+  "[R]"               [{:delim []} {:align :R} {:delim []}]
+  "[l]"               [{:delim []} {:align :L} {:delim []}]
+  "[c]"               [{:delim []} {:align :C} {:delim []}]
+  "[r]"               [{:delim []} {:align :R} {:delim []}]
+  "a[L]b"             [{:delim ["a"]} {:align :L} {:delim ["b"]}]
+  "a[C]b"             [{:delim ["a"]} {:align :C} {:delim ["b"]}]
+  "a[R]b"             [{:delim ["a"]} {:align :R} {:delim ["b"]}]
+  "a[l]b"             [{:delim ["a"]} {:align :L} {:delim ["b"]}]
+  "a[c]b"             [{:delim ["a"]} {:align :C} {:delim ["b"]}]
+  "a[r]b"             [{:delim ["a"]} {:align :R} {:delim ["b"]}]
+  "[L][C][R]"         [{:delim []} {:align :L} {:delim []} {:align :C} {:delim []} {:align :R} {:delim []}]
+  "|[L]|[C]|"         [{:delim ["|"]} {:align :L} {:delim ["|"]} {:align :C} {:delim ["|"]}]
+   "[L]|[C]|"         [{:delim []}    {:align :L} {:delim ["|"]} {:align :C} {:delim ["|"]}]
+  "|[L]|[C]"          [{:delim ["|"]} {:align :L} {:delim ["|"]} {:align :C} {:delim []}]
+  "[L]|[C]"           [{:delim []}    {:align :L} {:delim ["|"]} {:align :C} {:delim []}]
+  "|[L][C]|"          [{:delim ["|"]} {:align :L} {:delim []}    {:align :C} {:delim ["|"]}]
+  "-[l]-f-[r]-"       [{:delim ["-"]}  {:align :L} {:delim ["-" :F "-"]}         {:align :R} {:delim ["-"]}]
+  "--[l]--f--[r]--"   [{:delim ["--"]} {:align :L} {:delim ["--" :F "--"]}       {:align :R} {:delim ["--"]}]
+  "--[l]f--f--f[r]--" [{:delim ["--"]} {:align :L} {:delim [:F "--" :F "--" :F]} {:align :R} {:delim ["--"]}]
 
   )
 
 
 (tabular
   (fact "Should calculate fills correctly"
-        (calculate-fills ?fill-width ?fill-count ?align-char) => ?expected-result)
-  ?fill-width  ?fill-count   ?align-char ?expected-result
-  0            1             \*          [""]
-  1            1             \*          ["*"]
-  2            1             \*          ["**"]
-  2            2             \*          ["*" "*"]
-  3            2             \*          ["*" "**"]
-  4            2             \*          ["**" "**"]
-  3            3             \*          ["*"   "*"   "*"]
-  4            3             \*          ["*"   "*"   "**"]
-  5            3             \*          ["*"   "**"  "**"]
-  6            3             \*          ["**"  "**"  "**"]
-  7            3             \*          ["**"  "**"  "***"]
-  8            3             \*          ["**"  "***" "***"]
-  9            3             \*          ["***" "***" "***"]
-  10           3             \*          ["***" "***" "****"]
-  7            2             \*          ["***" "****"]
-  20           6             \*          ["***" "***" "****" "***" "***" "****"]
+        (calculate-fills ?fill-width ?fill-count ?fill-chars) => ?expected-result)
+  ?fill-width  ?fill-count   ?fill-chars ?expected-result
+  0            1             [\*]                 [""]
+  1            1             [\*]                 ["*"]
+  2            1             [\*]                 ["**"]
+  2            2             [\* \+]              ["*" "+"]
+  3            2             [\* \+]              ["*" "++"]
+  4            2             [\* \+]              ["**" "++"]
+  3            3             [\* \+ \-]           ["*"   "+"   "-"]
+  4            3             [\* \+ \-]           ["*"   "+"   "--"]
+  5            3             [\* \+ \-]           ["*"   "++"  "--"]
+  6            3             [\* \+ \-]           ["**"  "++"  "--"]
+  7            3             [\* \+ \-]           ["**"  "++"  "---"]
+  8            3             [\* \+ \-]           ["**"  "+++" "---"]
+  9            3             [\* \+ \-]           ["***" "+++" "---"]
+  10           3             [\* \+ \-]           ["***" "+++" "----"]
+  7            2             [\* \+]              ["***" "++++"]
+  20           6             [\1 \2 \3 \4 \5 \6]  ["111" "222" "3333" "444" "555" "6666"]
 )
 
 (tabular
   (fact "Should expands fills correctly"
-        (expand-fills ?spaces ?fill-width ?col-widths ?align-char) => ?expected-result)
-  ?spaces            ?fill-width   ?col-widths ?align-char ?expected-result
-  [[]]               5             [0 0]       \*          [[]]
-  [[" "]]            5             [0 0]       \*          [[" "]]
-  [["-"]]            5             [0 0]       \*          [["-"]]
-  [[:F]]             5             [0 0]       \*          [["*****"]]
-  [[:F]]             5             [1 1]       \*          [["***"]]
-  [[" "] [:F]]       5             [0 0]       \*          [[" "] ["****"]]
-  [[" "] [:F]]       5             [1 1]       \*          [[" "] ["**"]]
-  [[:F] [" "]]       5             [0 0]       \*          [["****"] [" "]]
-  [[:F] [" "]]       5             [1 1]       \*          [["**"] [" "]]
-  [[:F] [" "] [:F]]  5             [1 1]       \*          [["*"] [" "] ["*"]]
-  [[:F] [" "] [:F]]  9             [1 1]       \*          [["***"] [" "] ["***"]]
-  [[:F] [" "] [:F]]  10            [1 1]       \*          [["***"] [" "] ["****"]]
+        (expand-fills ?layout ?fill-width ?col-widths ?fill-chars) => ?expected-result)
+  ?layout                         ?fill-width   ?col-widths ?fill-chars ?expected-result
+  []                              5             [0 0]       [\*]        []
+  [{:delim [" "]}]                5             [0 0]       [\*]        [{:delim [" "]}]
+  [{:delim "-"}]                  5             [0 0]       [\*]        [{:delim "-"}]
+  [{:delim [:F]}]                 5             [0 0]       [\*]        [{:delim ["*****"]}]
+  [{:delim [:F]}]                 5             [1 1]       [\*]        [{:delim ["***"]}]
+  [{:delim [" "]} {:delim [:F]}]  5             [0 0]       [\*]        [{:delim [" "]} {:delim ["****"]}]
+  [{:delim [" " :F]}]             5             [0 0]       [\*]        [{:delim [" " "****"]}]
+  [{:delim [" " :F]}]             5             [1 1]       [\*]        [{:delim [" " "**"]}]
+  [{:delim [:F " "]}]             5             [0 0]       [\*]        [{:delim ["****" " "]}]
+  [{:delim [:F " "]}]             5             [1 1]       [\* \*]     [{:delim ["**" " "]}]
+  [{:delim [:F " " :F]}]          5             [1 1]       [\* \*]     [{:delim ["*" " " "*"]}]
+  [{:delim [:F " " :F]}]          9             [1 1]       [\* \*]     [{:delim ["***" " " "***"]}]
+  [{:delim [:F " " :F]}]          10            [1 1]       [\* \*]     [{:delim ["***" " " "****"]}]
   )
 
 (tabular
   (fact "Should correctly lay out simple expressions"
     (layout
         ?rows
-        ?layout-string
-        {:width ?width :align-char ?align-c :split-char ?split-c}) => ?expected-result)
-        ?rows        ?align-c ?split-c ?layout-string  ?width ?expected-result
+        {:col-layout ?col-layout :width ?width :align-char ?align-c :split-char ?split-c}) => ?expected-result)
+        ?rows        ?align-c ?split-c ?col-layout  ?width ?expected-result
         "a b"        \space   \space   "[L] [R]"       20     ["a b"]
         "a b"        \space   \space   "[L] [R]"        0     ["a b"]
         "a b"        \space   \space   "[R] [L]"       20     ["a b"]
