@@ -51,10 +51,10 @@
   ; ├───────────────┼───────────────┼───────┤ ← 3
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
-  {:col-layout   "│ [L] │ [C] │ [R] │"
-   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when not-last-row?]
-                ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
+  {:layout {:cols   "│ [L] │ [C] │ [R] │"
+            :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
+                   ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
+                   ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}}
 
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐ ← 0
@@ -63,7 +63,7 @@
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
-  {:col-layout   "│ [L] │ [C] │ [R] │"
+  {:col-layout "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
                 ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]}
 
@@ -75,7 +75,7 @@
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
-  {:col-layout   "│ [L] │f[C]f│ [R] │"
+  {:col-layout "│ [L] │f[C]f│ [R] │"
    :row-layout [["┌─[─]─┬f[─]f┬─[─]─┐" :apply-when first-row? :fill-char \-]
                 ["└─[─]─┴f[─]f┴─[─]─┘" :apply-when last-row?]]}
 
@@ -87,7 +87,7 @@
   ; │ zebra stripes  are neat          $1 │
   ; └─────────────────────────────────────┘ ← 4
 
-  {:col-layout   "│ [L]f[C]f[R] │"
+  {:col-layout "│ [L]f[C]f[R] │"
    :row-layout [["┌─[─]f[─]f[─]─┐" :apply-when first-row? :fill-chars [\- \-]]
                 ["└─[─]f[─]f[─]─┘" :apply-when last-row?]]}
 
@@ -100,7 +100,7 @@
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
 
-  {:col-layout   "│ [L] │ [C] │ [R] │"
+  {:col-layout "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when second-row?]
                 ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
@@ -117,7 +117,7 @@
   ; ├───────────────┼───────────────┼───────┤ ← 4
   ; │ zebra stripes │   are neat    │    $1 │
   ; └───────────────┴───────────────┴───────┘
-  {:col-layout   "│ [L] │ [C] │ [R] │"
+  {:col-layout "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
                 ["┝━[━]━┿━[━]━┿━[━]━┥" :apply-when (every-pred interior-row? even-row?)]
                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when (every-pred not-last-row? odd-row?)]
@@ -129,7 +129,7 @@
   ; | col 2 is      | centered      |   $12 |
   ; | zebra stripes | are neat      |    $1 |
 
-  {:col-layout   "│ [L] │ [C] │ [R] │"
+  {:col-layout "│ [L] │ [C] │ [R] │"
    :row-layout [["| [-] |:[-]:| [-]:|" :apply-when second-row?]]}
 
   ; | Tables        | Are           | Cool  |
@@ -138,9 +138,7 @@
   ; | col 2 is      | centered      |   $12 |
   ; | zebra stripes | are neat      |    $1 |
 
-  {:col-layout   "│ [L] │ f[C]f │ [R] │"
+  {:col-layout "│ [L] │ f[C]f │ [R] │"
    :row-layout [["| [-] |:f[-]f:| [-]:|" :apply-when second-row? :fill-char \-]]}
-
-
 
   )
