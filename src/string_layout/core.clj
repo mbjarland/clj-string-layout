@@ -3,11 +3,30 @@
             [clojure.string :refer [split join]]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]
-            [com.rpl.specter :refer [select pred= ALL FIRST transform
-                                     multi-transform multi-path]]))
+            [com.rpl.specter :refer [select pred= pred ALL FIRST transform
+                                     multi-transform multi-path ]]))
 
-(defn count-by [pred coll]
-  (count (keep pred coll)))
+(def default-layout
+  {
+   :align-char \space
+   :fill-char  \space
+   :split-char \space
+   :width      80
+   :raw?       false
+   ;:col-layout "│ [L] │ [C] │ [R] │"
+   ;:row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
+   ;             ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]
+   })
+
+
+(defn first-row? [[idx _]] (zero? idx))
+(def not-first-row? (complement first-row?))
+(defn second-row? [[idx _]] (= idx 1))
+
+(defn last-row? [[idx cnt]] (= idx cnt))
+(defn interior-row? [[idx cnt]] (not (or (zero? idx) (= idx cnt))))
+
+(defn all-rows? [[_ _]] true)
 
 (defn make-col-layout-parser []
   (insta/parser
@@ -116,7 +135,7 @@
   "add empty elements as padding to rows with too few elements. If the
   rows argument is a string, also split it using split-char as delimiter"
   [rows col-layout split-char]
-  (let [align-count (count-by :align col-layout)
+  (let [align-count (count (keep :align col-layout))
         p           (re-pattern (str \\ split-char))
         r           (if (instance? String rows) (mapv #(split % p) (split rows #"\n"))
                                                 rows)]
@@ -136,36 +155,16 @@
         :L (fmt "~v,,,vA")
         :R (fmt "~v,,,v@A")
         :C (fmt "~v,,,v:@<~A~>")
-        ;:W (fmt (str "~{~<~%~1,"  ":;~A~> ~}"))
+        ;:W (fmt (str "~{~<~%~1," width ":;~A~> ~}"))
         :else (throw (IllegalArgumentException.
                        (str "Unsupported alignment operation '" (nth aligns col)
                             "' encountered at align index: " col " in " aligns)))))))
 
-(def default-layout
-  {
-   :align-char \space
-   :fill-char  \space
-   :split-char \space
-   :width      80
-   :raw?       false
-   ;:col-layout "│ [L] │ [C] │ [R] │"
-   ;:row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
-   ;             ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]
-   })
 
 (defn merge-default-layout [layout]
   (let [{:keys [align-char]} layout
         layout (transform [:fill-char] (fnil identity align-char) layout)]
     (merge default-layout layout)))
-
-(defn first-row? [[idx _]] (zero? idx))
-(def not-first-row? (complement first-row?))
-(defn second-row? [[idx _]] (= idx 1))
-
-(defn last-row? [[idx cnt]] (= idx cnt))
-(defn interior-row? [[idx cnt]] (not (or (zero? idx) (= idx cnt))))
-
-(defn all-rows? [[_ _]] true)
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
   (let [fill-count (count (select [ALL :delim ALL (pred= :F)] row-layout))]
@@ -274,7 +273,7 @@
         col-layout    (parse-layout-string false (get-in layout-config [:layout :cols]))
         rows          (normalize-rows rows col-layout split-char)
         col-widths    (calculate-col-widths rows)
-        fill-chars    (repeat (count col-widths) fill-char) ;TODO: WRONG!!
+        fill-chars    (repeatedly (fn [] fill-char))     ;TODO: WRONG!!
         col-layout    (expand-fills col-layout width col-widths fill-chars)
         layout-row    (make-col-layout-fn col-layout col-widths align-char)
         result        (mapv layout-row rows)
