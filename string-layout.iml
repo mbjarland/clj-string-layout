@@ -18,6 +18,9 @@
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.4" level="project" />
     <orderEntry type="library" name="Leiningen: colorize:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.rpl/specter:1.0.5" level="project" />
+    <orderEntry type="library" name="Leiningen: com.taoensso/encore:2.92.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.taoensso/truss:1.5.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.taoensso/tufte:1.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Leiningen: environ:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: fipp:0.6.10" level="project" />
@@ -41,6 +44,7 @@
     <orderEntry type="library" name="Leiningen: org.clojure/tools.macro:0.1.5" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.namespace:0.2.11" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.nrepl:0.2.12" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/tools.reader:0.10.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.tcrawley/dynapath:1.0.0" level="project" />
     <orderEntry type="library" name="Leiningen: potemkin:0.4.3" level="project" />
     <orderEntry type="library" name="Leiningen: riddley:0.1.12" level="project" />
