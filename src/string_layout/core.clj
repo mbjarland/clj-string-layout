@@ -4,45 +4,74 @@
             [instaparse.core :as insta]
             [instaparse.failure :as fail]
             [com.rpl.specter :refer [select pred= pred ALL FIRST transform
-                                     multi-transform multi-path ]]))
+                                     multi-transform multi-path]]
+            [taoensso.tufte :refer [p profiled profile]]))
 
-(def default-layout
+; row layout predicates
+(defn first? [[idx _]] (zero? idx))
+(def not-first? (complement first-row?))
+(defn second? [[idx _]] (= idx 1))
+(defn last? [[idx last]] (= idx last))
+(def not-last? (complement last?))
+(defn interior? [[idx last]] (not (or (zero? idx) (= idx last))))
+(def not-interior? (complement interior?))
+(defn always? [[_ _]] true)
+
+(defn interior-col? [[idx last]] (not (or (zero? idx) (= idx last))))
+
+(def default-layout-config
   {
-   :align-char \space
-   :fill-char  \space
-   :split-char \space
-   :width      80
-   :raw?       false
-   ;:col-layout "│ [L] │ [C] │ [R] │"
-   ;:row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
-   ;             ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]
-   })
+   :align-char      \space
+   :fill-char       \space
+   :word-split-char \space
+   :row-split-char  \newline
+   :width           80
+   :raw?            false})
+
+(comment
+  (def ascii-box-layout
+    {:layout {:cols ["│ [L] │ [L] │ [L] │" :apply-when [interior-col?]]
+              :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
+                     ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
+                     ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}})
+
+  (def ascii-box-layout
+    {:layout {:cols ["│{ [C] │} [C] │" :apply-when [interior-col?]]
+              :rows [["┌{─[─]─┬}─[─]─┐" :apply-when first-row?]
+                     ["├{─[─]─┼}─[─]─┤" :apply-when interior-row?]
+                     ["└{─[─]─┴}─[─]─┘" :apply-when last-row?]]}})
 
 
-(defn first-row? [[idx _]] (zero? idx))
-(def not-first-row? (complement first-row?))
-(defn second-row? [[idx _]] (= idx 1))
+  (def html-layout
+    {:layout {:cols "<tr>{<td>[L]</td>}</tr>" :apply-when [interior-col?]
+              :rows [["<table>" :apply-when first-row?]
+                     ["</table" :apply-when last-row?]]}})
 
-(defn last-row? [[idx cnt]] (= idx cnt))
-(defn interior-row? [[idx cnt]] (not (or (zero? idx) (= idx cnt))))
+  (defn markdown-layout
+    {:layout {:cols ["|{ [L] |}"]
+              :rows [["|{:[-] |}" :apply-when second-row?]]}})
 
-(defn all-rows? [[_ _]] true)
+  )
 
-(defn make-col-layout-parser []
-  (insta/parser
-    "layout   = delim (align delim)+
-     delim    = (fill | padding)*
-     fill     = ('F' | 'f')
-     padding  = #'[^\\[\\]fF]*'
-     align    = <'['> ('L' | 'l' | 'C' | 'c' | 'R' | 'r') <']'>"))
+; TODO: memoize
+(def make-col-layout-parser (memoize (fn []
+                              (insta/parser
+                                "layout   = (align | delim | repeat)+
+                                 repeat   = <'{'> (align | delim)+ <'}'>
+                                 delim    = (fill | padding)+
+                                 fill     = ('F')
+                                 padding  = #'[^\\[\\]{}fF]*'
+                                 align    = <'['> ('L' | 'C' | 'R' | 'T') <']'>"
+                                :string-ci true))))
 
-(defn make-row-layout-parser []
-  (insta/parser
-    "layout   = delim (align delim)+
-     delim    = (fill | padding)*
-     fill     = ('F' | 'f')
-     padding  = #'[^\\[\\]fF]*'
-     align    = <'['> #'[^]]' <']'>"))
+(def make-row-layout-parser (memoize (fn []
+                              (insta/parser
+                                "layout   = (align | delim | repeat)+
+                                 repeat   = <'{'> (align | delim)+ <'}'>\n                                          delim    = (fill | padding)+
+                                 fill     = ('F')
+                                 padding  = #'[^\\[\\]{}fF]*'
+                                 align    = <'['> #'[^]]' <']'>"
+                                :string-ci true))))
 
 ;;(def make-col-layout-parser (memoize make-col-layout-parser-internal))
 ;;(def make-row-layout-parser (memoize make-row-layout-parser-internal))
@@ -54,6 +83,7 @@
     {:layout  vector
      :fill    (fn [_] :F)
      :padding identity
+     :repeat  (fn [& r] {:repeat (into [] r)})
      :delim   (fn [& r] {:delim (into [] r)})
      :align   (fn [a]
                 {:align
@@ -74,6 +104,25 @@
     (if (insta/failure? parsed)
       (throw-parse-error parsed layout-string)
       (transform-parsed parsed row-layout?))))
+
+
+(comment
+  (def example-layout ["│{ [C] │} [C] │" :apply-when [interior-col?]])
+
+  (def parsed-goal
+    [{:delim ["│"]}
+     {:repeat [{:delim [" "]}
+               {:align :C}
+               {:delim [" │"]}]}
+     {:delim [" "]}
+     {:align :C}
+     {:delim [" │"]}])
+  )
+
+(defn expand-repeats [col-count layout-specs]
+
+  )
+
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
@@ -108,7 +157,7 @@
 (defn expand-fills
   "expands the :F formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
-  [layout width col-widths fill-chars]
+  [width col-widths fill-chars layout]
   (let [f-path [ALL :delim ALL (pred= :F)]
         fs     (select f-path layout)
         ss     (select [ALL :delim ALL string?] layout)]
@@ -134,12 +183,14 @@
 (defn normalize-rows
   "add empty elements as padding to rows with too few elements. If the
   rows argument is a string, also split it using split-char as delimiter"
-  [rows col-layout split-char]
-  (let [align-count (count (keep :align col-layout))
-        p           (re-pattern (str \\ split-char))
-        r           (if (instance? String rows) (mapv #(split % p) (split rows #"\n"))
-                                                rows)]
-    (normalize-row-lens align-count r)))
+  [layout-config rows]
+  (let [wp       (re-pattern (str \\ (:word-split-char layout-config)))
+        rp       (re-pattern (str \\ (:row-split-char layout-config)))
+        r        (if (instance? String rows) (mapv #(split % wp)
+                                                   (split rows rp))
+                                             rows)
+        max-cols (apply max (map count r))]
+    (normalize-row-lens max-cols r)))
 
 (defn calculate-col-widths [rows]
   (apply mapv #(apply max (map count %&)) rows))
@@ -161,10 +212,10 @@
                             "' encountered at align index: " col " in " aligns)))))))
 
 
-(defn merge-default-layout [layout]
-  (let [{:keys [align-char]} layout
-        layout (transform [:fill-char] (fnil identity align-char) layout)]
-    (merge default-layout layout)))
+(defn merge-default-layout [layout-config]
+  (let [{:keys [align-char]} layout-config
+        layout (transform [:fill-char] (fnil identity align-char) layout-config)]
+    (merge default-layout-config layout)))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
   (let [fill-count (count (select [ALL :delim ALL (pred= :F)] row-layout))]
@@ -175,10 +226,10 @@
 
 (defn expand-row-spec-fills [layout-config col-widths row-spec]
   (let [{:keys [width fill-char align-char]} layout-config
-        {:keys [row-layout fill-char fill-chars] :or {fill-char fill-char}} row-spec
-        fill-chars (row-fill-chars row-layout fill-char fill-chars align-char)]
-    (transform [:row-layout]
-               #(expand-fills % width col-widths fill-chars)
+        {:keys [layout fill-char fill-chars] :or {fill-char fill-char}} row-spec
+        fill-chars (row-fill-chars layout fill-char fill-chars align-char)]
+    (transform [:layout]
+               #(expand-fills width col-widths fill-chars %)
                row-spec)))
 
 (defn realize-row-layout [col-widths row-layout]
@@ -191,13 +242,9 @@
       [[] 0]
       row-layout)))
 
-
-;["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first?]
-;->
-;{:row-layout "┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first?}
 (defn row-spec->map [row-spec]
   (let [[row-layout & rest] row-spec]
-    (merge {:row-layout row-layout} (apply hash-map rest))))
+    (merge {:layout row-layout} (apply hash-map rest))))
 
 (defn realize-row-specs [layout-config col-widths]
   (let [parse   (partial parse-layout-string true)
@@ -228,84 +275,149 @@
 ; ├───────────────┼───────────────┼───────┤ ← 1
 ; │ col 3 is      │ right-aligned │ $1600 │
 ; └───────────────┴───────────────┴───────┘ ← 2 (n)
-(defn apply-row-layout [layout-config col-widths rows]
-  (let [realized  (realize-row-specs layout-config col-widths)
-        row-specs (select [:layout :rows ALL] realized)
+(defn apply-row-layout [layout-config rows]
+  (let [row-specs (select [:layout :rows ALL] layout-config)
         cnt       (max 1 (count rows))]
     (reduce
       (fn [a idx]
-        (let [matching (fn [{:keys [row-layout apply-when] :as all}]
-                         (when (apply-when [idx cnt]) row-layout))
+        (let [matching (fn [{:keys [layout apply-when]}]
+                         (when (apply-when [idx cnt]) layout))
               new-a    (into [] (concat a (keep matching row-specs)))]
           (if (= idx cnt) new-a
                           (conj new-a (nth rows idx)))))
       []
       (range (inc cnt)))))
 
-(defn make-col-layout-fn [col-layout col-widths align-char]
-  (let [delims (keep :delim col-layout)
-        align  (partial align-word col-layout col-widths align-char)]
-    (fn [row] (str (join (interleave (map join delims)
-                                     (map-indexed #(align %2 %1) row)))
-                   (join (last delims))))))
 
-; TODO: read up on mig layout, change precondition
-; TODO: fix parsing failure handling
-(defn layout
-  "Lays out rows of text in columns. The first argument can either
-  be a string with spaces between 'words' and newlines between each
-  row _or_ a vector of vector of strings representing the rows
-  and the words (columns) within the rows. The second
-  argument is a layout string on the form ' [L]f[R] [R] ' and
-  the third argument is a layout config on the form
-  {:width 80 :align-char \\space :raw? false} where width is the
-  total width of the row (any 'f' specifiers between columns will
-  fill the row out to this width), the align-char is the character to
-  use when filling to width, and raw? (default false) will, if true,
-  return rows as vectors of indented columns and column spacings instead of
-  returning rows as already joined strings. The raw format can be useful
-  if you need to do some post processing like adding ansi colors to
-  certain columns before outputting to terminal etc."
-  [rows layout-config]
-  {:pre [(pos? (count rows))]}                              ;TODO: replace predicate with spec
-  (let [layout-config (merge-default-layout layout-config)
-        {:keys [align-char fill-char split-char width raw?]} layout-config
-        col-layout    (parse-layout-string false (get-in layout-config [:layout :cols]))
-        rows          (normalize-rows rows col-layout split-char)
-        col-widths    (calculate-col-widths rows)
-        fill-chars    (repeatedly (fn [] fill-char))     ;TODO: WRONG!!
-        col-layout    (expand-fills col-layout width col-widths fill-chars)
-        layout-row    (make-col-layout-fn col-layout col-widths align-char)
-        result        (mapv layout-row rows)
-        result        (if (get-in layout-config [:layout :rows])
-                        (apply-row-layout layout-config col-widths result)
-                        result)]
-    (if raw? result (mapv join result))))
+(defn throw-invalid-grouping-exception []
+  (throw (RuntimeException. "invalid grouping")))
 
-(comment
+(defn partition-layout [layout]
+  (let [parts (partition-by #(contains? % :repeat) layout)
+        part  (fn [n] (into [] (nth parts n)))
+        types (map (comp #(contains? % :repeat) first) parts)]
+    (condp = types
+      [true] [[] (part 0) []]
+      [true false] [[] (part 0) (part 1)]
+      [false true] [(part 0) (part 1) []]
+      [false true false] parts
+      (throw-invalid-grouping-exception))))
 
-  (println
-    (join \newline
-          (layout
-            (str "alice, why is a raven" \newline
-                 "like a writing desk?" \newline
-                 "Have you guessed the riddle" \newline
-                 "yet?")
-            {:layout {:cols   "│ [L] │ [C] │ [R] │ [R] │ [C] │"
-                      :rows [["┌─[─]─┬─[─]─┬─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                             ["├─[─]─┼─[─]─┼─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
-                             ["└─[─]─┴─[─]─┴─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}})))
+(defn throw-no-matching-pred-exception [idx last]
+  (throw (RuntimeException. (str "no matching predicate found for index "
+                                 idx " (last col idx = " last ")"))))
 
-  (println
-    (join \newline
-          (layout
-            (str "hdr1 hdr2 hdr3 hdr4 hdr5" \newline
-                 "alice, why is a raven" \newline
-                 "like a writing desk?" \newline
-                 "Have you guessed the riddle" \newline
-                 "yet?")
-            {:layout    {:cols   "| [L] | [C] | [R] | [R] | [C] |"
-                         :rows [["|:[-] |:[-]:| [-]:| [-]:|:[-]:|" :apply-when second-row?]]}})))
+(defn expand-repeating-groups [col-count preds layout]
+  (if (not-any? :repeat layout)
+    layout
+    (let [[lhs repeats rhs] (partition-layout layout)
+          count-aligns (fn [c] (count (keep :align c)))
+          repeat-range (range (count-aligns lhs)
+                              (- col-count (count-aligns rhs)))
+          last-col     (dec col-count)
+          f            (fn [a i]
+                         (let [matching-idxs (keep-indexed
+                                               (fn [pi p] (when (p [i last-col]) pi))
+                                               preds)
+                               matching-reps (map #(:repeat (nth repeats %)) matching-idxs)
+                               addition      (reduce concat matching-reps)
+                               add-count     (count-aligns addition)]
+                           (if (zero? add-count)
+                             (throw-no-matching-pred-exception i last-col)
+                             (concat a addition))))]
+      (into [] (concat (reduce f lhs repeat-range) rhs)))))
 
-  )
+(defn transform-layout-config [layout-config col-widths]
+  (let [mappify       (fn [layout rest] (merge {:layout layout} (apply hash-map rest)))
+        parse-fn      (fn [r? [ls & r]] (mappify (parse-layout-string r? ls) r))
+        layout-config (->> layout-config
+                           (transform [:layout (pred :cols) :cols] (partial parse-fn false))
+                           (transform [:layout (pred :rows) :rows ALL] (partial parse-fn true)))
+        fill-chars    (repeat (:fill-char layout-config))
+        col-fill-fn   (partial expand-fills (:width layout-config) col-widths fill-chars)
+        row-fill-fn   (partial expand-row-spec-fills layout-config col-widths)
+        col-preds     (get-in layout-config [:layout :cols :apply-when])
+        groups-fn     (partial expand-repeating-groups (count col-widths) col-preds)
+        realize-fn    (partial realize-row-layout col-widths)]
+    (->> layout-config
+         (transform [:layout (pred :cols) :cols :layout] col-fill-fn)
+         (transform [:layout (pred :rows) :rows ALL] row-fill-fn)
+         (transform [:layout (pred :cols) :cols :layout] groups-fn)
+         (transform [:layout (pred :rows) :rows ALL :layout] groups-fn)
+         (transform [:layout (pred :rows) :rows ALL :layout] realize-fn))))
+
+(defn make-col-layout-fn [layout-config col-widths]
+  (let [align-char (:align-char layout-config)
+        col-layout (get-in layout-config [:layout :cols :layout])
+        align      (partial align-word col-layout col-widths align-char)]
+    (fn [row]
+      (first
+        (reduce
+          (fn [[a ci] l]
+            (cond
+              (:align l) [(conj a (align (nth row ci) ci)) (inc ci)]
+              (:delim l) [(conj a (join (:delim l))) ci]))
+          [[] 0]
+          col-layout)))))
+
+    ;(fn [row] (str (join (interleave (map join delims)
+    ;                                 (map-indexed #(align %2 %1) row)))
+    ;               (join (last delims))))))
+
+    ; TODO: read up on mig layout, change precondition
+    ; TODO: fix parsing failure handling
+    (defn layout
+      "Lays out rows of text in columns. The first argument can either
+      be a string with spaces between 'words' and newlines between each
+      row _or_ a vector of vector of strings representing the rows
+      and the words (columns) within the rows. The second
+      argument is a layout string on the form ' [L]f[R] [R] ' and
+      the third argument is a layout config on the form
+      {:width 80 :align-char \\space :raw? false} where width is the
+      total width of the row (any 'f' specifiers between columns will
+      fill the row out to this width), the align-char is the character to
+      use when filling to width, and raw? (default false) will, if true,
+      return rows as vectors of indented columns and column spacings instead of
+      returning rows as already joined strings. The raw format can be useful
+      if you need to do some post processing like adding ansi colors to
+      certain columns before outputting to terminal etc."
+      [rows layout-config]
+      {:pre [(pos? (count rows))]}                          ;TODO: replace predicate with spec
+      (let [layout-config (merge-default-layout layout-config)
+            rows          (normalize-rows layout-config rows)
+            col-widths    (calculate-col-widths rows)
+            layout-config (transform-layout-config layout-config col-widths)
+            layout-cols   (make-col-layout-fn layout-config col-widths)
+            result        (mapv layout-cols rows)
+            result        (if (get-in layout-config [:layout :rows])
+                            (apply-row-layout layout-config result)
+                            result)]
+        (if (:raw? layout-config) result (mapv join result))))
+
+    (comment
+
+      (println
+        (join \newline
+              (layout
+                (str "alice, why is a raven" \newline
+                     "like a writing desk?" \newline
+                     "Have you guessed the riddle" \newline
+                     "yet?")
+                {:layout {:cols "│ [L] │ [C] │ [R] │ [R] │ [C] │"
+                          :rows [["┌─[─]─┬─[─]─┬─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
+                                 ["├─[─]─┼─[─]─┼─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
+                                 ["└─[─]─┴─[─]─┴─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}})))
+
+      (println
+        (join \newline
+              (layout
+                (str "hdr1 hdr2 hdr3 hdr4 hdr5" \newline
+                     "alice, why is a raven" \newline
+                     "like a writing desk?" \newline
+                     "Have you guessed the riddle" \newline
+                     "yet?")
+                {:layout {:cols "| [L] | [C] | [R] | [R] | [C] |"
+                          :rows [["|:[-] |:[-]:| [-]:| [-]:|:[-]:|" :apply-when second-row?]]}})))
+
+      )
 
