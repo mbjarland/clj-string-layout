@@ -28,30 +28,36 @@
    :width           80
    :raw?            false})
 
-(comment
-  (def ascii-box-layout
-    {:layout {:cols ["│ [L] │ [L] │ [L] │" :apply-when [interior-col?]]
-              :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                     ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
-                     ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}})
+(def ascii-box-layout-left
+  {:layout {:cols  ["│{ [L] │} [L] │" :apply-when [always?]]
+            :rows [["┌{─[─]─┬}─[─]─┐" :apply-when first?]
+                   ["├{─[─]─┼}─[─]─┤" :apply-when interior?]
+                   ["└{─[─]─┴}─[─]─┘" :apply-when last?]]}})
+(def ascii-box-layout-center
+  {:layout {:cols  ["│{ [C] │} [C] │" :apply-when [always?]]
+            :rows [["┌{─[─]─┬}─[─]─┐" :apply-when first?]
+                   ["├{─[─]─┼}─[─]─┤" :apply-when interior?]
+                   ["└{─[─]─┴}─[─]─┘" :apply-when last?]]}})
+(def ascii-box-layout-right
+  {:layout {:cols  ["│{ [R] │} [R] │" :apply-when [always?]]
+            :rows [["┌{─[─]─┬}─[─]─┐" :apply-when first?]
+                   ["├{─[─]─┼}─[─]─┤" :apply-when interior?]
+                   ["└{─[─]─┴}─[─]─┘" :apply-when last?]]}})
 
-  (def ascii-box-layout
-    {:layout {:cols ["│{ [C] │} [C] │" :apply-when [interior-col?]]
-              :rows [["┌{─[─]─┬}─[─]─┐" :apply-when first-row?]
-                     ["├{─[─]─┼}─[─]─┤" :apply-when interior-row?]
-                     ["└{─[─]─┴}─[─]─┘" :apply-when last-row?]]}})
+(def markdown-layout-left
+  {:layout {:cols ["|{ [L] |}"  :apply-when [always?]]
+            :rows [["|{:[-] |}" :apply-when second?]]}})
+(def markdown-layout-center
+  {:layout {:cols ["|{ [C] |}"  :apply-when [always?]]
+            :rows [["|{:[-]:|}" :apply-when second?]]}})
+(def markdown-layout-right
+  {:layout {:cols ["|{ [R] |}"  :apply-when [always?]]
+            :rows [["|{ [-]:|}" :apply-when second?]]}})
 
-
-  (def html-layout
-    {:layout {:cols "<tr>{<td>[L]</td>}</tr>" :apply-when [interior-col?]
-              :rows [["<table>" :apply-when first-row?]
-                     ["</table" :apply-when last-row?]]}})
-
-  (defn markdown-layout
-    {:layout {:cols ["|{ [L] |}"]
-              :rows [["|{:[-] |}" :apply-when second-row?]]}})
-
-  )
+(def html-layout
+  {:layout {:cols ["  <tr>{<td>[L]</td>}</tr>" :apply-when [always?]]
+            :rows [["<table>" :apply-when first?]
+                   ["</table" :apply-when last?]]}})
 
 ; TODO: memoize
 (def make-col-layout-parser (memoize (fn []
@@ -72,9 +78,6 @@
                                  padding  = #'[^\\[\\]{}fF]*'
                                  align    = <'['> #'[^]]' <']'>"
                                 :string-ci true))))
-
-;;(def make-col-layout-parser (memoize make-col-layout-parser-internal))
-;;(def make-row-layout-parser (memoize make-row-layout-parser-internal))
 
 (defn transform-parsed [p row-layout?]
   "transforms the parse tree returned from instaparse
@@ -104,25 +107,6 @@
     (if (insta/failure? parsed)
       (throw-parse-error parsed layout-string)
       (transform-parsed parsed row-layout?))))
-
-
-(comment
-  (def example-layout ["│{ [C] │} [C] │" :apply-when [interior-col?]])
-
-  (def parsed-goal
-    [{:delim ["│"]}
-     {:repeat [{:delim [" "]}
-               {:align :C}
-               {:delim [" │"]}]}
-     {:delim [" "]}
-     {:align :C}
-     {:delim [" │"]}])
-  )
-
-(defn expand-repeats [col-count layout-specs]
-
-  )
-
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
@@ -211,7 +195,6 @@
                        (str "Unsupported alignment operation '" (nth aligns col)
                             "' encountered at align index: " col " in " aligns)))))))
 
-
 (defn merge-default-layout [layout-config]
   (let [{:keys [align-char]} layout-config
         layout (transform [:fill-char] (fnil identity align-char) layout-config)]
@@ -242,32 +225,6 @@
       [[] 0]
       row-layout)))
 
-(defn row-spec->map [row-spec]
-  (let [[row-layout & rest] row-spec]
-    (merge {:layout row-layout} (apply hash-map rest))))
-
-(defn realize-row-specs [layout-config col-widths]
-  (let [parse   (partial parse-layout-string true)
-        expand  (partial expand-row-spec-fills layout-config col-widths)
-        realize (partial realize-row-layout col-widths)]
-    (->> layout-config
-         (transform [:layout :rows ALL] row-spec->map)
-         (transform [:layout :rows ALL :row-layout] parse)
-         (transform [:layout :rows ALL] expand)
-         (transform [:layout :rows ALL :row-layout] realize))))
-
-(comment
-  (def my-layout-config
-    {:width     20
-     :fill-char \*
-     :layout    {:cols "│ [L] │ [C] │ [R] │"
-                 :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                        ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
-                        ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}})
-  (realize-row-specs my-layout-config [5 5 5])
-
-  )
-
 ; data size 2 (..n)
 ; ↓               ↓               ↓       ↓
 ; ┌───────────────┬───────────────┬───────┐ ← 0
@@ -275,7 +232,7 @@
 ; ├───────────────┼───────────────┼───────┤ ← 1
 ; │ col 3 is      │ right-aligned │ $1600 │
 ; └───────────────┴───────────────┴───────┘ ← 2 (n)
-(defn apply-row-layout [layout-config rows]
+(defn apply-row-layouts [layout-config rows]
   (let [row-specs (select [:layout :rows ALL] layout-config)
         cnt       (max 1 (count rows))]
     (reduce
@@ -290,7 +247,7 @@
 
 
 (defn throw-invalid-grouping-exception []
-  (throw (RuntimeException. "invalid grouping")))
+  (throw (RuntimeException. "invalid grouping xxxx TODO: expound...")))
 
 (defn partition-layout [layout]
   (let [parts (partition-by #(contains? % :repeat) layout)
@@ -305,7 +262,7 @@
 
 (defn throw-no-matching-pred-exception [idx last]
   (throw (RuntimeException. (str "no matching predicate found for index "
-                                 idx " (last col idx = " last ")"))))
+                                 idx " (last index = " last ")"))))
 
 (defn expand-repeating-groups [col-count preds layout]
   (if (not-any? :repeat layout)
@@ -334,9 +291,9 @@
                            (transform [:layout (pred :cols) :cols] (partial parse-fn false))
                            (transform [:layout (pred :rows) :rows ALL] (partial parse-fn true)))
         fill-chars    (repeat (:fill-char layout-config))
+        col-preds     (get-in layout-config [:layout :cols :apply-when])
         col-fill-fn   (partial expand-fills (:width layout-config) col-widths fill-chars)
         row-fill-fn   (partial expand-row-spec-fills layout-config col-widths)
-        col-preds     (get-in layout-config [:layout :cols :apply-when])
         groups-fn     (partial expand-repeating-groups (count col-widths) col-preds)
         realize-fn    (partial realize-row-layout col-widths)]
     (->> layout-config
@@ -390,7 +347,7 @@
             layout-cols   (make-col-layout-fn layout-config col-widths)
             result        (mapv layout-cols rows)
             result        (if (get-in layout-config [:layout :rows])
-                            (apply-row-layout layout-config result)
+                            (apply-row-layouts layout-config result)
                             result)]
         (if (:raw? layout-config) result (mapv join result))))
 
