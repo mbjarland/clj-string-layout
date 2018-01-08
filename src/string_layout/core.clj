@@ -33,6 +33,7 @@
   (insta/parser
     "layout = delim? ((align | repeat) delim)*
      repeat = <'{'> delim? (align delim?)* <'}'>
+     delim    = (fill | padding)+
      fill     = ('F')
      padding  = #'[^\\[\\]{}fF]*'
      align    = <'['> #'[^]]' <']'>"
@@ -61,8 +62,8 @@
                     {:failure (insta/get-failure parsed)}))))
 
 (defn parse-layout-string [row-layout? layout-string]
-  (let [parser (if row-layout? (make-row-layout-parser)
-                               (make-col-layout-parser))
+  (let [parser (if row-layout? (make-row-layout-parser-m)
+                               (make-col-layout-parser-m))
         parsed (parser layout-string)]
     (if (insta/failure? parsed)
       (throw-parse-error parsed layout-string)
@@ -102,7 +103,6 @@
   "expands the :F formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout]
-  (prn "===>" layout)
   (let [f-path [ALL :delim ALL (pred= :F)]
         fs     (select f-path layout)
         ss     (select [ALL :delim ALL string?] layout)]
@@ -158,9 +158,9 @@
                             "' encountered at align index: " col " in " aligns)))))))
 
 (defn merge-default-layout [layout-config]
-  (let [{:keys [align-char]} layout-config
-        layout (transform [:fill-char] (fnil identity align-char) layout-config)]
-    (merge default-layout-config layout)))
+  (let [layout-config (merge default-layout-config layout-config)
+        {:keys [align-char]} layout-config]
+        (transform [:fill-char] (fnil identity align-char) layout-config)))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
   (let [fill-count (count (select [ALL :delim ALL (pred= :F)] row-layout))]
@@ -252,7 +252,6 @@
         layout-config (->> layout-config
                            (transform [:layout (pred :cols) :cols] (partial parse-fn false))
                            (transform [:layout (pred :rows) :rows ALL] (partial parse-fn true)))
-        _             (prn layout-config)
         fill-chars    (repeat (:fill-char layout-config))
         col-preds     (get-in layout-config [:layout :cols :apply-for])
         col-fill-fn   (partial expand-fills (:width layout-config) col-widths fill-chars)
@@ -262,9 +261,6 @@
     (->> layout-config
          (transform [:layout (pred :cols) :cols :layout] groups-fn)
          (transform [:layout (pred :rows) :rows ALL :layout] groups-fn)
-         ((fn [lc]
-            (prn "--> " lc)
-            lc))
          (transform [:layout (pred :cols) :cols :layout] col-fill-fn)
          (transform [:layout (pred :rows) :rows ALL] row-fill-fn)
          (transform [:layout (pred :rows) :rows ALL :layout] realize-fn))))
@@ -311,7 +307,7 @@
   (let [layout-config (merge-default-layout layout-config)
         rows          (normalize-rows layout-config rows)
         col-widths    (calculate-col-widths rows)
-        layout-config (transform-layout-config layout-config col-widths)
+        layout-config (transform-layout-config-m layout-config col-widths)
         layout-cols   (make-col-layout-fn layout-config col-widths)
         result        (mapv layout-cols rows)
         result        (if (get-in layout-config [:layout :rows])
