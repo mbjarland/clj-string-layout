@@ -52,9 +52,9 @@
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
   {:layout {:cols   "│ [L] │ [C] │ [R] │"
-            :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                   ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when interior-row?]
-                   ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}}
+            :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-for first-row?]
+                   ["├─[─]─┼─[─]─┼─[─]─┤" :apply-for interior-row?]
+                   ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for last-row?]]}}
 
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐ ← 0
@@ -64,8 +64,8 @@
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
   {:col-layout "│ [L] │ [C] │ [R] │"
-   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-when first-row?
-                ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-when last-row?]}
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-for first-row?
+                ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-for last-row?]}
 
 
   ; ↓               ↓               ↓       ↓
@@ -76,8 +76,8 @@
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
   {:col-layout "│ [L] │f[C]f│ [R] │"
-   :row-layout [["┌─[─]─┬f[─]f┬─[─]─┐" :apply-when first-row? :fill-char \-]
-                ["└─[─]─┴f[─]f┴─[─]─┘" :apply-when last-row?]]}
+   :row-layout [["┌─[─]─┬f[─]f┬─[─]─┐" :apply-for first-row? :fill-char \-]
+                ["└─[─]─┴f[─]f┴─[─]─┘" :apply-for last-row?]]}
 
   ; ↓             ↓               ↓       ↓
   ; ┌─────────────────────────────────────┐ ← 0
@@ -88,8 +88,8 @@
   ; └─────────────────────────────────────┘ ← 4
 
   {:col-layout "│ [L]f[C]f[R] │"
-   :row-layout [["┌─[─]f[─]f[─]─┐" :apply-when first-row? :fill-chars [\- \-]]
-                ["└─[─]f[─]f[─]─┘" :apply-when last-row?]]}
+   :row-layout [["┌─[─]f[─]f[─]─┐" :apply-for first-row? :fill-chars [\- \-]]
+                ["└─[─]f[─]f[─]─┘" :apply-for last-row?]]}
 
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐ ← 0
@@ -101,9 +101,9 @@
   ; └───────────────┴───────────────┴───────┘ ← 4
 
   {:col-layout "│ [L] │ [C] │ [R] │"
-   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when second-row?]
-                ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-for first-row?]
+                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-for second-row?]
+                ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for last-row?]]}
 
   ; ↓               ↓               ↓       ↓
   ; ┌───────────────┬───────────────┬───────┐ ← 0
@@ -118,10 +118,10 @@
   ; │ zebra stripes │   are neat    │    $1 │
   ; └───────────────┴───────────────┴───────┘
   {:col-layout "│ [L] │ [C] │ [R] │"
-   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-when first-row?]
-                ["┝━[━]━┿━[━]━┿━[━]━┥" :apply-when (every-pred interior-row? even-row?)]
-                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-when (every-pred not-last-row? odd-row?)]
-                ["└─[─]─┴─[─]─┴─[─]─┘" :apply-when last-row?]]}
+   :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-for first-row?]
+                ["┝━[━]━┿━[━]━┿━[━]━┥" :apply-for (every-pred interior-row? even-row?)]
+                ["├─[─]─┼─[─]─┼─[─]─┤" :apply-for (every-pred not-last-row? odd-row?)]
+                ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for last-row?]]}
 
   ; | Tables        | Are           | Cool  |
   ; | ------------- |:-------------:| -----:|
@@ -130,7 +130,7 @@
   ; | zebra stripes | are neat      |    $1 |
 
   {:col-layout "│ [L] │ [C] │ [R] │"
-   :row-layout [["| [-] |:[-]:| [-]:|" :apply-when second-row?]]}
+   :row-layout [["| [-] |:[-]:| [-]:|" :apply-for second-row?]]}
 
   ; | Tables        | Are           | Cool  |
   ; | ------------- |:-------------:| -----:|
@@ -139,6 +139,6 @@
   ; | zebra stripes | are neat      |    $1 |
 
   {:col-layout "│ [L] │ f[C]f │ [R] │"
-   :row-layout [["| [-] |:f[-]f:| [-]:|" :apply-when second-row? :fill-char \-]]}
+   :row-layout [["| [-] |:f[-]f:| [-]:|" :apply-for second-row? :fill-char \-]]}
 
   )
