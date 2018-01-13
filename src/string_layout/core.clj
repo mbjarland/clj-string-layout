@@ -8,7 +8,6 @@
                                      multi-transform multi-path]]
             [taoensso.tufte :refer [p profiled profile]]))
 
-
 (def default-layout-config
   {
    :align-char      \space
@@ -20,12 +19,12 @@
 
 (defn make-col-layout-parser []
   (insta/parser
-    "layout = delim? ((align | repeat) delim)*
-     repeat = <'{'> delim? (align delim?)* <'}'>
-     delim    = (fill | padding)+
-     fill     = 'F'
-     padding  = #'[^\\[\\]{}fF]*'
-     align    = <'['> ('L' | 'C' | 'R' | 'V') <']'>"
+    "layout = delim? ((col | repeat) delim)*
+     repeat = <'{'> delim? (col delim?)* <'}'>
+     delim    = (fill | #'[^\\[\\]{}fF]*')+
+     fill     = <'F'> (#'[\\d]+')?
+     col      = <'['> fill? align fill? <']'>
+     align    = ('L' | 'C' | 'R' | 'V') "
     :string-ci true))
 (def make-col-layout-parser-m (memoize make-col-layout-parser))
 
@@ -40,12 +39,17 @@
     :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
 
-(defn transform-parsed [p row-layout?]
+
+
+(defn transform-parsed
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
+  ;; => [:layout [:delim "| "] [:col [:fill "2"] [:align "C"] [:fill "2"]] [:delim " |"]]
+  ;; => {:layout [{:delim ["| " {:f 2}]} {:col [{:f 2} \C {:f 2}]} {:delim " |"}]
+  [row-layout? parsed-layout]
   (insta/transform
     {:layout  vector
-     :fill    (fn [_] :F)
+     :fill    (fn [_] :f)
      :padding identity
      :repeat  (fn [& r] {:repeat (into [] r)})
      :delim   (fn [& r] {:delim (into [] r)})
@@ -54,7 +58,7 @@
                  (if row-layout?
                    (first a)
                    (-> a .toUpperCase keyword))})}
-    p))
+    parsed-layout))
 
 (defn throw-parse-error [parsed s]
   (let [msg (with-out-str (fail/pprint-failure parsed))]
@@ -62,12 +66,14 @@
                     {:failure (insta/get-failure parsed)}))))
 
 (defn parse-layout-string [row-layout? layout-string]
-  (let [parser (if row-layout? (make-row-layout-parser-m)
-                               (make-col-layout-parser-m))
-        parsed (parser layout-string)]
-    (if (insta/failure? parsed)
-      (throw-parse-error parsed layout-string)
-      (transform-parsed parsed row-layout?))))
+  (let [parser        (if row-layout? (make-row-layout-parser-m)
+                                      (make-col-layout-parser-m))
+        parsed-layout (parser layout-string)]
+    (if (insta/failure? parsed-layout)
+      (throw-parse-error parsed-layout layout-string)
+      (transform-parsed row-layout? parsed-layout))))
+
+
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
@@ -79,7 +85,7 @@
 (defn calculate-fills
   "given a fill width (say 7), a fill count (say 2) and an
   align char (say *), returns strings suitable for replacing
-  :F values with (in this case ['***', '****'] or vice versa)
+  :f values with (in this case ['***', '****'] or vice versa)
   Note that there is an ambiguity here, we could as well have
   returned ['****', '***']"
   [fill-width fill-count fill-chars]
@@ -95,17 +101,19 @@
              (take fill-count s)))))
 
 ; best way (natahan marz)
-;(count (select [ALL :delim ALL (pred= :F)] data))
+;(count (select [ALL :delim ALL (pred= :f)] data))
 ; most performant way
-;(transduce (map (constantly 1)) + (traverse [ALL :delim ALL (pred= :F)] data))
-;(transform [ALL :delim ALL (pred= :F)]
+;(transduce (map (constantly 1)) + (traverse [ALL :delim ALL (pred= :f)] data))
+;(transform [ALL :delim ALL (pred= :f)]
+
+; TODO: check out specter (must :a) instead of (pred :delim) :delim
 (defn expand-fills
-  "expands the :F formatting specifiers in the layout vector
+  "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout]
-  (let [f-path [ALL :delim ALL (pred= :F)]
+  (let [f-path [ALL (pred :delim) :delim ALL (pred= :f)]
         fs     (select f-path layout)
-        ss     (select [ALL :delim ALL string?] layout)]
+        ss     (select [ALL (pred :delim) :delim ALL string?] layout)]
     (if (empty? fs)
       layout
       (let [fill-count  (count fs)
@@ -160,10 +168,10 @@
 (defn merge-default-layout [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
         {:keys [align-char]} layout-config]
-        (transform [:fill-char] (fnil identity align-char) layout-config)))
+    (transform [:fill-char] (fnil identity align-char) layout-config)))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
-  (let [fill-count (count (select [ALL :delim ALL (pred= :F)] row-layout))]
+  (let [fill-count (count (select [ALL :delim ALL (pred= :f)] row-layout))]
     (cond
       fill-chars fill-chars
       fill-char (repeat fill-count fill-char)
@@ -187,13 +195,6 @@
       [[] 0]
       row-layout)))
 
-; data size 2 (..n)
-; ↓               ↓               ↓       ↓
-; ┌───────────────┬───────────────┬───────┐ ← 0
-; │ Tables        │ Are           │ Cool  │
-; ├───────────────┼───────────────┼───────┤ ← 1
-; │ col 3 is      │ right-aligned │ $1600 │
-; └───────────────┴───────────────┴───────┘ ← 2 (n)
 (defn apply-row-layouts [layout-config rows]
   (let [row-specs (select [:layout :rows ALL] layout-config)
         cnt       (max 1 (count rows))]
@@ -246,9 +247,17 @@
                              (concat a addition))))]
       (into [] (concat (reduce f lhs repeat-range) rhs)))))
 
+
+(defn mappify
+  "transform a vector layout ['layout string' :apply-for ...]
+   to a map format {:layout parsed :apply-for. Works for both
+   row and col layouts"
+  [layout rest]
+  (println "layout" layout "rest" rest)
+  (merge {:layout layout} (apply hash-map rest)))
+
 (defn transform-layout-config [layout-config col-widths]
-  (let [mappify       (fn [layout rest] (merge {:layout layout} (apply hash-map rest)))
-        parse-fn      (fn [r? [ls & r]] (mappify (parse-layout-string r? ls) r))
+  (let [parse-fn      (fn [r? [ls & r]] (mappify (parse-layout-string r? ls) r))
         layout-config (->> layout-config
                            (transform [:layout (pred :cols) :cols] (partial parse-fn false))
                            (transform [:layout (pred :rows) :rows ALL] (partial parse-fn true)))
@@ -281,9 +290,6 @@
           [[] 0]
           col-layout)))))
 
-;(fn [row] (str (join (interleave (map join delims)
-;                                 (map-indexed #(align %2 %1) row)))
-;               (join (last delims))))))
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
@@ -317,10 +323,18 @@
 
 
 (comment
+  ;TODO: move col widths to layout-config
+  ;TODO: potentially add to col widths when filling col layout
   (layout
     (str "Alice, why is" \newline
          "a raven like" \newline
          "a writing desk?")
     ascii-box-layout-center)
 
+
+  [{:delim [{:padding "|"}]}
+   {:repeat [{:delim [{:padding " "} :fill]}
+             {:col [:fill {:align \L} :fill]}
+             {:delim [:fill {:padding " |"}]}]}
+   {:delim [" " :f]}]
   )
