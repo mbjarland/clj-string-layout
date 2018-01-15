@@ -1,73 +1,80 @@
 (ns string-layout.layout)
 
 ; layout predicates
-(defn first-row? [[idx _]] (zero? idx))
-(def not-first-row? (complement first-row?))
+(defn -first? [[idx _]] (zero? idx))
+(def -not-first? (complement -first?))
 
-(defn second-row? [[idx _]] (= idx 1))
-(defn last-row? [[idx last]] (= idx last))
-(def not-last-row? (complement last-row?))
+(defn -second? [[idx _]] (= idx 1))
+(defn -last? [[idx last]] (= idx last))
+(def -not-last? (complement -last?))
+(defn -interior? [pair] (and (-not-first? pair)
+                             (-not-last? pair)))
+(def -not-interior? (complement -interior?))
+(defn -all? [_] true)
 
-(defn interior-row? [pair] (and (not-first-row? pair)
-                                      (not-last-row? pair)))
-(def not-interior-row? (complement interior-row?))
+; row layout predicates
+(def first-row? -first?)
+(def not-first-row? -not-first?)
+(def second-row? -second?)
+(def last-row? -last?)
+(def not-last-row? -not-last?)
+(def interior-row? -interior?)
+(def not-interior-row? -not-interior?)
+(def all-rows? -all?)
 
-(defn all-rows? [[_ _]] true)
-
-; there is no difference between the row/col predicates,
-; we duplicate them that way for clarity
-(def first-col? first-row?)
-(def not-first-col? not-first-row?)
-(def second-col? second-row?)
-(def last-col? last-row?)
-(def not-last-col? not-last-row?)
-(def interior-col? interior-row?)
-(def not-interior-col? not-interior-row?)
-(def all-cols? all-rows?)
+; col layout predicates
+(def first-col? -first?)
+(def not-first-col? -not-first?)
+(def second-col? -second?)
+(def last-col? -last?)
+(def not-last-col? -not-last?)
+(def interior-col? -interior?)
+(def not-interior-col? -not-interior?)
+(def all-cols? -all?)
 
 
 
 (def ascii-box-layout-left
-  {:layout {:cols  ["│{ [L] │} [L] │" :apply-for [all-cols?]]
+  {:layout {:cols ["│{ [L] │} [L] │" :apply-for [all-cols?]]
             :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
 (def ascii-box-layout-center
-  {:layout {:cols  ["│{ [C] │} [C] │" :apply-for [all-cols?]]
+  {:layout {:cols ["│{ [C] │} [C] │" :apply-for [all-cols?]]
             :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
 (def ascii-box-layout-right
-  {:layout {:cols  ["│{ [R] │} [R] │" :apply-for [all-cols?]]
+  {:layout {:cols ["│{ [R] │} [R] │" :apply-for [all-cols?]]
             :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
 
 (def norton-commander-layout-left
-  {:layout {:cols  ["║{ [L] │} [L] ║" :apply-for [all-cols?]]
+  {:layout {:cols ["║{ [L] │} [L] ║" :apply-for [all-cols?]]
             :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
                    ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
                    ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
 (def norton-commander-layout-center
-  {:layout {:cols  ["║{ [C] │} [C] ║" :apply-for [all-cols?]]
+  {:layout {:cols ["║{ [C] │} [C] ║" :apply-for [all-cols?]]
             :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
                    ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
                    ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
 (def norton-commander-layout-right
-  {:layout {:cols  ["║{ [R] │} [R] ║" :apply-for [all-cols?]]
+  {:layout {:cols ["║{ [R] │} [R] ║" :apply-for [all-cols?]]
             :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
                    ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
                    ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
 
 
 (def markdown-layout-left
-  {:layout {:cols ["|{ [L] |}"  :apply-for [all-cols?]]
+  {:layout {:cols ["|{ [L] |}" :apply-for [all-cols?]]
             :rows [["|{:[-] |}" :apply-for second-row?]]}})
 (def markdown-layout-center
-  {:layout {:cols ["|{ [C] |}"  :apply-for [all-cols?]]
+  {:layout {:cols ["|{ [C] |}" :apply-for [all-cols?]]
             :rows [["|{:[-]:|}" :apply-for second-row?]]}})
 (def markdown-layout-right
-  {:layout {:cols ["|{ [R] |}"  :apply-for [all-cols?]]
+  {:layout {:cols ["|{ [R] |}" :apply-for [all-cols?]]
             :rows [["|{ [-]:|}" :apply-for second-row?]]}})
 
 (def html-table-layout
