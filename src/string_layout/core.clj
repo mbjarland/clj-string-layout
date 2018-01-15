@@ -4,8 +4,9 @@
             [clojure.string :refer [split join]]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]
-            [com.rpl.specter :refer [select pred= pred ALL FIRST transform
-                                     multi-transform multi-path]]
+            [com.rpl.specter :refer [select pred= pred ALL FIRST NONE transform
+                                     multi-transform multi-path setval must subselect
+                                     select-one MAP-VALS LAST]]
             [taoensso.tufte :refer [p profiled profile]]))
 
 (def default-layout-config
@@ -17,47 +18,44 @@
    :width           80
    :raw?            false})
 
+(def grammar
+  "layout = delim? ((col | repeat) delim)*
+   repeat = <'{'> delim? (col delim?)* <'}'>
+   delim    = (fill | #'[^\\[\\]{}fF]*')+
+   fill     = <'F'> (#'[\\d]+')?
+   col      = <'['> fill? align fill? <']'>")
+;align    = ('L' | 'C' | 'R' | 'V') ")
+
 (defn make-col-layout-parser []
-  (insta/parser
-    "layout = delim? ((col | repeat) delim)*
-     repeat = <'{'> delim? (col delim?)* <'}'>
-     delim    = (fill | #'[^\\[\\]{}fF]*')+
-     fill     = <'F'> (#'[\\d]+')?
-     col      = <'['> fill? align fill? <']'>
-     align    = ('L' | 'C' | 'R' | 'V') "
-    :string-ci true))
+  (insta/parser (str grammar \newline "align = ('L'|'C'|'R'|'V')")
+                :string-ci true))
 (def make-col-layout-parser-m (memoize make-col-layout-parser))
 
 (defn make-row-layout-parser []
-  (insta/parser
-    "layout = delim? ((align | repeat) delim)*
-     repeat = <'{'> delim? (align delim?)* <'}'>
-     delim    = (fill | padding)+
-     fill     = ('F')
-     padding  = #'[^\\[\\]{}fF]*'
-     align    = <'['> #'[^]]' <']'>"
-    :string-ci true))
+  (insta/parser (str grammar \newline "align = #'[^]]'")
+                :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
 
 
 
+;; => [:layout [:del "| "] [:col [:fill "2"] [:align "C"] [:fill "2"]] [:del " |"]]
+;; => {:layout [{:del ["| " {:f 2}]} {:col [{:f 2} \C {:f 2}]} {:del " |"}]
 (defn transform-parsed
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
-  ;; => [:layout [:delim "| "] [:col [:fill "2"] [:align "C"] [:fill "2"]] [:delim " |"]]
-  ;; => {:layout [{:delim ["| " {:f 2}]} {:col [{:f 2} \C {:f 2}]} {:delim " |"}]
   [row-layout? parsed-layout]
   (insta/transform
     {:layout  vector
-     :fill    (fn [_] :f)
+     :fill    (fn [] :f)
      :padding identity
      :repeat  (fn [& r] {:repeat (into [] r)})
-     :delim   (fn [& r] {:delim (into [] r)})
+     :delim   (fn [& r] {:del (into [] r)})
+     :col     (fn [& r] {:col (into [] r)})
      :align   (fn [a]
                 {:align
                  (if row-layout?
                    (first a)
-                   (-> a .toUpperCase keyword))})}
+                   (-> a .toLowerCase keyword))})}
     parsed-layout))
 
 (defn throw-parse-error [parsed s]
@@ -101,31 +99,84 @@
              (take fill-count s)))))
 
 ; best way (natahan marz)
-;(count (select [ALL :delim ALL (pred= :f)] data))
+;(count (select [ALL :del ALL (pred= :f)] data))
 ; most performant way
-;(transduce (map (constantly 1)) + (traverse [ALL :delim ALL (pred= :f)] data))
-;(transform [ALL :delim ALL (pred= :f)]
+;(transduce (map (constantly 1)) + (traverse [ALL :del ALL (pred= :f)] data))
+;(transform [ALL :del ALL (pred= :f)]
 
-; TODO: check out specter (must :a) instead of (pred :delim) :delim
+; TODO: check out specter (must :a) instead of (pred :del) :del
 (defn expand-fills
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout]
-  (let [f-path [ALL (pred :delim) :delim ALL (pred= :f)]
-        fs     (select f-path layout)
-        ss     (select [ALL (pred :delim) :delim ALL string?] layout)]
-    (if (empty? fs)
+  (let [del-f-path [ALL (must :del) ALL (pred= :f)]
+        col-f-path [ALL (must :col) ALL (pred= :f)]
+        del-fs     (select del-f-path layout)
+        col-fs     (select col-f-path layout)
+        ss         (select [ALL (must :del) ALL string?] layout)]
+    (if (empty? del-fs)
       layout
-      (let [fill-count  (count fs)
-            sum-cols    (reduce + col-widths)
-            sum-strings (reduce + (map count ss))
-            fill-width  (max 0 (- width (+ sum-cols sum-strings)))
-            fills       (calculate-fills fill-width fill-count fill-chars)
-            fill-idx    (atom -1)]
-        (transform f-path
-                   (fn [_] (nth fills (swap! fill-idx inc)))
-                   layout)))))
+      (let [fill-count  (+ (count del-fs) (count col-fs))
+            tot-col-len (reduce + col-widths)
+            tot-str-len (reduce + (map count ss))
+            fill-width  (max 0 (- width (+ tot-col-len tot-str-len)))
+            fills       (calculate-fills fill-width fill-count fill-chars)]
+        (->> layout
+             (setval [(subselect ALL MAP-VALS ALL (pred= :f))] fills)
+             (transform [ALL (must :del)] join)
+             (transform [ALL (must :col) ALL string?] count))))))
 
+
+(comment
+  [{:del [:f "║"]}
+   {:del [" "]}
+   {:col [:f {:align :c}]}
+   {:del [" │"]}
+   {:del [" "]}
+   {:col [:f {:align :c}]}
+   {:del [" │"]}
+   {:del [" "]}
+   {:col [:f {:align :c}]}
+   {:del [" │"]}
+   {:del [" "]}
+   {:col [:f {:align :c}]}
+   {:del [" │"]}
+   {:del [" " :f]}
+   {:col [:f {:align :c}]}
+   {:del [" ║"]}]
+
+
+  [{:del "║"}
+   {:del " "}
+   {:col [3 {:align :c} 3]}
+   {:del " │"}
+   {:del " "}
+   {:col [4 {:align :c} 3]}
+   {:del " │"}
+   {:del " "}
+   {:col [4 {:align :c} 3]}
+   {:del " │"}
+   {:del " "}
+   {:col [4 {:align :c} 3]}
+   {:del " │"}
+   {:del "     "}
+   {:col [3 {:align :c} 4]}
+   {:del " ║"}]
+
+  ;=>
+
+  [{:del "║ "}
+   {:col [3 {:align :c} 3]}
+   {:del " │ "}
+   {:col [4 {:align :c} 3]}
+   {:del " │ "}
+   {:col [4 {:align :c} 3]}
+   {:del " │ "}
+   {:col [4 {:align :c} 3]}
+   {:del " │     "}
+   {:col [3 {:align :c} 4]}
+   {:del " ║"}]
+  )
 
 (defn normalize-row-lens [col-count rows]
   "Add empty elements to any rows which have fewer elements
@@ -171,7 +222,7 @@
     (transform [:fill-char] (fnil identity align-char) layout-config)))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
-  (let [fill-count (count (select [ALL :delim ALL (pred= :f)] row-layout))]
+  (let [fill-count (count (select [ALL :del ALL (pred= :f)] row-layout))]
     (cond
       fill-chars fill-chars
       fill-char (repeat fill-count fill-char)
@@ -185,15 +236,42 @@
                #(expand-fills width col-widths fill-chars %)
                row-spec)))
 
-(defn realize-row-layout [col-widths row-layout]
-  (first
-    (reduce
-      (fn [[a i] e]
-        (if (:delim e)
-          [(conj a (join (:delim e))) i]
-          [(conj a (join (repeat (nth col-widths i) (:align e)))) (inc i)]))
-      [[] 0]
-      row-layout)))
+(comment
+  [{:del "╔═"}
+   {:col [{:align \═}]}
+   {:del "═╤═"}
+   {:col [{:align \═}]}
+   {:del "═╤═"}
+   {:col [{:align \═}]}
+   {:del "═╤═"}
+   {:col [{:align \═}]}
+   {:del "═╤═"}
+   {:col [{:align \═}]}
+   {:del "═╗"}]
+  )
+
+
+
+(defn f-realize-row-layout [col-widths]
+  (fn [row-layout]
+    (let [align-chars (select [ALL (must :col) FIRST (must :align)] row-layout)
+          cols        (map #(join (repeat %1 %2)) col-widths align-chars)]
+      (->> row-layout
+           (setval [(subselect ALL (must :col))] cols)
+           (select [ALL MAP-VALS])))))
+
+(comment
+  (defn f-realize-row-layout [col-widths]
+    (fn [row-layout]
+      (first
+        (reduce
+          (fn [[a i] e]
+            (if (:del e)
+              [(conj a (join (:del e))) i]
+              [(conj a (join (repeat (nth col-widths i) (:align e)))) (inc i)]))
+          [[] 0]
+          row-layout))))
+  )
 
 (defn apply-row-layouts [layout-config rows]
   (let [row-specs (select [:layout :rows ALL] layout-config)
@@ -227,25 +305,36 @@
   (throw (RuntimeException. (str "no matching predicate found for index "
                                  idx " (last index = " last ")"))))
 
-(defn expand-repeating-groups [col-count preds layout]
-  (if (not-any? :repeat layout)
-    layout
-    (let [[lhs repeats rhs] (partition-layout layout)
-          count-aligns (fn [c] (count (keep :align c)))
-          repeat-range (range (count-aligns lhs)
-                              (- col-count (count-aligns rhs)))
-          last-col     (dec col-count)
-          f            (fn [a i]
-                         (let [matching-idxs (keep-indexed
-                                               (fn [pi p] (when (p [i last-col]) pi))
-                                               preds)
-                               matching-reps (map #(:repeat (nth repeats %)) matching-idxs)
-                               addition      (reduce concat matching-reps)
-                               add-count     (count-aligns addition)]
-                           (if (zero? add-count)
-                             (throw-no-matching-pred-exception i last-col)
-                             (concat a addition))))]
-      (into [] (concat (reduce f lhs repeat-range) rhs)))))
+;
+; "║{ [C] │} [C] ║"
+; ==>
+;  [{:del ["║"]}
+;  {:repeat [{:del [" "]}
+;            {:col [{:align :c}]}
+;            {:del [" │"]}]}
+;  {:del [" "]}
+;  {:col [{:align :c}]}
+;  {:del [" ║"]}]
+(defn f-expand-repeating-groups [col-count]
+  (fn [layout]
+    (if (not-any? :repeat layout)
+      layout
+      (let [[lhs repeats rhs] (partition-layout layout)     ;TODO: zippers for partition?
+            count-cols   (fn [c] (count (keep :col c)))
+            repeat-range (range (count-cols lhs)
+                                (- col-count (count-cols rhs)))
+            last-col     (dec col-count)
+            f            (fn [a i]
+                           (let [loc             [i last-col]
+                                 matching-groups (keep (fn [g]
+                                                         (when ((:apply-for g) loc)
+                                                           (:repeat g))) repeats)
+                                 addition        (reduce concat matching-groups)
+                                 add-count       (count-cols addition)]
+                             (if (zero? add-count)
+                               (throw-no-matching-pred-exception i last-col)
+                               (concat a addition))))]
+        (into [] (concat (reduce f lhs repeat-range) rhs))))))
 
 
 (defn mappify
@@ -253,26 +342,81 @@
    to a map format {:layout parsed :apply-for. Works for both
    row and col layouts"
   [layout rest]
-  (println "layout" layout "rest" rest)
   (merge {:layout layout} (apply hash-map rest)))
 
-(defn transform-layout-config [layout-config col-widths]
-  (let [parse-fn      (fn [r? [ls & r]] (mappify (parse-layout-string r? ls) r))
-        layout-config (->> layout-config
-                           (transform [:layout (pred :cols) :cols] (partial parse-fn false))
-                           (transform [:layout (pred :rows) :rows ALL] (partial parse-fn true)))
-        fill-chars    (repeat (:fill-char layout-config))
-        col-preds     (get-in layout-config [:layout :cols :apply-for])
-        col-fill-fn   (partial expand-fills (:width layout-config) col-widths fill-chars)
-        row-fill-fn   (partial expand-row-spec-fills layout-config col-widths)
-        groups-fn     (partial expand-repeating-groups (count col-widths) col-preds)
-        realize-fn    (partial realize-row-layout col-widths)]
+
+(comment
+  (setval [:layout
+           (subselect
+             ALL
+             #(contains? % :repeat)
+             :apply-for)
+           ]
+          af)
+  )
+
+; TODO: do nothing if there are no repeating groups
+; TODO: validate same number of repeating groups as predicates
+(defn spread-layout-apply-fors
+  "takes a col layout spec {:layout [{:repeat x}...] :apply-for [a ...]}}
+   and turns it into       {:layout [{:repeat x :apply-for a} ...] }}"
+  [preds]
+  (fn [layout-spec]
+    (setval [:layout (subselect ALL (pred :repeat) :apply-for)] preds layout-spec)))
+
+(defn get-col-preds [raw-layout-config]
+  (:apply-for (apply hash-map (rest (get-in raw-layout-config [:layout :cols])))))
+
+;{:layout {:cols  ["║{ [C] │} [C] ║" :apply-for [all-cols? last-col?]]
+(defn parse-layout-config
+  "transform the layout config, replace the layout strings and the
+  surrounding vectors with parsed and mappified data structures"
+  [layout-config]
+  (let [parse-fn  (fn [r? [ls & r]] (mappify (parse-layout-string r? ls) r))
+        col-preds (get-col-preds layout-config)
+        spread-f  (spread-layout-apply-fors col-preds)]
     (->> layout-config
-         (transform [:layout (pred :cols) :cols :layout] groups-fn)
-         (transform [:layout (pred :rows) :rows ALL :layout] groups-fn)
-         (transform [:layout (pred :cols) :cols :layout] col-fill-fn)
-         (transform [:layout (pred :rows) :rows ALL] row-fill-fn)
-         (transform [:layout (pred :rows) :rows ALL :layout] realize-fn))))
+         (transform [:layout (must :cols)] (partial parse-fn false))
+         (transform [:layout (must :cols)] spread-f)
+         (transform [:layout (must :rows) ALL] (partial parse-fn true))
+         (transform [:layout (must :rows) ALL] spread-f)
+         (setval [:layout (must :cols) :apply-for] NONE))))
+
+(defn merge-adjacent-dels [layout]
+  (reduce
+    (fn [a c]
+      (let [f (fn [m] (first (keys m)))]
+        (if (= :del (f (last a)) (f c))
+          (transform [LAST MAP-VALS] #(join (concat % (:del c))) a)
+          (conj a c))))
+    []
+    layout))
+
+;; things to validate in the layout config
+;; * all repeating groups need to have at least one column def
+;; * the col layout and all row layouts need to have:
+;;   * the same number of repeating groups
+;;   * the same number of columns
+;;   tbd
+(defn transform-layout-config [layout-config col-widths]
+  (let [layout-config (parse-layout-config layout-config)
+        fill-chars    (repeat (:fill-char layout-config))
+        expand-f      (f-expand-repeating-groups (count col-widths))
+        c-fill-f      (partial expand-fills (:width layout-config) col-widths fill-chars)
+        r-fill-f      (partial expand-row-spec-fills layout-config col-widths)
+        realize-f     (f-realize-row-layout col-widths)
+        prn-f         (fn [layout]
+                        (prn :transform-mid layout)
+                        layout)]
+    (->> layout-config
+         (transform [:layout (must :cols) :layout] expand-f)
+         (transform [:layout (must :rows) ALL :layout] expand-f)
+         (transform [:layout (must :cols) :layout] c-fill-f)
+         (transform [:layout (must :rows) ALL] r-fill-f)
+         (transform [:layout (must :cols) :layout] merge-adjacent-dels)
+         (transform [:layout (must :rows) ALL :layout] merge-adjacent-dels)
+         (prn-f)
+         (transform [:layout (must :rows) ALL :layout] realize-f))))
 
 (def transform-layout-config-m (memoize transform-layout-config))
 
@@ -286,9 +430,19 @@
           (fn [[a ci] l]
             (cond
               (:align l) [(conj a (align (nth row ci) ci)) (inc ci)]
-              (:delim l) [(conj a (join (:delim l))) ci]))
+              (:del l) [(conj a (join (:del l))) ci]))
           [[] 0]
           col-layout)))))
+
+(comment
+  (defn fake-it [rows layout-config]
+    (let [layout-config (merge-default-layout layout-config)
+          rows          (normalize-rows layout-config rows)
+          col-widths    (calculate-col-widths rows)
+          layout-config (transform-layout-config layout-config col-widths)]
+      layout-config))
+
+  )
 
 
 ; TODO: read up on mig layout, change precondition
@@ -313,13 +467,16 @@
   (let [layout-config (merge-default-layout layout-config)
         rows          (normalize-rows layout-config rows)
         col-widths    (calculate-col-widths rows)
-        layout-config (transform-layout-config-m layout-config col-widths)
-        layout-cols   (make-col-layout-fn layout-config col-widths)
-        result        (mapv layout-cols rows)
-        result        (if (get-in layout-config [:layout :rows])
-                        (apply-row-layouts layout-config result)
-                        result)]
-    (if (:raw? layout-config) result (mapv join result))))
+        layout-config (transform-layout-config layout-config col-widths)
+        ]
+    layout-config))
+
+;    layout-cols   (make-col-layout-fn layout-config col-widths)
+;    result        (mapv layout-cols rows)
+;    result        (if (get-in layout-config [:layout :rows])
+;                    (apply-row-layouts layout-config result)
+;                    result)]
+;(if (:raw? layout-config) result (mapv join result))))
 
 
 (comment
@@ -332,9 +489,13 @@
     ascii-box-layout-center)
 
 
-  [{:delim [{:padding "|"}]}
-   {:repeat [{:delim [{:padding " "} :fill]}
-             {:col [:fill {:align \L} :fill]}
-             {:delim [:fill {:padding " |"}]}]}
-   {:delim [" " :f]}]
+  ;;----------------------------------------------
+  (parse-layout-string false "║{ [C] │} [fCf]f║")
+  ;;=>
+  [{:del ["║"]}
+   {:repeat [{:del [" "]} {:col [{:align :c}]} {:del [" │"]}]}
+   {:del [" "]}
+   {:col [:f {:align :c} :f]}
+   {:del [:f "║"]}]
+
   )
