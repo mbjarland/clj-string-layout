@@ -24,7 +24,8 @@
    delim    = (fill | #'[^\\[\\]{}fF]*')+
    fill     = <'F'> (#'[\\d]+')?
    col      = <'['> fill? align fill? <']'>")
-;align    = ('L' | 'C' | 'R' | 'V') ")
+;align      = ('L' | 'C' | 'R' | 'V') ")
+;align      = #'[^]]'
 
 (defn make-col-layout-parser []
   (insta/parser (str grammar \newline "align = ('L'|'C'|'R'|'V')")
@@ -35,8 +36,6 @@
   (insta/parser (str grammar \newline "align = #'[^]]'")
                 :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
-
-
 
 ;; => [:layout [:del "| "] [:col [:fill "2"] [:align "C"] [:fill "2"]] [:del " |"]]
 ;; => {:layout [{:del ["| " {:f 2}]} {:col [{:f 2} \C {:f 2}]} {:del " |"}]
@@ -81,11 +80,11 @@
 ; - [ 0    1    2    2    3    4] ;(int above)
 ;   [ 0    1    1    0    1    1] ;when changes
 (defn calculate-fills
-  "given a fill width (say 7), a fill count (say 2) and an
-  align char (say *), returns strings suitable for replacing
-  :f values with (in this case ['***', '****'] or vice versa)
+  "given a fill width (say 7), a fill count (say 2) and
+  fill chars (say [* -]), returns strings suitable for
+  replacing :f values with (in this case ['***', '----'] or vice versa)
   Note that there is an ambiguity here, we could as well have
-  returned ['****', '***']"
+  returned ['****', '---']"
   [fill-width fill-count fill-chars]
   (let [[q sr] ((juxt quot rem) fill-width fill-count)
         r  (/ sr fill-count)
@@ -416,7 +415,9 @@
          (transform [:layout (must :cols) :layout] merge-adjacent-dels)
          (transform [:layout (must :rows) ALL :layout] merge-adjacent-dels)
          (prn-f)
-         (transform [:layout (must :rows) ALL :layout] realize-f))))
+         (transform [:layout (must :rows) ALL :layout] realize-f)
+         (transform [:layout (must :cols) :layout
+                     ALL (must :col) ALL (pred :align)] :align))))
 
 (def transform-layout-config-m (memoize transform-layout-config))
 
