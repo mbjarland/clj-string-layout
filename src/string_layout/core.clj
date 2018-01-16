@@ -10,8 +10,7 @@
             [taoensso.tufte :refer [p profiled profile]]))
 
 (def default-layout-config
-  {
-   :align-char      \space
+  {:align-char      \space
    :fill-char       \space
    :word-split-char \space
    :row-split-char  \newline
@@ -108,72 +107,67 @@
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout]
+  (prn :expand-before layout)
   (let [del-f-path [ALL (must :del) ALL (pred= :f)]
         col-f-path [ALL (must :col) ALL (pred= :f)]
         del-fs     (select del-f-path layout)
         col-fs     (select col-f-path layout)
         ss         (select [ALL (must :del) ALL string?] layout)]
-    (if (empty? del-fs)
+    (if (and (empty? del-fs) (empty? col-fs))
       layout
       (let [fill-count  (+ (count del-fs) (count col-fs))
+            _           (prn :fcount fill-count)
+            _           (prn :del-fs del-fs)
+            _           (prn :col-fs col-fs)
             tot-col-len (reduce + col-widths)
             tot-str-len (reduce + (map count ss))
+            _           (prn :tot-col-len tot-col-len)
+            _           (prn :tot-str-len tot-str-len)
+            _           (prn :fill-chars (take 100 fill-chars))
             fill-width  (max 0 (- width (+ tot-col-len tot-str-len)))
-            fills       (calculate-fills fill-width fill-count fill-chars)]
-        (->> layout
-             (setval [(subselect ALL MAP-VALS ALL (pred= :f))] fills)
-             (transform [ALL (must :del)] join)
-             (transform [ALL (must :col) ALL string?] count))))))
+            fills       (calculate-fills fill-width fill-count fill-chars)
+            res         (->> layout
+                             (setval [(subselect ALL MAP-VALS ALL (pred= :f))] fills)
+                             (transform [ALL (must :del)] join)
+                             (transform [ALL (must :col) ALL string?] count))]
+        (prn :expand-after res)
+        res))))
 
 
 (comment
-  [{:del [:f "║"]}
-   {:del [" "]}
-   {:col [:f {:align :c}]}
-   {:del [" │"]}
-   {:del [" "]}
-   {:col [:f {:align :c}]}
-   {:del [" │"]}
-   {:del [" "]}
-   {:col [:f {:align :c}]}
-   {:del [" │"]}
-   {:del [" "]}
-   {:col [:f {:align :c}]}
-   {:del [" │"]}
-   {:del [" " :f]}
-   {:col [:f {:align :c}]}
-   {:del [" ║"]}]
-
-
+  (expand-fills 80 [2 2 2 2 2] (repeat \*)
+                [{:del ["║"]}
+                 {:del [" "]}
+                 {:col [:f {:align :c} :f]}
+                 {:del [" │"]}
+                 {:del [" "]}
+                 {:col [:f {:align :c} :f]}
+                 {:del [" │"]}
+                 {:del [" "]}
+                 {:col [:f {:align :c} :f]}
+                 {:del [" │"]}
+                 {:del [" "]}
+                 {:col [:f {:align :c} :f]}
+                 {:del [" │"]}
+                 {:del [" " :f]}
+                 {:col [:f {:align :c} :f]}
+                 {:del [" ║"]}])
+  ;=>
   [{:del "║"}
    {:del " "}
-   {:col [3 {:align :c} 3]}
+   {:col [4 {:align :c} 5]}
    {:del " │"}
    {:del " "}
-   {:col [4 {:align :c} 3]}
+   {:col [5 {:align :c} 5]}
    {:del " │"}
    {:del " "}
-   {:col [4 {:align :c} 3]}
+   {:col [5 {:align :c} 5]}
    {:del " │"}
    {:del " "}
-   {:col [4 {:align :c} 3]}
+   {:col [5 {:align :c} 5]}
    {:del " │"}
-   {:del "     "}
-   {:col [3 {:align :c} 4]}
-   {:del " ║"}]
-
-  ;=>
-
-  [{:del "║ "}
-   {:col [3 {:align :c} 3]}
-   {:del " │ "}
-   {:col [4 {:align :c} 3]}
-   {:del " │ "}
-   {:col [4 {:align :c} 3]}
-   {:del " │ "}
-   {:col [4 {:align :c} 3]}
-   {:del " │     "}
-   {:col [3 {:align :c} 4]}
+   {:del " *****"}
+   {:col [5 {:align :c} 5]}
    {:del " ║"}]
   )
 
@@ -198,22 +192,40 @@
 (defn calculate-col-widths [rows]
   (apply mapv #(apply max (map count %&)) rows))
 
+(comment
+  [{:del "║ "}
+   {:col [:l]}
+   {:del " │ "}
+   {:col [:l]}
+   {:del " │ "}
+   {:col [:l]}
+   {:del " ║"}])
+
 (defn align-word
   "align a word based on the given col-layout, col-widths and
   align-char. Word is a string word to layout and col is the column
   this word should be laid out for"
   [layout col-widths align-char word col]
-  (let [aligns (keep :align layout)]
-    (letfn [(fmt [f] (cl-format nil f align-char (nth col-widths col) word))]
-      (case (nth aligns col)
-        :L (fmt "~v,,,vA")
-        :R (fmt "~v,,,v@A")
-        :C (fmt "~v,,,v:@<~A~>")
-        :V word                                             ;verbatim
+  (prn :align-layout layout)
+  (let [v (select-one [ALL (must :col)] layout)
+        w (+ (reduce + (select [ALL (pred int?)] v))
+             (nth col-widths col))
+        a (select-one [ALL (pred :align) MAP-VALS] layout)]
+    (println "-----")
+    (prn :align-o word :align-c col)
+    (prn :align-v v)
+    (prn :align-w w)
+    (prn :align-a a)
+    (letfn [(fmt [f] (cl-format nil f align-char w word))]
+      (case a
+        :l (fmt "~v,,,vA")
+        :r (fmt "~v,,,v@A")
+        :c (fmt "~v,,,v:@<~A~>")
+        :v word                                             ;verbatim
         ;:W (fmt (str "~{~<~%~1," width ":;~A~> ~}"))
         :else (throw (IllegalArgumentException.
-                       (str "Unsupported alignment operation '" (nth aligns col)
-                            "' encountered at align index: " col " in " aligns)))))))
+                       (str "Unsupported alignment operation '" a
+                            "' encountered at align index: " col)))))))
 
 (defn merge-default-layout [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
@@ -221,7 +233,8 @@
     (transform [:fill-char] (fnil identity align-char) layout-config)))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
-  (let [fill-count (count (select [ALL :del ALL (pred= :f)] row-layout))]
+  (prn :row-fill-chars row-layout)
+  (let [fill-count (count (select [ALL MAP-VALS ALL (pred= :f)] row-layout))]
     (cond
       fill-chars fill-chars
       fill-char (repeat fill-count fill-char)
@@ -250,9 +263,13 @@
   )
 
 
-
+(comment
+  (select [ALL (must :col) ALL (pred :align) :align]
+          [{:del "╔═"} {:col [17 {:align \═}]} {:del "═╤═"} {:col [17 {:align \═}]} {:del "═╤═"} {:col [18 {:align \═}]} {:del "═╗"}])
+  )
 (defn f-realize-row-layout [col-widths]
   (fn [row-layout]
+    (prn :f-realize row-layout)
     (let [align-chars (select [ALL (must :col) FIRST (must :align)] row-layout)
           cols        (map #(join (repeat %1 %2)) col-widths align-chars)]
       (->> row-layout
@@ -387,7 +404,8 @@
       (let [f (fn [m] (first (keys m)))]
         (if (= :del (f (last a)) (f c))
           (transform [LAST MAP-VALS] #(join (concat % (:del c))) a)
-          (conj a c))))
+          (if (:del c) (conj a (assoc c :del (join (:del c))))
+                       (conj a c)))))
     []
     layout))
 
@@ -404,9 +422,7 @@
         c-fill-f      (partial expand-fills (:width layout-config) col-widths fill-chars)
         r-fill-f      (partial expand-row-spec-fills layout-config col-widths)
         realize-f     (f-realize-row-layout col-widths)
-        prn-f         (fn [layout]
-                        (prn :transform-mid layout)
-                        layout)]
+        prn-f         (fn [layout] (prn :transform-mid layout) layout)]
     (->> layout-config
          (transform [:layout (must :cols) :layout] expand-f)
          (transform [:layout (must :rows) ALL :layout] expand-f)
@@ -421,17 +437,27 @@
 
 (def transform-layout-config-m (memoize transform-layout-config))
 
+(comment
+  [{:del "║ "}
+   {:col [5 {:align :l} 5]}
+   {:del " │ "}
+   {:col [5 {:align :l} 5]}
+   {:del " │ "}
+   {:col [5 {:align :l} 5]}
+   {:del " ║"}]
+  )
 (defn make-col-layout-fn [layout-config col-widths]
   (let [align-char (:align-char layout-config)
         col-layout (get-in layout-config [:layout :cols :layout])
         align      (partial align-word col-layout col-widths align-char)]
     (fn [row]
+      (prn :col-layout-row row)
       (first
         (reduce
           (fn [[a ci] l]
             (cond
-              (:align l) [(conj a (align (nth row ci) ci)) (inc ci)]
-              (:del l) [(conj a (join (:del l))) ci]))
+              (:col l) [(conj a (align (nth row ci) ci)) (inc ci)]
+              (:del l) [(conj a (:del l)) ci]))
           [[] 0]
           col-layout)))))
 
@@ -469,25 +495,23 @@
         rows          (normalize-rows layout-config rows)
         col-widths    (calculate-col-widths rows)
         layout-config (transform-layout-config layout-config col-widths)
-        ]
-    layout-config))
-
-;    layout-cols   (make-col-layout-fn layout-config col-widths)
-;    result        (mapv layout-cols rows)
-;    result        (if (get-in layout-config [:layout :rows])
-;                    (apply-row-layouts layout-config result)
-;                    result)]
-;(if (:raw? layout-config) result (mapv join result))))
+        layout-cols   (make-col-layout-fn layout-config col-widths)
+        result        (mapv layout-cols rows)
+        result        (if (get-in layout-config [:layout :rows])
+                        (apply-row-layouts layout-config result)
+                        result)]
+    (if (:raw? layout-config) result (mapv join result))))
 
 
 (comment
-  ;TODO: move col widths to layout-config
-  ;TODO: potentially add to col widths when filling col layout
   (layout
     (str "Alice, why is" \newline
          "a raven like" \newline
          "a writing desk?")
-    ascii-box-layout-center)
+    {:layout {:cols ["║{ [L] │} [L] ║" :apply-for [all-cols?]]
+              :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
+                     ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
+                     ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
 
 
   ;;----------------------------------------------
