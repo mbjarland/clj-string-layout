@@ -125,3 +125,8 @@
   {:layout {:cols  ["  <tr>{<td>[V]</td>}</tr>" :apply-for [all-cols?]]
             :rows [["<table>" :apply-for first-row?]
                    ["</table" :apply-for last-row?]]}})
+
+(def layout-html-table-readable
+  {:layout {:cols  ["  <tr>{<td>[L]</td>}</tr>" :apply-for [all-cols?]]
+            :rows [["<table>" :apply-for first-row?]
+                   ["</table" :apply-for last-row?]]}})
