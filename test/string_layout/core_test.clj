@@ -2,6 +2,7 @@
   (:require [midje.sweet :refer :all]
             [midje.repl :as m]
             [string-layout.core :refer :all]
+            [string-layout.layout :refer :all]
             [clojure.string :refer [split]]))
 
 (tabular
@@ -144,3 +145,60 @@
         "a b\naa bb" \space   \space   "[l]-f-f-[r]"    0     ["a --- b"  "aa---bb"]
         "a*b\naa*bb" \*       \*       "[l]*f*f*[r]"    0     ["a*****b"  "aa***bb"]
   )
+
+(fact "Should layout correctly using L justified nc layout"
+      (layout
+           (str "Alice, why is" \newline
+                "a raven like" \newline
+                "a writing desk?")
+           {:width 40
+            :layout {:cols  ["║{ [Lf] │} [Lf] ║" :apply-for [all-cols?]]
+                     :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
+                            ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
+                            ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+        =>
+      ["╔════════════╤═════════════╤═══════════╗"
+       "║ Alice,     │ why         │ is        ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║ a          │ raven       │ like      ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║ a          │ writing     │ desk?     ║"
+       "╚════════════╧═════════════╧═══════════╝"])
+
+(fact "Should layout correctly using C justified nc layout"
+      (layout
+        (str "Alice, why is" \newline
+             "a raven like" \newline
+             "a writing desk?")
+        {:width 40
+         :layout {:cols  ["║{ [Cf] │} [Cf] ║" :apply-for [all-cols?]]
+                  :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
+                         ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
+                         ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+      =>
+      ["╔════════════╤═════════════╤═══════════╗"
+       "║   Alice,   │     why     │     is    ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║      a     │    raven    │    like   ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║      a     │   writing   │   desk?   ║"
+       "╚════════════╧═════════════╧═══════════╝"])
+
+(fact "Should layout correctly using R justified nc layout"
+      (layout
+        (str "Alice, why is" \newline
+             "a raven like" \newline
+             "a writing desk?")
+        {:width 40
+         :layout {:cols  ["║{ [Rf] │} [Rf] ║" :apply-for [all-cols?]]
+                  :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
+                         ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
+                         ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+      =>
+      ["╔════════════╤═════════════╤═══════════╗"
+       "║     Alice, │         why │        is ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║          a │       raven │      like ║"
+       "╟────────────┼─────────────┼───────────╢"
+       "║          a │     writing │     desk? ║"
+       "╚════════════╧═════════════╧═══════════╝"])
