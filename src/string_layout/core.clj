@@ -18,9 +18,9 @@
    :raw?            false})
 
 (def grammar
-  "layout = delim? ((col | repeat) delim)*
+  "layout = delim? ((col | repeat) delim?)*
    repeat = <'{'> delim? (col delim?)* <'}'>
-   delim    = (fill | #'[^\\[\\]{}fF]*')+
+   delim    = (fill | #'[^\\[\\]{}fF]+')+
    fill     = <'F'> (#'[\\d]+')?
    col      = <'['> fill? align fill? <']'>")
 ;align      = ('L' | 'C' | 'R' | 'V') ")
