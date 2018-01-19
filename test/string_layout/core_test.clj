@@ -65,17 +65,27 @@
   20 6 [\1 \2 \3 \4 \5 \6] ["111" "222" "3333" "444" "555" "6666"]
   )
 
+;[{:del ["║"]}
+; {:del [:f " "]}
+; {:col [:f {:align :c}]}
+; {:del [" │"]}
+; {:del [" "]}
+; {:col [:f {:align :c}]}
+; {:del [" │"]}
+; {:del [" "]}
+; {:col [:f {:align :c}]}
+; {:del [" ║"]}])
 (tabular
   (fact "Should expands fills correctly"
-        (expand-fills ?fill-width ?col-widths ?fill-chars ?layout) => ?expected-result)
-  ?layout              ?fill-width ?col-widths ?fill-chars ?expected-result
+        (expand-fills ?width ?col-widths ?fill-chars ?layout) => ?expected-result)
+  ?layout              ?width ?col-widths ?fill-chars ?expected-result
   []                   5           [0 0]       [\*]        []
-  [{:del " "}]         5           [0 0]       [\*]        [{:del " "}]
-  [{:del "-"}]         5           [0 0]       [\*]        [{:del "-"}]
+  [{:del [" "]}]       5           [0 0]       [\*]        [{:del " "}]
+  [{:del ["-"]}]       5           [0 0]       [\*]        [{:del "-"}]
   [{:del [:f]}]        5           [0 0]       [\*]        [{:del "*****"}]
   [{:del [:f]}]        5           [1 1]       [\*]        [{:del "***"}]
   ;TODO: RE-ENABLE THE BELOW, an actual bug
-  [{:del " "}          ;split
+  [{:del [" "]}          ;split
    {:del [:f]}]        5           [0 0]       [\*]        [{:del " "} {:del "****"}]
   [{:del [" " :f]}]    5           [0 0]       [\*]        [{:del " ****"}]
   [{:del [" " :f]}]    5           [1 1]       [\*]        [{:del " **"}]
