@@ -1,17 +1,23 @@
 (ns string-layout.core-test
   (:require [midje.sweet :refer :all]
-            [midje.repl :as m]
             [string-layout.core :refer :all]
             [string-layout.layout :refer :all]
             [clojure.string :refer [split]]))
 
 (tabular
   (fact "Should throw exception on invalid layout string"
-        ((f-parse-layout-string false) [?layout-string]) => (throws Exception))
-  ?layout-string
-  "[]"
-  "[x]"
-  "[l][c][x]"
+        ((f-parse-layout-string ?row-layout) [?layout-string]) => (throws Exception))
+  ?row-layout ?layout-string
+  false       "[]"
+  false       "[x]"
+  false       "[x"
+  false       "x]"
+  false       "[x][c][r]"
+  false       "[l][x][r]"
+  false       "[l][c][x]"
+  false       "{ [c] "
+  false       " [c] }"
+
   )
 
 
@@ -25,6 +31,8 @@
   "[l]"                false  [{:col [{:align :l}]}]
   "[c]"                false  [{:col [{:align :c}]}]
   "[r]"                false  [{:col [{:align :r}]}]
+  "f[L]f"              false  [{:del [:f]} {:col [{:align :l}]} {:del [:f]}]
+  "[fLf]"              false  [{:col [:f {:align :l} :f]}]
   "[L]"                true   [{:col [{:align \L}]}]
   "[*]"                true   [{:col [{:align \*}]}]
   "a[L]b"              false  [{:del ["a"]} {:col [{:align :l}]} {:del ["b"]}]
@@ -44,34 +52,25 @@
   (fact "Should calculate fills correctly"
         (calculate-fills ?fill-width ?fill-count ?fill-chars) => ?expected-result)
   ?fill-width ?fill-count ?fill-chars ?expected-result
-  0 1 [\*] [""]
-  1 1 [\*] ["*"]
-  2 1 [\*] ["**"]
-  2 2 [\* \+] ["*" "+"]
-  3 2 [\* \+] ["*" "++"]
-  4 2 [\* \+] ["**" "++"]
-  3 3 [\* \+ \-] ["*" "+" "-"]
-  4 3 [\* \+ \-] ["*" "+" "--"]
-  5 3 [\* \+ \-] ["*" "++" "--"]
-  6 3 [\* \+ \-] ["**" "++" "--"]
-  7 3 [\* \+ \-] ["**" "++" "---"]
-  8 3 [\* \+ \-] ["**" "+++" "---"]
-  9 3 [\* \+ \-] ["***" "+++" "---"]
-  10 3 [\* \+ \-] ["***" "+++" "----"]
-  7 2 [\* \+] ["***" "++++"]
-  20 6 [\1 \2 \3 \4 \5 \6] ["111" "222" "3333" "444" "555" "6666"]
+  0           1           [\*]        [""]
+  1           1           [\*]        ["*"]
+  2           1           [\*]        ["**"]
+  2           2           [\* \+]     ["*" "+"]
+  3           2           [\* \+]     ["*" "++"]
+  4           2           [\* \+]     ["**" "++"]
+  3           3           [\* \+ \-]  ["*" "+" "-"]
+  4           3           [\* \+ \-]  ["*" "+" "--"]
+  5           3           [\* \+ \-]  ["*" "++" "--"]
+  6           3           [\* \+ \-]  ["**" "++" "--"]
+  7           3           [\* \+ \-]  ["**" "++" "---"]
+  8           3           [\* \+ \-]  ["**" "+++" "---"]
+  9           3           [\* \+ \-]  ["***" "+++" "---"]
+  10          3           [\* \+ \-]  ["***" "+++" "----"]
+  7           2           [\* \+]     ["***" "++++"]
+  20          6           [\1 \2 \3   ; split
+                           \4 \5 \6]  ["111" "222" "3333" "444" "555" "6666"]
   )
 
-;[{:del ["║"]}
-; {:del [:f " "]}
-; {:col [:f {:align :c}]}
-; {:del [" │"]}
-; {:del [" "]}
-; {:col [:f {:align :c}]}
-; {:del [" │"]}
-; {:del [" "]}
-; {:col [:f {:align :c}]}
-; {:del [" ║"]}])
 (tabular
   (fact "Should expands fills correctly"
         ((f-expand-fills ?width ?col-widths ?fill-chars)  ?layout) => ?expected-result)
@@ -81,7 +80,6 @@
   [{:del ["-"]}]       5           [0 0]       [\*]        [{:del "-"}]
   [{:del [:f]}]        5           [0 0]       [\*]        [{:del "*****"}]
   [{:del [:f]}]        5           [1 1]       [\*]        [{:del "***"}]
-  ;TODO: RE-ENABLE THE BELOW, an actual bug
   [{:del [" "]}          ;split
    {:del [:f]}]        5           [0 0]       [\*]        [{:del " "} {:del "****"}]
   [{:del [" " :f]}]    5           [0 0]       [\*]        [{:del " ****"}]
