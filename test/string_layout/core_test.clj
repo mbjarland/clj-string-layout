@@ -7,11 +7,8 @@
 
 (tabular
   (fact "Should throw exception on invalid layout string"
-        (parse-layout-string ?layout-string) => (throws Exception))
+        ((f-parse-layout-string false) [?layout-string]) => (throws Exception))
   ?layout-string
-  ""
-  " "
-  "bogus"
   "[]"
   "[x]"
   "[l][c][x]"
@@ -20,7 +17,7 @@
 
 (tabular
   (fact "Should correctly parse col layout strings"
-        (parse-layout-string ?row ?layout-string) => ?layout)
+        ((f-parse-layout-string ?row) [?layout-string]) => {:layout ?layout})
   ?layout-string       ?row   ?layout
   "[L]"                false  [{:col [{:align :l}]}]
   "[C]"                false  [{:col [{:align :c}]}]
@@ -77,7 +74,7 @@
 ; {:del [" ║"]}])
 (tabular
   (fact "Should expands fills correctly"
-        (expand-fills ?width ?col-widths ?fill-chars ?layout) => ?expected-result)
+        ((f-expand-fills ?width ?col-widths ?fill-chars)  ?layout) => ?expected-result)
   ?layout              ?width ?col-widths ?fill-chars ?expected-result
   []                   5           [0 0]       [\*]        []
   [{:del [" "]}]       5           [0 0]       [\*]        [{:del " "}]
@@ -128,6 +125,7 @@
   "a b\naa bb" \space   \space   ["[l]-f-f-[r]"]  0     ["a --- b" "aa---bb"]
   "a*b\naa*bb" \*       \*       ["[l]*f*f*[r]"]  0     ["a*****b" "aa***bb"]
   )
+
 
 (fact "should lay out correctly with simple L justified col layout"
       (layout
