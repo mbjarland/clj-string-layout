@@ -6,8 +6,7 @@
             [instaparse.failure :as fail]
             [com.rpl.specter :refer [select pred= pred ALL FIRST NONE transform
                                      multi-transform multi-path setval must subselect
-                                     select-one MAP-VALS LAST]]
-            [taoensso.tufte :refer [p profiled profile]]))
+                                     select-one MAP-VALS LAST]]))
 
 (def default-layout-config
   {:align-char      \space
@@ -36,8 +35,6 @@
                 :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
 
-;; => [:layout [:del "| "] [:col [:fill "2"] [:align "C"] [:fill "2"]] [:del " |"]]
-;; => {:layout [{:del ["| " {:f 2}]} {:col [{:f 2} \C {:f 2}]} {:del " |"}]
 (defn transform-parsed
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
@@ -83,8 +80,6 @@
           (mappify (transform-parsed row-layout? parsed-layout)
                    rest))))))
 
-
-
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
 ;   ["*"  "*"  "*"  "*"  "*"  "*"]
@@ -116,7 +111,6 @@
 ;(transduce (map (constantly 1)) + (traverse [ALL :del ALL (pred= :f)] data))
 ;(transform [ALL :del ALL (pred= :f)]
 
-; TODO: check out specter (must :a) instead of (pred :del) :del
 (defn expand-fills-with-fs
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
@@ -238,7 +232,6 @@
         []
         (range (inc cnt))))
     rows))
-
 
 (defn throw-invalid-grouping-exception []
   (throw (RuntimeException. "invalid grouping xxxx TODO: expound...")))
@@ -367,17 +360,14 @@
   "Lays out rows of text in columns. The first argument can either
   be a string with spaces between 'words' and newlines between each
   row _or_ a vector of vector of strings representing the rows
-  and the words (columns) within the rows. The second
-  argument is a layout string on the form ' [L]f[R] [R] ' and
-  the third argument is a layout config on the form
-  {:width 80 :align-char \\space :raw? false} where width is the
-  total width of the row (any 'f' specifiers between columns will
-  fill the row out to this width), the align-char is the character to
-  use when filling to width, and raw? (default false) will, if true,
-  return rows as vectors of indented columns and column spacings instead of
-  returning rows as already joined strings. The raw format can be useful
-  if you need to do some post processing like adding ansi colors to
-  certain columns before outputting to terminal etc."
+  and the words (columns) within the rows. The second argument is 
+  a map representing a 'layout config', please see the docs for 
+  details on layout configs. raw? (default false) will, if true
+  in the layout config return rows as vectors of indented columns 
+  and column spacings instead of returning rows as already joined 
+  strings. The raw format can be useful if you need to do some post 
+  processing like adding ansi colors to certain columns before 
+  outputting to terminal etc."
   [rows layout-config]
   {:pre [(pos? (count rows))]}                              ;TODO: replace predicate with spec
   (let [layout-config (merge-default-layout layout-config)
@@ -388,18 +378,3 @@
         result        (mapv c-layout-f rows)
         result        (apply-row-layouts layout-config result)]
     (if (:raw? layout-config) result (mapv join result))))
-
-
-(comment
-
-  (time
-    (layout
-      (str "Alice, why is" \newline
-           "a raven like" \newline
-           "a writing desk?")
-      {:layout {:cols ["║{ [fC] │} [fC] ║" :apply-for [all-cols?]]
-                :rows [["╔{═[f═]═╤}═[f═]═╗" :apply-for first-row? :fill-char \═]
-                       ["╟{─[f─]─┼}─[f─]─╢" :apply-for interior-row? :fill-char \─]
-                       ["╚{═[f═]═╧}═[f═]═╝" :apply-for last-row? :fill-char \═]]}}))
-
-  )

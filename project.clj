@@ -1,4 +1,4 @@
-(defproject string-layout "0.1.0-SNAPSHOT"
+(defproject string-layout "1.0.0-SNAPSHOT"
   :description "A library for laying out strings in rows and columns"
   :url "https://bitbucket.org/mbjarland/clj-string-layout"
   :license {:name "Eclipse Public License"
