@@ -51,7 +51,7 @@ With date left justified:
 #### Example 2: dynamic column-count ascii box layout
 With data center aligned: 
 
-```clojure 
+```clojure
 (layout 
   data 
   {:layout {:cols  ["│{ [C] │} [C] │" :apply-for [all-cols?]]
