@@ -347,7 +347,7 @@
 
 (def transform-layout-config-m (memoize transform-layout-config))
 
-(defn f-make-col-layout-fn [layout-config col-widths]
+(defn f-layout-cols [layout-config col-widths]
   (let [align-char (:align-char layout-config)
         col-layout (get-in layout-config [:layout :cols :layout])
         align      (partial align-word col-layout col-widths align-char)]
@@ -384,8 +384,8 @@
         rows          (normalize-rows layout-config rows)
         col-widths    (calculate-col-widths rows)
         layout-config (transform-layout-config-m layout-config col-widths)
-        layout-cols   (f-make-col-layout-fn layout-config col-widths)
-        result        (mapv layout-cols rows)
+        c-layout-f   (f-layout-cols layout-config col-widths)
+        result        (mapv c-layout-f rows)
         result        (apply-row-layouts layout-config result)]
     (if (:raw? layout-config) result (mapv join result))))
 
