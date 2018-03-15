@@ -1,33 +1,40 @@
 # clj-string-layout
 
-[![License](https://img.shields.io/badge/License-EPL%201.0-red.svg)](https://opensource.org/licenses/EPL-1.0) 
-[![Current Version](https://img.shields.io/clojars/v/mbjarland/clj-string-layout.svg)](https://clojars.org/mbjarland/clj-string-layout)
+[![License](https://img.shields.io/badge/License-EPL%201.0-red.svg?style=for-the-badge)](https://opensource.org/licenses/EPL-1.0) 
+[![Clojars](https://img.shields.io/clojars/v/string-layout.svg?style=for-the-badge)](https://clojars.org/string-layout)
 
-A clojure library that formats string data in table-like formats using a flexible layout language. 
+A clojure library for laying out strings in table-like structures using a flexible layout language.
 
 ## Installation
 
 The latest release version of clj-string-layout is hosted on [Clojars](https://clojars.org):
 
-[![Current Version](https://clojars.org/mbjarland/clj-string-layout/latest-version.svg)](https://clojars.org/mbjarland/clj-string-layout)
+[![Current Version](https://clojars.org/string-layout/latest-version.svg)](https://clojars.org/string-layout)
 
 ## Usage 
 In your leiningen project.clj file: 
 
 ```
-[mbjarland/clj-string-layout "1.0.0-SNAPSHOT"]
+[string-layout "1.0.0-SNAPSHOT"]
 ```
 
-in your source file: TODO: CHECK THIS!
+in your [deps.edn file](https://clojure.org/guides/deps_and_cli): 
 
 ```
-  (require '[string-layout.core :refer [layout]])
+{:deps 
+  {string-layout {:mvn/version "1.0.0-SNAPSHOT"}}}
+```
+
+in your clojure source:
+
+```
+  (require '[string-layout.core :as s])
 ```
 
 ## Dependencies 
 
 ```
-[com.rpl/specter "1.0.5"]
+ [com.rpl/specter "1.0.5"]
    [riddley "0.1.12"]
  [instaparse "1.4.8"]
  [org.clojure/clojure "1.9.0"]
