@@ -1,5 +1,5 @@
 (defproject string-layout "1.0.0-SNAPSHOT"
-  :description "A library for laying out strings in rows and columns"
+  :description "A clojure library for laying out strings in rows and columns"
   :url "https://bitbucket.org/mbjarland/clj-string-layout"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
