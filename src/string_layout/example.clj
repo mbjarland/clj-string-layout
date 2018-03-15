@@ -1,13 +1,22 @@
 (ns string-layout.example)
 
-(defn first-row? [[idx _]] (zero? idx))
-(def not-first? (complement first-row?))
-(defn second? [[idx _]] (= idx 1))
+(defn first-row? [[idx _]] 
+  (zero? idx))
+
+(def not-first? 
+  (complement first-row?))
+(defn second? [[idx _]] 
+  (= idx 1))
 
 (defn last-row? [[idx cnt]]
   (= idx cnt))
-(def not-last-row? (complement last-row?))
-(def interior-row? (complement last-row?))
+
+(def not-last-row? 
+  (complement last-row?))
+
+(def interior-row? 
+  (complement last-row?))
+
 (defn always? [[_ _]] true)
 
 
@@ -63,7 +72,7 @@
   ; │ col 2 is      │   centered    │   $12 │
   ; │ zebra stripes │ are neat      │    $1 │
   ; └───────────────┴───────────────┴───────┘ ← 4
-  {:col-layout "│ [L] │ [C] │ [R] │"
+  {:col-layout   "│ [L] │ [C] │ [R] │"
    :row-layout [["┌─[─]─┬─[─]─┬─[─]─┐"] :apply-for first-row?
                 ["└─[─]─┴─[─]─┴─[─]─┘"] :apply-for last-row?]}
 
@@ -87,7 +96,7 @@
   ; │ zebra stripes  are neat          $1 │
   ; └─────────────────────────────────────┘ ← 4
 
-  {:col-layout "│ [L]f[C]f[R] │"
+  {:col-layout   "│ [L]f[C]f[R] │"
    :row-layout [["┌─[─]f[─]f[─]─┐" :apply-for first-row? :fill-chars [\- \-]]
                 ["└─[─]f[─]f[─]─┘" :apply-for last-row?]]}
 
