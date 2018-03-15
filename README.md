@@ -73,7 +73,6 @@ and now call string-layout to format this data using some sample layout configur
                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
 =>
-
 ["┌────────┬─────────┬───────┐"
  "│ Alice, │   why   │   is  │"
  "├────────┼─────────┼───────┤"
