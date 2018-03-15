@@ -69,6 +69,15 @@ and now call string-layout to format this data using some sample layout configur
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
 
 =>
+<span style="font: 12px monospace">
+["┌────────┬─────────┬───────┐"
+ "│ Alice, │   why   │   is  │"
+ "├────────┼─────────┼───────┤"
+ "│    a   │  raven  │  like │"
+ "├────────┼─────────┼───────┤"
+ "│    a   │ writing │ desk? │"
+ "└────────┴─────────┴───────┘"]
+</span>
 ["┌────────┬─────────┬───────┐"
  "│ Alice, │   why   │   is  │"
  "├────────┼─────────┼───────┤"
