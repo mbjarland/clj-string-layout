@@ -1,3 +1,8 @@
+<style type="text/css">
+pre { font-family:monospace; }
+</style>
+
+
 # clj-string-layout
 [![License](https://img.shields.io/badge/License-EPL%201.0-red.svg)](https://opensource.org/licenses/EPL-1.0) 
 [![Current Version](https://img.shields.io/clojars/v/mbjarland/clj-string-layout.svg)](https://clojars.org/mbjarland/clj-string-layout)
@@ -60,15 +65,15 @@ and now call string-layout to format this data using some sample layout configur
 
 #### Example 2 - centered dynamic column-count ascii box layout:
 
-```clojure
+```
 (layout 
   data 
   {:layout {:cols  ["│{ [C] │} [C] │" :apply-for [all-cols?]]
             :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
-
 =>
+
 ["┌────────┬─────────┬───────┐"
  "│ Alice, │   why   │   is  │"
  "├────────┼─────────┼───────┤"
