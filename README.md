@@ -7,7 +7,7 @@ pre { font-family:monospace; }
 [![License](https://img.shields.io/badge/License-EPL%201.0-red.svg)](https://opensource.org/licenses/EPL-1.0) 
 [![Current Version](https://img.shields.io/clojars/v/mbjarland/clj-string-layout.svg)](https://clojars.org/mbjarland/clj-string-layout)
 
-A clojure library designed to format string data into table-like formats using a flexible layout language. 
+A clojure library that formats string data into table-like formats using a flexible layout language. 
 
 ## Installation
 
