@@ -22,17 +22,16 @@
    delim    = (fill | #'[^\\[\\]{}fF]+')+
    fill     = <'F'> (#'[\\d]+')?
    col      = <'['> fill? align fill? <']'>")
-;align      = ('L' | 'C' | 'R' | 'V') ")
-;align      = #'[^]]'
+
+(def col-grammar (str grammar \newline "align = ('L'|'C'|'R'|'V')"))
+(def row-grammar (str grammar \newline "align = #'[^]]'"))
 
 (defn make-col-layout-parser []
-  (insta/parser (str grammar \newline "align = ('L'|'C'|'R'|'V')")
-                :string-ci true))
+  (insta/parser col-grammar :string-ci true))
 (def make-col-layout-parser-m (memoize make-col-layout-parser))
 
 (defn make-row-layout-parser []
-  (insta/parser (str grammar \newline "align = #'[^]]'")
-                :string-ci true))
+  (insta/parser row-grammar :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
 
 (defn transform-parsed
