@@ -44,12 +44,12 @@ in your clojure source:
  
 
 ## Examples
-First, define some sample string data: 
+First we define some sample string data: 
 
 ```clojure
 (def data (str "Alice, why is\n" 
                "a raven like\n"
-               "a writing desk?")
+               "a writing desk?"))
 ```
 
 and now call string-layout to format this data using some sample layout configurations. Explanations for the layout configurations can be found further down in this document. 
@@ -149,7 +149,7 @@ distribution to the default 80 character width:
 ## Layout Configurations
 A layout configuration is a map containing a set of configuration options and layout strings for laying out columns and rows. 
 
-A somewhat contrived but complete example layout config: 
+An example layout config: 
 
 ```clojure
 (def full-layout-config
@@ -182,15 +182,38 @@ using this to lay out our data from above gives us:
 
 (with comments added for clarity)
 
-The layout language will be explained in detail below, but first let's go through the 
-Options explained: 
+The layout language used for the `:cols` and `:rows` expressions above will be explained in detail below, but first let's go through the other options: 
 
-* `align-char` - the widest word in a column defines the column width. All other words in that column will need to be aligned to the widest width. `align-char` is the character used to pad words to the correct width.
-* `fill-char` - the layout engine is capable of "fill to width" functionality where the data is filled to a specific width (default 80 characters). This functionality is enabled by using the `f` fill specifier in the `:cols` and `:rows` layout strings. If any fills are detected, then `fill-char` is the default character used for the "fill to width" functionality. Note that for simplicity, no fill chars were used in the above example. 
+* `align-char` - the widest word in a column defines the column width. All other words in that column will need to be aligned to the widest width. `align-char` is the character used to pad words to the correct width. As an example, the word "a" in the 
+above was padded to `a****`. 
+* `fill-char` - the layout engine is capable of "fill to width" functionality where the data is filled to a specific width (default 80 characters). Think of html tables 
+where the table fills some specific width. This functionality is enabled by using the `f` fill specifier in the `:cols` and `:rows` layout strings. If any fills are detected, then `fill-char` is the default character used for the "fill to width" functionality. Note that for simplicity, no fill chars were used in the above example. 
 * `word-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into "words".
 * `row-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into rows.
 
+## Col and row layouts 
+The layout language used by string-layout was inspired by [MigLayout](http://www.miglayout.com/), a swing layout manager that back in another life saved me 
+uncountable hours when building java swing user interfaces. 
 
+The grammar for the layout strings is defined using [instaparse](https://github.com/Engelberg/instaparse), an excellent clojure context-free grammar/parser builder. For reference, the complete grammar definition looks as follows: 
+
+```
+(def grammar
+  "layout = delim? ((col | repeat) delim?)*
+   repeat = <'{'> delim? (col delim?)* <'}'>
+   delim    = (fill | #'[^\\[\\]{}fF]+')+
+   fill     = <'F'> (#'[\\d]+')?
+   col      = <'['> fill? align fill? <']'>")
+
+(def col-grammar (str grammar \newline 
+                      "align = ('L'|'C'|'R'|'V')"))
+(def row-grammar (str grammar \newline 
+                      "align = #'[^]]'"))
+```
+
+as can be seen from this definition, the grammars for the col and row layouts have a lot in common and only differ in the "align" elements. 
+
+#### The Anatomy of a Column Layout
 
 ```
 
