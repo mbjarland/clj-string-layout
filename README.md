@@ -3,6 +3,14 @@
 [![License](https://img.shields.io/badge/License-EPL%201.0-red.svg?style=for-the-badge)](https://opensource.org/licenses/EPL-1.0) 
 [![Clojars](https://img.shields.io/clojars/v/string-layout.svg?style=for-the-badge)](https://clojars.org/string-layout)
 
+## BETA Notice
+Note that this readme and the related library is being worked on. Check back 
+in a week or two and this readme and the lib itself will be in a more complete
+shape. 
+
+-mbjarland 2018.Mar.19
+
+
 A clojure library for laying out strings in table-like structures using a flexible layout language.
 
 ## Installation
