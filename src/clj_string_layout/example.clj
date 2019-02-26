@@ -1,23 +1,4 @@
-(ns string-layout.example)
-
-(defn first-row? [[idx _]] 
-  (zero? idx))
-
-(def not-first? 
-  (complement first-row?))
-(defn second? [[idx _]] 
-  (= idx 1))
-
-(defn last-row? [[idx cnt]]
-  (= idx cnt))
-
-(def not-last-row? 
-  (complement last-row?))
-
-(def interior-row? 
-  (complement last-row?))
-
-(defn always? [[_ _]] true)
+(ns clj-string-layout.example)
 
 
 (comment

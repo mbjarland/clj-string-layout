@@ -1,7 +1,7 @@
-(ns string-layout.core-test
+(ns clj-string-layout.core-test
   (:require [midje.sweet :refer :all]
-            [string-layout.core :refer :all]
-            [string-layout.layout :refer :all]
+            [clj-string-layout.core :refer :all]
+            [clj-string-layout.layout :refer :all]
             [clojure.string :refer [split]]))
 
 (tabular
