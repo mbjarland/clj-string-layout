@@ -1,6 +1,7 @@
-(ns string-layout.layout)
+(ns clj-string-layout.layout)
 
 ; layout predicates
+
 (defn -first? [[idx _]] (zero? idx))
 (def -not-first? (complement -first?))
 
