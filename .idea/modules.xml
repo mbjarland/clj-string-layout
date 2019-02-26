@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/string-layout.iml" filepath="$PROJECT_DIR$/string-layout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clj-string-layout.iml" filepath="$PROJECT_DIR$/clj-string-layout.iml" />
     </modules>
   </component>
 </project>
