@@ -1,7 +1,80 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <option name="OTHER_INDENT_OPTIONS">
+      <value>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </value>
+    </option>
+    <ClojureCodeStyleSettings>{
+  :clojure.core/assoc 2
+  :clojure.core/binding 2
+  :clojure.core/case :only-indent
+  :clojure.core/cond :only-indent
+  :clojure.core/definterface 2
+  :clojure.core/do 2
+  :clojure.core/doseq :only-indent
+  :clojure.core/dotimes 2
+  :clojure.core/doto 2
+  :clojure.core/if :only-indent
+  :clojure.core/if-let :only-indent
+  :clojure.core/if-not 2
+  :clojure.core/if-some 2
+  :cursive.formatting/align-binding-forms true
+  :cursive.formatting/align-conditionals false
+  :cursive.formatting/imports-use-vectors true
+  :cursive.formatting/one-space-lists true
+}</ClojureCodeStyleSettings>
+    <JetCodeStyleSettings>
+      <option name="ALIGN_IN_COLUMNS_CASE_BRANCH" value="true" />
+    </JetCodeStyleSettings>
     <XML>
       <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
     </XML>
+    <codeStyleSettings language="Groovy">
+      <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+      <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
+      <option name="ALIGN_MULTILINE_THROWS_LIST" value="true" />
+      <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
+      <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="0" />
+        <option name="TAB_SIZE" value="2" />
+        <option name="LABEL_INDENT_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <option name="ALIGN_GROUP_FIELD_DECLARATIONS" value="true" />
+      <option name="ALIGN_CONSECUTIVE_VARIABLE_DECLARATIONS" value="true" />
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="Rust">
+      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+      <indentOptions>
+        <option name="INDENT_SIZE" value="3" />
+        <option name="CONTINUATION_INDENT_SIZE" value="3" />
+        <option name="TAB_SIZE" value="3" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="XML">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="kotlin">
+      <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+      <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
   </code_scheme>
 </component>
