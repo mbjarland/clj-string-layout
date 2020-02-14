@@ -20,57 +20,69 @@
    :width           80
    :raw?            false})
 
+(comment
+ {:layout {:cols "│ [L] │ [C] │ [R] │"
+           :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-for first-row?]
+                  ["├─[─]─┼─[─]─┼─[─]─┤" :apply-for interior-row?]
+                  ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for last-row?]]}}
+ )
+
 (def
-  ^{:doc "base grammar for the layout string language"
+  ^{:doc     "base grammar for the layout string language"
     :private true}
   grammar
   "layout = delim? ((col | repeat) delim?)*
    repeat = <'{'> delim? (col delim?)* <'}'>
    delim    = (fill | #'[^\\[\\]{}fF]+')+
-   fill     = <'F'> (#'[\\d]+')?
-   col      = <'['> fill? align fill? <']'>")
+   fill     = <'F'>
+   fix      = #'[\\d]+'
+   col      = <'['> (fill | fix)?  align (fill | fix)? <']'>")
 
 (def col-grammar (str grammar \newline "align = ('L'|'C'|'R'|'V')"))
 (def row-grammar (str grammar \newline "align = #'[^]]'"))
 
-(defn make-col-layout-parser []
-  (insta/parser col-grammar :string-ci true))
-(def make-col-layout-parser-m (memoize make-col-layout-parser))
-
-(defn make-row-layout-parser []
-  (insta/parser row-grammar :string-ci true))
-(def make-row-layout-parser-m (memoize make-row-layout-parser))
-
-(defn ^:private transform-parsed
+(defn ^:private transform-parsed-leaves
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
-  [row-layout? parsed-layout]
-  (prn :row-layout? row-layout? :parsed-layout parsed-layout)
+  [parsed-layout row-layout?]
+  ;(prn :row-layout? row-layout? :parsed-layout parsed-layout)
   (insta/transform
-    {:layout  vector
-     :fill    (fn [] :f)
-     :padding identity
-     :repeat  (fn [& r] {:repeat (into [] r)})
-     :delim   (fn [& r] {:del (into [] r)})
-     :col     (fn [& r] {:col (into [] r)})
-     :align   (fn [a]
-                {:align
-                 (if row-layout?
-                   (first a)
-                   (-> a .toLowerCase keyword))})}
-    parsed-layout))
+   {:layout  vector
+    :fill    (fn [] :f)
+    :padding identity
+    :fix     (fn [w] {:fix (Integer/parseInt w)})
+    :repeat  (fn [& r] {:repeat (into [] r)})
+    :delim   (fn [& r] {:del (into [] r)})
+    :col     (fn [& r] {:col (into [] r)})
+    :align   (fn [a]
+               {:align
+                (if row-layout?
+                  (first a)
+                  (-> a .toLowerCase keyword))})}
+   parsed-layout))
 
 (defn ^:private throw-parse-error [parsed s]
   (let [msg (with-out-str (fail/pprint-failure parsed))]
     (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
                     {:failure (insta/get-failure parsed)}))))
 
-(defn ^:private mappify
+(defn ^:private transform-parsed-envelope
   "transform a vector layout ['layout string' :apply-for ...]
    to a map format {:layout parsed :apply-for. Works for both
    row and col layouts"
   [layout rest]
   (merge {:layout layout} (apply hash-map rest)))
+
+(defn ^:private parse-layout-string
+  [row-layout? layout-string & rest]
+  (let [grammar (if row-layout? row-grammar col-grammar)
+        parser  (insta/parser grammar :string-ci true)
+        parsed  (parser layout-string)]
+      (if (insta/failure? parsed)
+        (throw-parse-error parsed layout-string)
+        (-> parsed
+            (transform-parsed-leaves row-layout?)
+            (transform-parsed-envelope rest)))))
 
 (defn ^:private f-parse-layout-string
   "given a flag indicating whether to parse row or col
@@ -79,13 +91,13 @@
   {:layout parsed other-keys-based-on-rest}"
   [row-layout?]
   (let [parser (if row-layout? (make-row-layout-parser-m)
-                               (make-col-layout-parser-m))]
+                 (make-col-layout-parser-m))]
     (fn [[layout-string & rest]]
       (let [parsed-layout (parser layout-string)]
         (if (insta/failure? parsed-layout)
           (throw-parse-error parsed-layout layout-string)
-          (mappify (transform-parsed row-layout? parsed-layout)
-                   rest))))))
+          (transform-parsed-envelope (transform-parsed-leaves row-layout? parsed-layout)
+                                     rest))))))
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
@@ -106,11 +118,11 @@
         s  (map int (iterate #(+ r %) r))                   ; 0 1 2 2 3 4
         ns (map #(join (repeat q %)) fill-chars)]
     (first (reduce
-             (fn [[a l i] x]
-               (let [n (nth ns i)]
-                 [(conj a (if (= l x) n (str n (nth fill-chars i)))) x (inc i)]))
-             [[] 0 0]
-             (take fill-count s)))))
+            (fn [[a l i] x]
+              (let [n (nth ns i)]
+                [(conj a (if (= l x) n (str n (nth fill-chars i)))) x (inc i)]))
+            [[] 0 0]
+            (take fill-count s)))))
 
 ; best way (natahan marz)
 ;(count (select [ALL :del ALL (pred= :f)] data))
@@ -158,7 +170,7 @@
         rp       (re-pattern (str \\ (:row-split-char layout-config)))
         r        (if (instance? String rows) (mapv #(split % wp)
                                                    (split rows rp))
-                                             rows)
+                   rows)
         max-cols (apply max (map count r))]
     (normalize-row-lens max-cols r)))
 
@@ -182,8 +194,8 @@
         :v word                                             ;verbatim
         ;:W (fmt (str "~{~<~%~1," width ":;~A~> ~}"))
         :else (throw (IllegalArgumentException.
-                       (str "Unsupported alignment operation '" a
-                            "' encountered at align index: " col)))))))
+                      (str "Unsupported alignment operation '" a
+                           "' encountered at align index: " col)))))))
 
 (defn ^:private merge-default-layout [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
@@ -208,36 +220,36 @@
 (defn ^:private f-realize-rows [col-widths]
   (fn [row-spec]
     (transform
-      [:layout]
-      (fn [row-layout]
-        (first
-          (reduce
-            (fn [[a ci] e]
-              (cond
-                (:del e) [(conj a (join (:del e))) ci]
-                (:col e) (let [g          (group-by int? (:col e))
-                               [widths aligns] [(get g true) (get g false)]
-                               width      (+ (reduce + widths) (nth col-widths ci))
-                               align-char (:align (first aligns))]
-                           [(conj a (join (repeat width align-char))) (inc ci)])
-                :else (throw (RuntimeException. (str "invalid layout element" e "encountered in" row-layout)))))
-            [[] 0]
-            row-layout)))
-      row-spec)))
+     [:layout]
+     (fn [row-layout]
+       (first
+        (reduce
+         (fn [[a ci] e]
+           (cond
+             (:del e) [(conj a (join (:del e))) ci]
+             (:col e) (let [g          (group-by int? (:col e))
+                            [widths aligns] [(get g true) (get g false)]
+                            width      (+ (reduce + widths) (nth col-widths ci))
+                            align-char (:align (first aligns))]
+                        [(conj a (join (repeat width align-char))) (inc ci)])
+             :else (throw (RuntimeException. (str "invalid layout element" e "encountered in" row-layout)))))
+         [[] 0]
+         row-layout)))
+     row-spec)))
 
 (defn ^:private apply-row-layouts [layout-config rows]
   (if (get-in layout-config [:layout :rows])
     (let [row-specs (select [:layout :rows ALL] layout-config)
           cnt       (max 1 (count rows))]
       (reduce
-        (fn [a idx]
-          (let [matching (fn [{:keys [layout apply-for]}]
-                           (when (apply-for [idx cnt]) layout))
-                new-a    (into [] (concat a (keep matching row-specs)))]
-            (if (= idx cnt) new-a
-                            (conj new-a (nth rows idx)))))
-        []
-        (range (inc cnt))))
+       (fn [a idx]
+         (let [matching (fn [{:keys [layout apply-for]}]
+                          (when (apply-for [idx cnt]) layout))
+               new-a    (into [] (concat a (keep matching row-specs)))]
+           (if (= idx cnt) new-a
+             (conj new-a (nth rows idx)))))
+       []
+       (range (inc cnt))))
     rows))
 
 (defn ^:private throw-invalid-grouping-exception []
@@ -305,7 +317,10 @@
           (fn [layout]
             (let [p (f-parse-layout-string row?)
                   s (f-spread-spec-apply-fors layout-config)]
-              (->> layout p s))))]
+              (->> layout
+                   (parse-layout-string row? )
+                   p
+                   s))))]
     (->> layout-config
          (transform [:layout (must :cols)] (parse-and-spread-f false))
          (transform [:layout (must :rows) ALL] (parse-and-spread-f true))
@@ -313,14 +328,14 @@
 
 (defn ^:private merge-adjacent-dels [layout]
   (reduce
-    (fn [a c]
-      (let [f (fn [m] (first (keys m)))]
-        (if (= :del (f (last a)) (f c))
-          (transform [LAST MAP-VALS] #(join (concat % (:del c))) a)
-          (if (:del c) (conj a (assoc c :del (join (:del c))))
-                       (conj a c)))))
-    []
-    layout))
+   (fn [a c]
+     (let [f (fn [m] (first (keys m)))]
+       (if (= :del (f (last a)) (f c))
+         (transform [LAST MAP-VALS] #(join (concat % (:del c))) a)
+         (if (:del c) (conj a (assoc c :del (join (:del c))))
+           (conj a c)))))
+   []
+   layout))
 
 (defn ^:private flatten-aligns [layout]
   (transform [ALL (must :col) ALL (pred :align)] :align layout))
@@ -355,13 +370,13 @@
         align      (partial align-word col-layout col-widths align-char)]
     (fn [row]
       (first
-        (reduce
-          (fn [[a ci] l]
-            (cond
-              (:col l) [(conj a (align (nth row ci) ci)) (inc ci)]
-              (:del l) [(conj a (:del l)) ci]))
-          [[] 0]
-          col-layout)))))
+       (reduce
+        (fn [[a ci] l]
+          (cond
+            (:col l) [(conj a (align (nth row ci) ci)) (inc ci)]
+            (:del l) [(conj a (:del l)) ci]))
+        [[] 0]
+        col-layout)))))
 
 ; TODO: read up on mig layout, change precondition
 ; TODO: fix parsing failure handling
