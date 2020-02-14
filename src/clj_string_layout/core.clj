@@ -35,13 +35,13 @@
    repeat = <'{'> delim? (col delim?)* <'}'>
    delim    = (fill | #'[^\\[\\]{}fF]+')+
    fill     = <'F'>
-   fix      = #'[\\d]+'
-   col      = <'['> (fill | fix)?  align (fill | fix)? <']'>")
+   fixed    = #'[\\d]+'
+   col      = <'['> (fill | fixed)?  align (fill | fixed)? <']'>")
 
 (def col-grammar (str grammar \newline "align = ('L'|'C'|'R'|'V')"))
 (def row-grammar (str grammar \newline "align = #'[^]]'"))
 
-(defn ^:private transform-parsed-leaves
+(defn ^:private transform-leaves
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
   [parsed-layout row-layout?]
@@ -61,28 +61,28 @@
                   (-> a .toLowerCase keyword))})}
    parsed-layout))
 
-(defn ^:private throw-parse-error [parsed s]
-  (let [msg (with-out-str (fail/pprint-failure parsed))]
-    (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
-                    {:failure (insta/get-failure parsed)}))))
-
-(defn ^:private transform-parsed-envelope
+(defn ^:private transform-envelope
   "transform a vector layout ['layout string' :apply-for ...]
    to a map format {:layout parsed :apply-for. Works for both
    row and col layouts"
   [layout rest]
   (merge {:layout layout} (apply hash-map rest)))
 
+(defn ^:private throw-parse-error [parsed s]
+  (let [msg (with-out-str (fail/pprint-failure parsed))]
+    (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
+                    {:failure (insta/get-failure parsed)}))))
+
 (defn ^:private parse-layout-string
   [row-layout? layout-string & rest]
   (let [grammar (if row-layout? row-grammar col-grammar)
         parser  (insta/parser grammar :string-ci true)
         parsed  (parser layout-string)]
-      (if (insta/failure? parsed)
+    (if (insta/failure? parsed)
         (throw-parse-error parsed layout-string)
         (-> parsed
-            (transform-parsed-leaves row-layout?)
-            (transform-parsed-envelope rest)))))
+            (transform-leaves row-layout?)
+            (transform-envelope rest)))))
 
 (defn ^:private f-parse-layout-string
   "given a flag indicating whether to parse row or col
@@ -96,8 +96,8 @@
       (let [parsed-layout (parser layout-string)]
         (if (insta/failure? parsed-layout)
           (throw-parse-error parsed-layout layout-string)
-          (transform-parsed-envelope (transform-parsed-leaves row-layout? parsed-layout)
-                                     rest))))))
+          (transform-envelope (transform-leaves row-layout? parsed-layout)
+                              rest))))))
 
 ; 10 6 -- 5 3 -> rest 2 -> 2/3
 ;   ["*"  "**" "**" "*"  "**" "**"]
