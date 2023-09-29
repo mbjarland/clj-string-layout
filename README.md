@@ -1,15 +1,9 @@
 # clj-string-layout
 
-[![License](https://img.shields.io/badge/License-EPL%201.0-red.svg?style=for-the-badge)](https://opensource.org/licenses/EPL-1.0) 
-[![Clojars](https://img.shields.io/clojars/v/string-layout.svg?style=for-the-badge)](https://clojars.org/string-layout)
-
-## BETA Notice
-Note that this readme and the related library is being worked on. Check back 
-in a week or two and this readme and the lib itself will be in a more complete
-shape. 
-
--mbjarland 2018.Mar.19
-
+[![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
+[![Clojars](https://img.shields.io/clojars/v/string-layout.svg)](https://clojars.org/string-layout)
+[![Version](https://img.shields.io/badge/version-1.0.2-brightgreen)](https://img.shields.io/badge/version-1.0.98-brightgreen)
+[![License](https://img.shields.io/badge/License-EPL_2.0-green.svg)](https://www.eclipse.org/legal/epl-2.0/)
 
 A clojure library for laying out strings in table-like structures using a flexible layout language.
 
@@ -19,7 +13,7 @@ The latest release version of clj-string-layout is hosted on [Clojars](https://c
 
 [![Current Version](https://clojars.org/string-layout/latest-version.svg)](https://clojars.org/string-layout)
 
-## Usage 
+## Usage
 In your leiningen project.clj file: 
 
 ```
@@ -39,7 +33,7 @@ in your clojure source:
   (require '[string-layout.core :as s])
 ```
 
-## Dependencies 
+## Dependencies
 
 ```
  [com.rpl/specter "1.0.5"]
@@ -62,7 +56,7 @@ First we define some sample string data:
 
 and now call string-layout to format this data using some sample layout configurations. Explanations for the layout configurations can be found further down in this document. 
 
-#### Example 1 - left justified, fixed column count layout: 
+#### Example 1 - left justified, fixed column count layout:
 
 ```clojure 
 (layout
@@ -199,7 +193,7 @@ where the table fills some specific width. This functionality is enabled by usin
 * `word-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into "words".
 * `row-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into rows.
 
-## Col and row layouts 
+## Col and row layouts
 The layout language used by string-layout was inspired by [MigLayout](http://www.miglayout.com/), a swing layout manager that back in another life saved me 
 uncountable hours when building java swing user interfaces. 
 
