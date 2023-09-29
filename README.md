@@ -10,21 +10,21 @@ A clojure library for laying out strings in table-like structures using a flexib
 ## Installation
 
 The latest release version of clj-string-layout is hosted on [Clojars](https://clojars.org):
-
-[![Current Version](https://clojars.org/string-layout/latest-version.svg)](https://clojars.org/string-layout)
+                    
+[![Current Version](https://clojars.org/com.github.mbjarland/clj-string-layout/latest-version.svg)](https://clojars.org/https://clojars.org/com.github.mbjarland/clj-string-layout)
 
 ## Usage
 In your leiningen project.clj file: 
 
 ```
-[string-layout "1.0.0-SNAPSHOT"]
+[com.github.mbjarland/string-layout "1.0.2"]
 ```
 
 in your [deps.edn file](https://clojure.org/guides/deps_and_cli): 
 
 ```
 {:deps 
-  {string-layout {:mvn/version "1.0.0-SNAPSHOT"}}}
+  {com.github.mbjarland/string-layout {:mvn/version "1.0.2"}}}
 ```
 
 in your clojure source:
@@ -36,14 +36,15 @@ in your clojure source:
 ## Dependencies
 
 ```
- [com.rpl/specter "1.0.5"]
+ [org.clojure/clojure "1.11.1"]
+   [org.clojure/core.specs.alpha "0.2.62"]
+   [org.clojure/spec.alpha "0.3.218"]
+ [com.rpl/specter "1.1.4"]
    [riddley "0.1.12"]
- [instaparse "1.4.8"]
- [org.clojure/clojure "1.9.0"]
-   [org.clojure/core.specs.alpha "0.1.24"]
-   [org.clojure/spec.alpha "0.1.143"]
+ [instaparse "1.4.12"]
+ [nrepl "0.8.3" :exclusions [[org.clojure/clojure]]]
+ [org.nrepl/incomplete "0.1.0" :exclusions [[org.clojure/clojure]]]
 ```
- 
 
 ## Examples
 First we define some sample string data: 
