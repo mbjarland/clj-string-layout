@@ -1,8 +1,7 @@
 (ns clj-string-layout.core-test
   (:require [midje.sweet :refer :all]
             [clj-string-layout.core :refer :all]
-            [clj-string-layout.layout :refer :all]
-            [clojure.string :refer [split]]))
+            [clj-string-layout.layout :refer :all]))
 
 (tabular
   (fact "Should throw exception on invalid layout string"

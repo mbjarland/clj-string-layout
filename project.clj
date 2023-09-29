@@ -1,13 +1,13 @@
 (defproject mbjarland/clj-string-layout "1.0.1-SNAPSHOT"
   :description "A library for laying out strings in rows and columns"
-  :url "https://bitbucket.org/mbjarland/clj-string-layout"
+  :url "https://github.org/mbjarland/clj-string-layout"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [instaparse "1.4.8"]
-                 [com.rpl/specter "1.0.5"]]
-  :profiles {:dev {:dependencies
-                            [[midje "1.9.1"]
-                             [org.clojure/test.check "0.9.0"]
-                             [com.taoensso/tufte "1.1.2"]]
-                   :plugins [[lein-midje "3.2.1"]]}})
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [instaparse "1.4.12"]
+                 [com.rpl/specter "1.1.4"]]
+  :profiles {:dev {:dependencies [[midje "1.10.9"]
+                                  [org.clojure/test.check "1.1.1"]
+                                  ;[com.taoensso/tufte "1.1.2"]
+                                  ]
+                   :plugins      [[lein-midje "3.2.2"]]}})
