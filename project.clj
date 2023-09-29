@@ -1,4 +1,4 @@
-(defproject mbjarland/clj-string-layout "1.0.2"
+(defproject com.github.mbjarland/clj-string-layout "1.0.2"
   :description "A library for laying out strings in rows and columns"
   :url "https://github.org/mbjarland/clj-string-layout"
   :license {:name "Eclipse Public License"
