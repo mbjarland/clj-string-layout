@@ -39,7 +39,7 @@ jobs:
           key: cljdeps-${{ hashFiles('project.clj') }}
           restore-keys: cljdeps-
       - name: Execute tests
-        run: lein test
+        run: lein midje
       - name: Build jar
         run: lein jar
 #      - name: archive uberjar
