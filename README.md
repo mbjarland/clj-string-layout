@@ -260,7 +260,7 @@ your option) any later version.
 --------------
 
 
-#### TODO - documentation
+#### NOTE TO SELF: TODO - documentation
 
 * high level aim - general layout, not specific to any format
 * parsing and normalizing of data
