@@ -260,18 +260,17 @@ your option) any later version.
 --------------
 
 
+#### TODO - documentation
 
-TODO: describe
-o high level aim - general layout, not specific to 
-  any format
-o parsing and normalizing of data
-o layout-config syntax (width, word-split-char, etc) 
-o col layout syntax
-o row layout syntax
-o repeating groups
-o fills 
-o predicates
-o performance
-o clojars release version 
-o prepackaged layouts 
+* high level aim - general layout, not specific to any format
+* parsing and normalizing of data
+* layout-config syntax (width, word-split-char, etc) 
+* col layout syntax
+* row layout syntax
+* repeating groups
+* fills 
+* predicates
+* performance
+* clojars release version 
+* prepackaged layouts 
 
