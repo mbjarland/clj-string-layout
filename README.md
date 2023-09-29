@@ -1,7 +1,7 @@
 # clj-string-layout
 
 [![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
-[![Clojars](https://img.shields.io/clojars/v/string-layout.svg)](https://clojars.org/com.github.mbjarland/clj-string-layout)
+[![Clojars](https://img.shields.io/clojars/v/com.github.mbjarland/clj-string-layout.svg)](https://clojars.org/com.github.mbjarland/clj-string-layout)
 [![Version](https://img.shields.io/badge/version-1.0.2-brightgreen)](https://img.shields.io/badge/version-1.0.2-brightgreen)
 [![License](https://img.shields.io/badge/License-EPL_2.0-green.svg)](https://www.eclipse.org/legal/epl-2.0/)
 
