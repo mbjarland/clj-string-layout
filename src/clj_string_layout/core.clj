@@ -21,8 +21,7 @@
    :raw?            false})
 
 (def
-  ^{:doc "base grammar for the layout string language"
-    :private true}
+  ^{:doc "base grammar for the layout string language"}
   grammar
   "layout = delim? ((col | repeat) delim?)*
    repeat = <'{'> delim? (col delim?)* <'}'>
@@ -41,7 +40,7 @@
   (insta/parser row-grammar :string-ci true))
 (def make-row-layout-parser-m (memoize make-row-layout-parser))
 
-(defn ^:private transform-parsed
+(defn transform-parsed
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
   [row-layout? parsed-layout]
@@ -60,19 +59,19 @@
                    (-> a .toLowerCase keyword))})}
     parsed-layout))
 
-(defn ^:private throw-parse-error [parsed s]
+(defn throw-parse-error [parsed s]
   (let [msg (with-out-str (fail/pprint-failure parsed))]
     (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
                     {:failure (insta/get-failure parsed)}))))
 
-(defn ^:private mappify
+(defn mappify
   "transform a vector layout ['layout string' :apply-for ...]
    to a map format {:layout parsed :apply-for. Works for both
    row and col layouts"
   [layout rest]
   (merge {:layout layout} (apply hash-map rest)))
 
-(defn ^:private f-parse-layout-string
+(defn f-parse-layout-string
   "given a flag indicating whether to parse row or col
   layouts, return a function which takes a vector
   [layout-string rest] returns a hash-map
@@ -94,7 +93,7 @@
 ;   [ 2/3  4/3  6/3  8/3  10/3 12/3]
 ; - [ 0    1    2    2    3    4] ;(int above)
 ;   [ 0    1    1    0    1    1] ;when changes
-(defn ^:private calculate-fills
+(defn calculate-fills
   "given a fill width (say 7), a fill count (say 2) and
   fill chars (say [* -]), returns strings suitable for
   replacing :f values with (in this case ['***', '----'] or vice versa)
@@ -118,7 +117,7 @@
 ;(transduce (map (constantly 1)) + (traverse [ALL :del ALL (pred= :f)] data))
 ;(transform [ALL :del ALL (pred= :f)]
 
-(defn ^:private expand-fills-with-fs
+(defn expand-fills-with-fs
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout del-fs col-fs]
@@ -130,7 +129,7 @@
         fills       (calculate-fills fill-width fill-count fill-chars)]
     (setval [(subselect ALL MAP-VALS ALL (pred= :f))] fills layout)))
 
-(defn ^:private f-expand-fills
+(defn f-expand-fills
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars]
@@ -144,13 +143,14 @@
            (transform [ALL (must :del)] join)
            (transform [ALL (must :col) ALL string?] count)))))
 
-(defn ^:private normalize-row-lens [col-count rows]
+(defn normalize-row-lens
   "Add empty elements to any rows which have fewer elements
   than col-count"
+  [col-count rows]
   (mapv #(into [] (take col-count (concat % (repeat ""))))
         rows))
 
-(defn ^:private normalize-rows
+(defn normalize-rows
   "add empty elements as padding to rows with too few elements. If the
   rows argument is a string, also split it using split-char as delimiter"
   [layout-config rows]
@@ -162,10 +162,10 @@
         max-cols (apply max (map count r))]
     (normalize-row-lens max-cols r)))
 
-(defn ^:private calculate-col-widths [rows]
+(defn calculate-col-widths [rows]
   (apply mapv #(apply max (map count %&)) rows))
 
-(defn ^:private align-word
+(defn align-word
   "align a word based on the given col-layout, col-widths and
   align-char. Word is a string word to layout and col is the column
   this word should be laid out for"
@@ -185,19 +185,19 @@
                        (str "Unsupported alignment operation '" a
                             "' encountered at align index: " col)))))))
 
-(defn ^:private merge-default-layout [layout-config]
+(defn merge-default-layout [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
         {:keys [align-char]} layout-config]
     (transform [:fill-char] (fnil identity align-char) layout-config)))
 
-(defn ^:private row-fill-chars [row-layout fill-char fill-chars align-char]
+(defn row-fill-chars [row-layout fill-char fill-chars align-char]
   (let [fill-count (count (select [ALL MAP-VALS ALL (pred= :f)] row-layout))]
     (cond
       fill-chars fill-chars
       fill-char (repeat fill-count fill-char)
       align-char (repeat fill-count align-char))))
 
-(defn ^:private f-expand-row-fills [layout-config col-widths]
+(defn f-expand-row-fills [layout-config col-widths]
   (let [{:keys [width fill-char align-char]} layout-config]
     (fn [row-spec]
       (let [{:keys [layout fill-char fill-chars] :or {fill-char fill-char}} row-spec
@@ -205,7 +205,7 @@
             tf         (f-expand-fills width col-widths fill-chars)]
         (transform [:layout] tf row-spec)))))
 
-(defn ^:private f-realize-rows [col-widths]
+(defn f-realize-rows [col-widths]
   (fn [row-spec]
     (transform
       [:layout]
@@ -225,7 +225,7 @@
             row-layout)))
       row-spec)))
 
-(defn ^:private apply-row-layouts [layout-config rows]
+(defn apply-row-layouts [layout-config rows]
   (if (get-in layout-config [:layout :rows])
     (let [row-specs (select [:layout :rows ALL] layout-config)
           cnt       (max 1 (count rows))]
@@ -240,10 +240,10 @@
         (range (inc cnt))))
     rows))
 
-(defn ^:private throw-invalid-grouping-exception []
+(defn throw-invalid-grouping-exception []
   (throw (RuntimeException. "invalid grouping xxxx TODO: expound...")))
 
-(defn ^:private partition-layout [layout]
+(defn partition-layout [layout]
   (let [parts (partition-by #(contains? % :repeat) layout)
         part  (fn [n] (into [] (nth parts n)))
         types (map (comp #(contains? % :repeat) first) parts)]
@@ -254,11 +254,11 @@
       [false true false] parts
       (throw-invalid-grouping-exception))))
 
-(defn ^:private throw-no-matching-pred-exception [idx last]
+(defn throw-no-matching-pred-exception [idx last]
   (throw (RuntimeException. (str "no matching predicate found for index "
                                  idx " (last index = " last ")"))))
 
-(defn ^:private f-expand-repeats [col-count]
+(defn f-expand-repeats [col-count]
   (fn [layout]
     (if (not-any? :repeat layout)
       layout
@@ -279,7 +279,7 @@
                                (concat a addition))))]
         (into [] (concat (reduce f lhs repeat-range) rhs))))))
 
-(defn ^:private get-col-preds [raw-layout-config]
+(defn get-col-preds [raw-layout-config]
   (let [cols (get-in raw-layout-config [:layout :cols])]
     (:apply-for (apply hash-map (rest cols)))))
 
@@ -296,7 +296,7 @@
               spec))))
 
 ;{:layout {:cols  ["║{ [C] │} [C] ║" :apply-for [all-cols? last-col?]]
-(defn ^:private parse-layout-config
+(defn parse-layout-config
   "transform the layout config, replace the layout strings and the
   surrounding vectors with parsed and mappified data structures"
   [layout-config]
@@ -311,7 +311,7 @@
          (transform [:layout (must :rows) ALL] (parse-and-spread-f true))
          (setval [:layout (must :cols) :apply-for] NONE))))
 
-(defn ^:private merge-adjacent-dels [layout]
+(defn merge-adjacent-dels [layout]
   (reduce
     (fn [a c]
       (let [f (fn [m] (first (keys m)))]
@@ -322,7 +322,7 @@
     []
     layout))
 
-(defn ^:private flatten-aligns [layout]
+(defn flatten-aligns [layout]
   (transform [ALL (must :col) ALL (pred :align)] :align layout))
 
 ;; things to validate in the layout config
@@ -331,7 +331,7 @@
 ;;   * the same number of repeating groups
 ;;   * the same number of columns
 ;;   tbd
-(defn ^:private transform-layout-config [layout-config col-widths]
+(defn transform-layout-config [layout-config col-widths]
   (let [layout-config (parse-layout-config layout-config)
         {:keys [fill-char width]} layout-config
         repeats-f     (f-expand-repeats (count col-widths))
@@ -345,11 +345,9 @@
          (transform [:layout (must :cols) :layout] col-f)
          (transform [:layout (must :rows) ALL] row-f))))
 
-(def
-  ^:private
-  transform-layout-config-m (memoize transform-layout-config))
+(def transform-layout-config-m (memoize transform-layout-config))
 
-(defn ^:private f-layout-cols [layout-config col-widths]
+(defn f-layout-cols [layout-config col-widths]
   (let [align-char (:align-char layout-config)
         col-layout (get-in layout-config [:layout :cols :layout])
         align      (partial align-word col-layout col-widths align-char)]
