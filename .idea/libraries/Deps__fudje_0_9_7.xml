@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Deps: fudje:0.9.7">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/fudje/fudje/0.9.7/fudje-0.9.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
