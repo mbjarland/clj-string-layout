@@ -1,11 +1,14 @@
 (ns clj-string-layout.core-test
-  (:require [midje.sweet :refer :all]
+  (:require [fudje.sweet :refer :all]
             [clj-string-layout.core :refer :all]
             [clj-string-layout.layout :refer :all]))
 
+(defn parse-layout-string [row-layout? layout-string]
+  ((f-parse-layout-string row-layout?) layout-string))
+
 (tabular
   (fact "Should throw exception on invalid layout string"
-        ((f-parse-layout-string ?row-layout) [?layout-string]) => (throws Exception))
+        (parse-layout-string ?row-layout [?layout-string]) => (throws Exception))
   ?row-layout ?layout-string
   false       "[]"
   false       "[x]"
@@ -22,7 +25,7 @@
 
 (tabular
   (fact "Should correctly parse col layout strings"
-        ((f-parse-layout-string ?row) [?layout-string]) => {:layout ?layout})
+        (parse-layout-string ?row [?layout-string]) => {:layout ?layout})
   ?layout-string       ?row   ?layout
   "[L]"                false  [{:col [{:align :l}]}]
   "[C]"                false  [{:col [{:align :c}]}]
@@ -70,9 +73,12 @@
                            \4 \5 \6]  ["111" "222" "3333" "444" "555" "6666"]
   )
 
+(defn expand-fills [width col-widths fill-chars layout]
+  ((f-expand-fills width col-widths fill-chars) layout))
+
 (tabular
   (fact "Should expands fills correctly"
-        ((f-expand-fills ?width ?col-widths ?fill-chars)  ?layout) => ?expected-result)
+        (expand-fills ?width ?col-widths ?fill-chars ?layout) => ?expected-result)
   ?layout              ?width ?col-widths ?fill-chars ?expected-result
   []                   5           [0 0]       [\*]        []
   [{:del [" "]}]       5           [0 0]       [\*]        [{:del " "}]

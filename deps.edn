@@ -1,0 +1,25 @@
+{:paths   ["src" "resources"]
+ :deps    {org.clojure/clojure   {:mvn/version "1.11.1"}
+           instaparse/instaparse {:mvn/version "1.4.12"}
+           com.rpl/specter       {:mvn/version "1.1.4"}}
+
+ :aliases {;; run with clj -T:build function-in-build-dot-clj, e.g. clj -T:build jar
+           :build {:deps       {io.github.clojure/tools.build {:git/tag "v0.9.5" :git/sha "24f2894"}}
+                   :ns-default build}
+           ;; alias to support repl work with build.clj - see that file for details
+           :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}}}
+           ;; run tests with clj -M:test
+           ;;
+
+           ;:test  {:extra-paths ["test"]
+           ;        :extra-deps  {fudje/fudje {:mvn/version "0.9.7"}
+           ;                      io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+           ;        :main-opts   ["-m" "cognitect.test-runner"]
+           ;        :exec-fn     cognitect.test-runner.api/test}
+           ;; run with
+           :test  {:main-opts  ["-m" "kaocha.runner"]
+                   :extra-deps {fudje/fudje {:mvn/version "0.9.7"}
+                                ;org.clojure/test.check {:mvn/version "0.9.0"}
+                                lambdaisland/kaocha {:mvn/version "1.87.1366"}}}
+
+           }}
