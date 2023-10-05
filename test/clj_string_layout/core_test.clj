@@ -1,11 +1,13 @@
 (ns clj-string-layout.core-test
   (:require [fudje.sweet :refer :all]
             [clj-string-layout.core :refer :all]
-            [clj-string-layout.layout :refer :all]))
+            [clj-string-layout.layout :refer :all]
+            [clojure.test :refer [deftest]]))
 
 (defn parse-layout-string [row-layout? layout-string]
   ((f-parse-layout-string row-layout?) layout-string))
 
+(deftest should-throw-exception-on-invalid-layout-string
 (tabular
   (fact "Should throw exception on invalid layout string"
         (parse-layout-string ?row-layout [?layout-string]) => (throws Exception))
@@ -19,10 +21,10 @@
   false       "[l][c][x]"
   false       "{ [c] "
   false       " [c] }"
+  )         )
 
-  )
 
-
+(deftest should-correctly-parse-col-layout-strings
 (tabular
   (fact "Should correctly parse col layout strings"
         (parse-layout-string ?row [?layout-string]) => {:layout ?layout})
@@ -48,7 +50,7 @@
   "--[l]--f--[r]--"    false  [{:del ["--"]} {:col [{:align :l}]} {:del ["--" :f "--"]} {:col [{:align :r}]} {:del ["--"]}]
   "--[l]f--f--f[r]--"  false  [{:del ["--"]} {:col [{:align :l}]} {:del [:f "--" :f "--" :f]} {:col [{:align :r}]} {:del ["--"]}]
   "|f[fl]f|f[rf]f|"    false  [{:del ["|" :f]} {:col [:f {:align :l}]} {:del [:f "|" :f]} {:col [{:align :r} :f]} {:del [:f "|"]}]
-  )
+  ))
 
 (tabular
   (fact "Should calculate fills correctly"

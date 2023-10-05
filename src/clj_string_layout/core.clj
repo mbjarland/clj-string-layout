@@ -44,7 +44,7 @@
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
   [row-layout? parsed-layout]
-  (prn :row-layout? row-layout? :parsed-layout parsed-layout)
+  ;(prn :row-layout? row-layout? :parsed-layout parsed-layout)
   (insta/transform
     {:layout  vector
      :fill    (fn [] :f)
