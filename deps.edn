@@ -1,0 +1,18 @@
+{:paths ["src"]
+
+ :deps {org.clojure/clojure {:mvn/version "1.12.4"}
+        instaparse/instaparse {:mvn/version "1.5.0"}}
+
+ :aliases
+ {:test
+  {:extra-paths ["test"]
+   :main-opts ["-m" "clj-string-layout.test-runner"]}
+
+  :lint
+  {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.04.15"}}
+   :main-opts ["-m" "clj-kondo.main" "--lint" "src" "test" "build.clj"]}
+
+  :build
+  {:deps {io.github.clojure/tools.build {:mvn/version "0.10.13"}
+          slipset/deps-deploy {:mvn/version "0.2.3"}}
+   :ns-default build}}}

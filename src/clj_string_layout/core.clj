@@ -2,13 +2,10 @@
   ^{:doc    "A library for laying out string data in table-like formats"
     :author "Matias Bjarland"}
   clj-string-layout.core
-  (:require [clj-string-layout.layout :refer :all]
+  (:require [clojure.pprint :as pprint]
             [clojure.string :refer [split join]]
             [instaparse.core :as insta]
-            [instaparse.failure :as fail]
-            [com.rpl.specter :refer [select pred= pred ALL FIRST NONE transform
-                                     multi-transform multi-path setval must subselect
-                                     select-one MAP-VALS LAST]]))
+            [instaparse.failure :as fail]))
 
 (def
   ^{:doc "default layout config. Merged with argument one."}
@@ -44,7 +41,6 @@
   "transforms the parse tree returned from instaparse
   to a vector of maps better suited for working with layouts"
   [row-layout? parsed-layout]
-  (prn :row-layout? row-layout? :parsed-layout parsed-layout)
   (insta/transform
     {:layout  vector
      :fill    (fn [] :f)
@@ -54,15 +50,68 @@
      :col     (fn [& r] {:col (into [] r)})
      :align   (fn [a]
                 {:align
-                 (if row-layout?
-                   (first a)
-                   (-> a .toLowerCase keyword))})}
+                  (if row-layout?
+                    (first a)
+                    (-> ^String a .toLowerCase keyword))})}
     parsed-layout))
 
 (defn throw-parse-error [parsed s]
   (let [msg (with-out-str (fail/pprint-failure parsed))]
     (throw (ex-info (str "error parsing layout string '" s "':\n" msg)
-                    {:failure (insta/get-failure parsed)}))))
+                     {:failure (insta/get-failure parsed)}))))
+
+(defn layout-values
+  "Returns values from layout entries under k matching pred. If k is nil,
+  all vector values in each layout entry are considered."
+  ([layout k pred]
+   (into []
+         (comp (mapcat (fn [entry]
+                         (if k
+                           [(get entry k)]
+                           (vals entry))))
+               (filter vector?)
+               cat
+               (filter pred))
+         layout)))
+
+(defn replace-fill-tokens [layout fills]
+  (first
+    (reduce
+      (fn [[out fills] entry]
+        (let [[entry fills]
+              (reduce-kv
+                (fn [[entry fills] k v]
+                  (if-not (vector? v)
+                    [(assoc entry k v) fills]
+                    (let [[v fills]
+                          (reduce
+                            (fn [[items fills] item]
+                              (if (= :f item)
+                                [(conj items (first fills)) (rest fills)]
+                                [(conj items item) fills]))
+                            [[] fills]
+                            v)]
+                      [(assoc entry k v) fills])))
+                [{} fills]
+                entry)]
+          [(conj out entry) fills]))
+      [[] fills]
+      layout)))
+
+(defn join-delims [layout]
+  (mapv #(if (contains? % :del) (update % :del join) %) layout))
+
+(defn count-col-fill-widths [layout]
+  (mapv #(if (contains? % :col)
+           (update % :col (fn [items]
+                            (mapv (fn [item]
+                                    (if (string? item) (count item) item))
+                                  items)))
+           %)
+        layout))
+
+(defn col-layouts [layout]
+  (into [] (keep :col) layout))
 
 (defn mappify
   "transform a vector layout ['layout string' :apply-for ...]
@@ -111,37 +160,31 @@
              [[] 0 0]
              (take fill-count s)))))
 
-; best way (natahan marz)
-;(count (select [ALL :del ALL (pred= :f)] data))
-; most performant way
-;(transduce (map (constantly 1)) + (traverse [ALL :del ALL (pred= :f)] data))
-;(transform [ALL :del ALL (pred= :f)]
-
 (defn expand-fills-with-fs
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars layout del-fs col-fs]
-  (let [ss          (select [ALL (must :del) ALL string?] layout)
+  (let [ss          (layout-values layout :del string?)
         fill-count  (+ (count del-fs) (count col-fs))
         tot-col-len (reduce + col-widths)
         tot-str-len (reduce + (map count ss))
         fill-width  (max 0 (- width (+ tot-col-len tot-str-len)))
         fills       (calculate-fills fill-width fill-count fill-chars)]
-    (setval [(subselect ALL MAP-VALS ALL (pred= :f))] fills layout)))
+    (replace-fill-tokens layout fills)))
 
 (defn f-expand-fills
   "expands the :f formatting specifiers in the layout vector
   to the appropriate number of align-char characters"
   [width col-widths fill-chars]
   (fn [layout]
-    (let [del-fs (select [ALL (must :del) ALL (pred= :f)] layout)
-          col-fs (select [ALL (must :col) ALL (pred= :f)] layout)]
+    (let [del-fs (layout-values layout :del #{:f})
+          col-fs (layout-values layout :col #{:f})]
       (->> (if (and (empty? del-fs) (empty? col-fs))
              layout
              (expand-fills-with-fs width col-widths fill-chars
-                                   layout del-fs col-fs))
-           (transform [ALL (must :del)] join)
-           (transform [ALL (must :col) ALL string?] count)))))
+                                    layout del-fs col-fs))
+           join-delims
+           count-col-fill-widths))))
 
 (defn normalize-row-lens
   "Add empty elements to any rows which have fewer elements
@@ -170,28 +213,28 @@
   align-char. Word is a string word to layout and col is the column
   this word should be laid out for"
   [layout col-widths align-char word col]
-  (let [v (nth (select [ALL (must :col)] layout) col)       ;[9 :l 8]
+  (let [v (nth (col-layouts layout) col)       ;[9 :l 8]
         w (+ (reduce + (keep #(when (int? %) %) v))
-             (nth col-widths col))
-        a (select-one [ALL keyword?] v)]
-    (letfn [(fmt [f] (clojure.pprint/cl-format nil f align-char w word))]
+              (nth col-widths col))
+        a (some #(when (keyword? %) %) v)]
+    (letfn [(fmt [f] (pprint/cl-format nil f align-char w word))]
       (case a
         :l (fmt "~v,,,vA")
         :r (fmt "~v,,,v@A")
         :c (fmt "~v,,,v:@<~A~>")
         :v word                                             ;verbatim
         ;:W (fmt (str "~{~<~%~1," width ":;~A~> ~}"))
-        :else (throw (IllegalArgumentException.
-                       (str "Unsupported alignment operation '" a
-                            "' encountered at align index: " col)))))))
+        (throw (IllegalArgumentException.
+                 (str "Unsupported alignment operation '" a
+                      "' encountered at align index: " col)))))))
 
 (defn merge-default-layout [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
         {:keys [align-char]} layout-config]
-    (transform [:fill-char] (fnil identity align-char) layout-config)))
+    (update layout-config :fill-char (fnil identity align-char))))
 
 (defn row-fill-chars [row-layout fill-char fill-chars align-char]
-  (let [fill-count (count (select [ALL MAP-VALS ALL (pred= :f)] row-layout))]
+  (let [fill-count (count (layout-values row-layout nil #{:f}))]
     (cond
       fill-chars fill-chars
       fill-char (repeat fill-count fill-char)
@@ -203,31 +246,30 @@
       (let [{:keys [layout fill-char fill-chars] :or {fill-char fill-char}} row-spec
             fill-chars (row-fill-chars layout fill-char fill-chars align-char)
             tf         (f-expand-fills width col-widths fill-chars)]
-        (transform [:layout] tf row-spec)))))
+        (update row-spec :layout tf)))))
 
 (defn f-realize-rows [col-widths]
   (fn [row-spec]
-    (transform
-      [:layout]
-      (fn [row-layout]
-        (first
-          (reduce
-            (fn [[a ci] e]
-              (cond
-                (:del e) [(conj a (join (:del e))) ci]
-                (:col e) (let [g          (group-by int? (:col e))
-                               [widths aligns] [(get g true) (get g false)]
-                               width      (+ (reduce + widths) (nth col-widths ci))
-                               align-char (:align (first aligns))]
-                           [(conj a (join (repeat width align-char))) (inc ci)])
-                :else (throw (RuntimeException. (str "invalid layout element" e "encountered in" row-layout)))))
-            [[] 0]
-            row-layout)))
-      row-spec)))
+    (update row-spec
+            :layout
+            (fn [row-layout]
+              (first
+                (reduce
+                  (fn [[a ci] e]
+                    (cond
+                      (:del e) [(conj a (join (:del e))) ci]
+                      (:col e) (let [g          (group-by int? (:col e))
+                                     [widths aligns] [(get g true) (get g false)]
+                                     width      (+ (reduce + widths) (nth col-widths ci))
+                                     align-char (:align (first aligns))]
+                                 [(conj a (join (repeat width align-char))) (inc ci)])
+                      :else (throw (RuntimeException. (str "invalid layout element" e "encountered in" row-layout)))))
+                  [[] 0]
+                  row-layout))))))
 
 (defn apply-row-layouts [layout-config rows]
   (if (get-in layout-config [:layout :rows])
-    (let [row-specs (select [:layout :rows ALL] layout-config)
+    (let [row-specs (get-in layout-config [:layout :rows])
           cnt       (max 1 (count rows))]
       (reduce
         (fn [a idx]
@@ -289,11 +331,18 @@
   "takes a col layout spec {:layout [{:repeat x}...] :apply-for [a ...]}}
    and turns it into       {:layout [{:repeat x :apply-for a} ...] }}"
   [layout-config]
-  (let [preds (get-col-preds layout-config)]
+  (let [preds (get-col-preds layout-config)
+        preds (if (sequential? preds) preds [preds])]
     (fn [spec]
-      (setval [:layout (subselect ALL (pred :repeat) :apply-for)]
-              preds
-              spec))))
+      (first
+        (reduce
+          (fn [[spec preds] entry]
+            (if (contains? entry :repeat)
+              [(update spec :layout conj (assoc entry :apply-for (first preds)))
+               (next preds)]
+              [(update spec :layout conj entry) preds]))
+          [(assoc spec :layout []) preds]
+          (:layout spec))))))
 
 ;{:layout {:cols  ["║{ [C] │} [C] ║" :apply-for [all-cols? last-col?]]
 (defn parse-layout-config
@@ -307,23 +356,36 @@
                   s (f-spread-spec-apply-fors layout-config)]
               (->> layout p s))))]
     (->> layout-config
-         (transform [:layout (must :cols)] (parse-and-spread-f false))
-         (transform [:layout (must :rows) ALL] (parse-and-spread-f true))
-         (setval [:layout (must :cols) :apply-for] NONE))))
+         (#(update-in % [:layout :cols] (parse-and-spread-f false)))
+         (#(if (get-in % [:layout :rows])
+             (update-in % [:layout :rows]
+                        (fn [rows]
+                          (mapv (parse-and-spread-f true) rows)))
+             %))
+         (#(update-in % [:layout :cols] dissoc :apply-for)))))
 
 (defn merge-adjacent-dels [layout]
   (reduce
     (fn [a c]
-      (let [f (fn [m] (first (keys m)))]
-        (if (= :del (f (last a)) (f c))
-          (transform [LAST MAP-VALS] #(join (concat % (:del c))) a)
-          (if (:del c) (conj a (assoc c :del (join (:del c))))
-                       (conj a c)))))
+      (let [c (if (and (:del c) (vector? (:del c)))
+                (update c :del join)
+                c)]
+        (if (and (:del (last a)) (:del c))
+          (conj (pop a) (update (last a) :del str (:del c)))
+          (conj a c))))
     []
     layout))
 
 (defn flatten-aligns [layout]
-  (transform [ALL (must :col) ALL (pred :align)] :align layout))
+  (mapv #(if (contains? % :col)
+           (update % :col (fn [items]
+                            (mapv (fn [item]
+                                    (if (and (map? item) (contains? item :align))
+                                      (:align item)
+                                      item))
+                                  items)))
+           %)
+        layout))
 
 ;; things to validate in the layout config
 ;; * all repeating groups need to have at least one column def
@@ -338,12 +400,12 @@
         c-fills-f     (f-expand-fills width col-widths (repeat fill-char))
         r-fills-f     (f-expand-row-fills layout-config col-widths)
         realize-f     (f-realize-rows col-widths)
-        f             (fn [g] (fn [spec] (transform [:layout] g spec)))
+        f             (fn [g] (fn [spec] (update spec :layout g)))
         col-f         (comp flatten-aligns merge-adjacent-dels c-fills-f repeats-f)
         row-f         (comp realize-f (f merge-adjacent-dels) r-fills-f (f repeats-f))]
-    (->> layout-config
-         (transform [:layout (must :cols) :layout] col-f)
-         (transform [:layout (must :rows) ALL] row-f))))
+    (cond-> (update-in layout-config [:layout :cols :layout] col-f)
+      (get-in layout-config [:layout :rows])
+      (update-in [:layout :rows] #(mapv row-f %)))))
 
 (def transform-layout-config-m (memoize transform-layout-config))
 

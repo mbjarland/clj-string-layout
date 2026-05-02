@@ -1,24 +1,30 @@
-# Change Log
-All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
+# Changelog
+
+All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
-### Changed
-- Add a new arity to `make-widget-async` to provide a different widget shape.
 
-## [0.1.1] - 2017-04-20
 ### Changed
-- Documentation on how to make the widgets.
 
-### Removed
-- `make-widget-sync` - we're all async, all the time.
+- Migrated the project from Leiningen to Clojure CLI, `deps.edn`, and `tools.build`.
+- Updated runtime dependencies to Clojure 1.12.4 and Instaparse 1.5.0.
+- Replaced Midje tests with `clojure.test`.
+- Removed the Specter runtime dependency by rewriting the internal transformations with standard Clojure data operations.
+- Reworked CI to run linting, tests, and jar builds on Java 11, 17, and 21.
+- Expanded README documentation for the layout language, predicates, built-in layouts, development commands, and release flow.
 
 ### Fixed
-- Fixed widget maker to keep working when daylight savings switches over.
 
-## 0.1.0 - 2017-04-20
-### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
+- Removed parser debug output from normal library execution.
+- Fixed the built-in HTML table layouts to emit `</table>`.
 
-[Unreleased]: https://github.com/your-name/string-layout/compare/0.1.1...HEAD
-[0.1.1]: https://github.com/your-name/string-layout/compare/0.1.0...0.1.1
+### Removed
+
+- Removed old Leiningen, IDE, Groovy prototype, scratch, and commented-out source files from the public artifact.
+
+## [1.0.2]
+
+- Previous published release.
+
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/1.0.2...HEAD
+[1.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/1.0.2

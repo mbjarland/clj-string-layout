@@ -2,275 +2,353 @@
 
 [![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
 [![Clojars](https://img.shields.io/clojars/v/com.github.mbjarland/clj-string-layout.svg)](https://clojars.org/com.github.mbjarland/clj-string-layout)
-[![Version](https://img.shields.io/badge/version-1.0.2-brightgreen)](https://img.shields.io/badge/version-1.0.2-brightgreen)
-[![License](https://img.shields.io/badge/License-EPL_2.0-green.svg)](https://www.eclipse.org/legal/epl-2.0/)
+[![License](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](LICENSE)
 
-A clojure library for laying out strings in table-like structures using a flexible layout language.
+`clj-string-layout` is a small Clojure library for turning rows of strings into aligned text layouts: simple columns, box-drawing tables, Markdown tables, HTML table snippets, and custom formats defined with a compact layout language.
+
+The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
 ## Installation
 
-The latest release version of clj-string-layout is hosted on [Clojars](https://clojars.org):
-                    
-[![Current Version](https://clojars.org/com.github.mbjarland/clj-string-layout/latest-version.svg)](https://clojars.org/https://clojars.org/com.github.mbjarland/clj-string-layout)
-
-## Usage
-In your leiningen project.clj file: 
-
-```
-[com.github.mbjarland/string-layout "1.0.2"]
-```
-
-in your [deps.edn file](https://clojure.org/guides/deps_and_cli): 
-
-```
-{:deps 
-  {com.github.mbjarland/string-layout {:mvn/version "1.0.2"}}}
-```
-
-in your clojure source:
-
-```
-  (require '[string-layout.core :as s])
-```
-
-## Dependencies
-
-```
- [org.clojure/clojure "1.11.1"]
-   [org.clojure/core.specs.alpha "0.2.62"]
-   [org.clojure/spec.alpha "0.3.218"]
- [com.rpl/specter "1.1.4"]
-   [riddley "0.1.12"]
- [instaparse "1.4.12"]
- [nrepl "0.8.3" :exclusions [[org.clojure/clojure]]]
- [org.nrepl/incomplete "0.1.0" :exclusions [[org.clojure/clojure]]]
-```
-
-## Examples
-First we define some sample string data: 
+Add the library to `deps.edn`:
 
 ```clojure
-(def data (str "Alice, why is\n" 
+{:deps {com.github.mbjarland/clj-string-layout {:mvn/version "1.0.3"}}}
+```
+
+Require the namespaces you need:
+
+```clojure
+(require '[clj-string-layout.core :refer [layout]]
+         '[clj-string-layout.layout :as layouts])
+```
+
+The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum runtime.
+
+## Quick Start
+
+Input can be a string split into rows and words:
+
+```clojure
+(def data (str "Alice, why is\n"
                "a raven like\n"
                "a writing desk?"))
+
+(layout data {:layout {:cols ["[L] [L] [L]"]}})
+;; => ["Alice, why     is   "
+;;     "a      raven   like "
+;;     "a      writing desk?"]
 ```
 
-and now call string-layout to format this data using some sample layout configurations. Explanations for the layout configurations can be found further down in this document. 
-
-#### Example 1 - left justified, fixed column count layout:
-
-```clojure 
-(layout
-  data 
-  {:layout {:cols ["[L] [L] [L]"]}})
-
-=> ["Alice, why     is   " 
-    "a      raven   like " 
-    "a      writing desk?"]
-```
-
-#### Example 2 - centered dynamic column-count ascii box layout:
-
-```
-(layout 
-  data 
-  {:layout {:cols  ["│{ [C] │} [C] │" :apply-for [all-cols?]]
-            :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
-                   ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
-                   ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
-=>
-["┌────────┬─────────┬───────┐"
- "│ Alice, │   why   │   is  │"
- "├────────┼─────────┼───────┤"
- "│    a   │  raven  │  like │"
- "├────────┼─────────┼───────┤"
- "│    a   │ writing │ desk? │"
- "└────────┴─────────┴───────┘"]
-```
-
-#### Example 3 - norton commander style dynamic column-count layout
-Data right justified in an ascii box layout where we fill 
-the layout to a specific width and allocate an equal amount 
-of space to all columns: 
+Input can also be a vector of rows when you want exact control over cell boundaries:
 
 ```clojure
-(layout 
-  data
-  {:width 50
-   :layout {:cols  ["║{ [Rf] │} [Rf] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                   ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                   ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
-
-=>
-["╔═══════════════╤════════════════╤═══════════════╗"
- "║        Alice, │            why │            is ║"
- "╟───────────────┼────────────────┼───────────────╢"
- "║             a │          raven │          like ║"
- "╟───────────────┼────────────────┼───────────────╢"
- "║             a │        writing │         desk? ║"
- "╚═══════════════╧════════════════╧═══════════════╝"]
+(layout [["Alice," "why" "is"]
+         ["a" "raven" "like"]
+         ["a" "writing" "desk?"]]
+        {:layout {:cols ["[L] [L] [L]"]}})
 ```
 
-#### Example 4 - markdown table layout
-Data centered, markdown table headers centered, 
-header data inserted, and column widths filled with equal 
-distribution to the default 80 character width: 
-
-```clojure 
-(layout 
-  (str "header_1 header_2 header_3" \newline data)
-  {:layout {:cols  ["|{ [Cf] |}" :apply-for [all-cols?]]
-            :rows [["|{:[-f]:|}" :apply-for second-row?]]}})
-
-=>
-["|         header_1        |         header_2        |         header_3         |"
- "|:-----------------------:|:-----------------------:|:------------------------:|"
- "|          Alice,         |           why           |            is            |"
- "|            a            |          raven          |           like           |"
- "|            a            |         writing         |           desk?          |"]
-```
-
-#### Example 5 - html table layout
-
+Use a built-in layout for common output formats:
 
 ```clojure
-(layout 
-  data
-  {:layout {:cols  ["  <tr>{<td>[V]</td>}</tr>" :apply-for [all-cols?]]
-            :rows [["<table>" :apply-for first-row?]
-                   ["</table" :apply-for last-row?]]}})
-
-=>
-["<table>"
- "  <tr><td>Alice,</td><td>why</td><td>is</td></tr>"
- "  <tr><td>a</td><td>raven</td><td>like</td></tr>"
- "  <tr><td>a</td><td>writing</td><td>desk?</td></tr>"
- "</table"]
+(layout data layouts/layout-ascii-box-center)
+;; => ["┌────────┬─────────┬───────┐"
+;;     "│ Alice, │   why   │   is  │"
+;;     "├────────┼─────────┼───────┤"
+;;     "│    a   │  raven  │  like │"
+;;     "├────────┼─────────┼───────┤"
+;;     "│    a   │ writing │ desk? │"
+;;     "└────────┴─────────┴───────┘"]
 ```
 
-## Layout Configurations
-A layout configuration is a map containing a set of configuration options and layout strings for laying out columns and rows. 
+## Layout Config
 
-An example layout config: 
+`layout` takes rows and a layout config map.
 
 ```clojure
-(def full-layout-config
-  {:align-char      \*
-   :fill-char       \space
-   :word-split-char \space
-   :row-split-char  \newline
-   :width           80
-   :raw?            false
-   :layout {:cols  ["+[L]+[L]+[L]+"]
-            :rows [["-[~]-[~]-[~]-" :apply-for all-rows?]]}})
+{:align-char      \space
+ :fill-char       \space
+ :word-split-char \space
+ :row-split-char  \newline
+ :width           80
+ :raw?            false
+ :layout {:cols ["[L] [C] [R]"]
+          :rows [["|[-]|[-]|[-]|" :apply-for layouts/first-row?]]}}
 ```
 
-using this to lay out our data from above gives us: 
+Options:
 
-```clojure 
-(layout data full-layout-config)
-
-=>
-; +[L   ]+[L    ]+[L  ]+
-;  ↓      ↓       ↓     
-["-~~~~~~-~~~~~~~-~~~~~-"  ; ← 0 row layout
- "+Alice,+why****+is***+"
- "-~~~~~~-~~~~~~~-~~~~~-"  ; ← 1 row layout
- "+a*****+raven**+like*+"
- "-~~~~~~-~~~~~~~-~~~~~-"  ; ← 2 row layout
- "+a*****+writing+desk?+"
- "-~~~~~~-~~~~~~~-~~~~~-"] ; ← 3 row layout
-```
-
-(with comments added for clarity)
-
-The layout language used for the `:cols` and `:rows` expressions above will be explained in detail below, but first let's go through the other options: 
-
-* `align-char` - the widest word in a column defines the column width. All other words in that column will need to be aligned to the widest width. `align-char` is the character used to pad words to the correct width. As an example, the word "a" in the 
-above was padded to `a****`. 
-* `fill-char` - the layout engine is capable of "fill to width" functionality where the data is filled to a specific width (default 80 characters). Think of html tables 
-where the table fills some specific width. This functionality is enabled by using the `f` fill specifier in the `:cols` and `:rows` layout strings. If any fills are detected, then `fill-char` is the default character used for the "fill to width" functionality. Note that for simplicity, no fill chars were used in the above example. 
-* `word-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into "words".
-* `row-split-char` - if in-data is specified as a string (see section on in-data), this character is used to split the string into rows.
-
-## Col and row layouts
-The layout language used by string-layout was inspired by [MigLayout](http://www.miglayout.com/), a swing layout manager that back in another life saved me 
-uncountable hours when building java swing user interfaces. 
-
-The grammar for the layout strings is defined using [instaparse](https://github.com/Engelberg/instaparse), an excellent clojure context-free grammar/parser builder. For reference, the complete grammar definition looks as follows: 
-
-```
-(def grammar
-  "layout = delim? ((col | repeat) delim?)*
-   repeat = <'{'> delim? (col delim?)* <'}'>
-   delim    = (fill | #'[^\\[\\]{}fF]+')+
-   fill     = <'F'> (#'[\\d]+')?
-   col      = <'['> fill? align fill? <']'>")
-
-(def col-grammar (str grammar \newline 
-                      "align = ('L'|'C'|'R'|'V')"))
-(def row-grammar (str grammar \newline 
-                      "align = #'[^]]'"))
-```
-
-as can be seen from this definition, the grammars for the col and row layouts have a lot in common and only differ in the "align" elements. 
-
-#### The Anatomy of a Column Layout
-
-```
-
-  ; ↓               ↓               ↓       ↓
-  ; ┌───────────────┬───────────────┬───────┐ ← 0
-  ; │ Tables        │ Are           │ Cool  │
-  ; └───────────────┴───────────────┴───────┘ ← 1
-```
-
-## String Data In
-String data can either be provided as a string where 
-the word and line delimters are configurable (default to \space and \newline): 
-
-```clojure
-(def data (str "Alice, why is\n" 
-               "a raven like\n"
-               "a writing desk?")
-```
-
-_or_ for more fine grained control, as a vector of vectors of strings. The 
-above could thus equally well have been provided as: 
-
-```clojure 
-(def data [["Alice," "why" "is"]
-           ["a" "raven" "like"]
-           ["a" "writing" "desk?"]])
-```
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `:layout` | required | A map with `:cols` and optional `:rows`. |
+| `:width` | `80` | Target width when the layout contains fill markers. Layouts can still exceed this if the data and literals are wider. |
+| `:align-char` | space | Character used to pad aligned data cells. |
+| `:fill-char` | space | Character used for `f` fill markers unless overridden by a row layout. |
+| `:word-split-char` | space | Character used to split string input into words. |
+| `:row-split-char` | newline | Character used to split string input into rows. |
+| `:raw?` | `false` | Return each output row as a vector of pieces instead of joined strings. Useful when post-processing cells, for example adding ANSI colors. |
 
 ## The Layout Language
 
-TODO: this section needs to be written. 
+Layout strings are made from three pieces:
+
+| Piece | Example | Meaning |
+| --- | --- | --- |
+| Literal delimiter text | `" | "`, `"</td>"`, `"┌"` | Text emitted exactly as part of the output. |
+| Column marker | `[L]`, `[C]`, `[R]`, `[V]` | Placeholder for a data column. |
+| Fill marker | `f` or `F` | Expands to absorb remaining width. |
+| Repeat group | `{ [L] |}` | Repeats a sub-layout for a variable number of columns. |
+
+The current grammar is:
+
+```clojure
+layout = delim? ((col | repeat) delim?)*
+repeat = <'{'> delim? (col delim?)* <'}'>
+delim  = (fill | #'[^\\[\\]{}fF]+')+
+fill   = <'F'> (#'[\\d]+')?
+col    = <'['> fill? align fill? <']'>
+```
+
+Column layouts and row layouts share this structure, but they interpret `align` differently.
+
+## Column Layouts
+
+Column layouts live at `[:layout :cols]`. The value is a vector whose first item is the layout string. Additional key/value pairs configure repeating groups.
+
+```clojure
+{:layout {:cols ["[L] [C] [R]"]}}
+```
+
+Supported column alignments:
+
+| Marker | Meaning |
+| --- | --- |
+| `[L]` | Left-align the cell within the column width. |
+| `[C]` | Center-align the cell within the column width. |
+| `[R]` | Right-align the cell within the column width. |
+| `[V]` | Verbatim output. Do not pad the cell to the computed column width. |
+
+Examples:
+
+```clojure
+(layout "name price\napple 12\npear 4"
+        {:layout {:cols ["[L]  [R]"]}})
+;; => ["name   price"
+;;     "apple     12"
+;;     "pear       4"]
+```
+
+Use `f` when extra width should be distributed into the layout instead of ignored:
+
+```clojure
+(layout "left right"
+        {:width 20
+         :layout {:cols ["[L]f[R]"]}})
+;; => ["left           right"]
+```
+
+Fill markers may appear in delimiters or inside column brackets:
+
+```clojure
+"[L]f[R]"      ;; all extra width between two columns
+"f[R] [L]f"    ;; split extra width before and after the row
+"[Lf] [Rf]"    ;; expand the column padding itself
+```
+
+When multiple fill markers are present, remaining width is distributed across them as evenly as possible. Any remainder is assigned from left to right according to the existing fill algorithm.
+
+## Repeat Groups
+
+Repeat groups make layouts adapt to the number of input columns. They are wrapped in `{...}`.
+
+```clojure
+{:layout {:cols ["|{ [L] |}" :apply-for [layouts/all-cols?]]}}
+```
+
+For three columns, the repeating section is expanded three times:
+
+```text
+| [L] | [L] | [L] |
+```
+
+Repeat groups are useful for table-like formats where the same cell pattern should be reused for every column:
+
+```clojure
+(layout "a b c\n1 2 3"
+        {:layout {:cols ["|{ [C] |}" :apply-for [layouts/all-cols?]]}})
+;; => ["| a | b | c |"
+;;     "| 1 | 2 | 3 |"]
+```
+
+The `:apply-for` value controls which columns a repeat group handles. The predicate receives `[idx last-idx]`.
+
+Column predicates supplied by `clj-string-layout.layout`:
+
+| Predicate | Matches |
+| --- | --- |
+| `first-col?` | First column. |
+| `second-col?` | Second column. |
+| `last-col?` | Last column. |
+| `not-first-col?` | Every column except the first. |
+| `not-last-col?` | Every column except the last. |
+| `interior-col?` | Columns that are neither first nor last. |
+| `not-interior-col?` | First or last column. |
+| `all-cols?` | Every column. |
+
+You can also pass your own predicate:
+
+```clojure
+(defn even-col? [[idx _]] (even? idx))
+```
+
+## Row Layouts
+
+Row layouts live at `[:layout :rows]`. They insert virtual rows before, between, or after data rows.
+
+```clojure
+{:layout {:cols ["│{ [L] │}" :apply-for [layouts/all-cols?]]
+          :rows [["┌{─[─]─┬}─[─]─┐" :apply-for layouts/first-row?]
+                 ["├{─[─]─┼}─[─]─┤" :apply-for layouts/interior-row?]
+                 ["└{─[─]─┴}─[─]─┘" :apply-for layouts/last-row?]]}}
+```
+
+Row layout column markers use the character inside brackets as a drawing character, not a cell alignment. For example, `[─]` emits enough `─` characters to match the corresponding data column width. `[=f]` uses `=` and can include fill expansion.
+
+Row predicates receive `[idx last-idx]`, where the indexes refer to virtual row positions. With three data rows, the virtual row positions are `0`, `1`, `2`, and `3`. `0` is before the first data row, `3` is after the last data row, and the interior positions are between data rows.
+
+Row predicates supplied by `clj-string-layout.layout`:
+
+| Predicate | Matches |
+| --- | --- |
+| `first-row?` | Virtual row before the first data row. |
+| `second-row?` | Virtual row after the first data row. Useful for Markdown header separators. |
+| `last-row?` | Virtual row after the last data row. |
+| `not-first-row?` | Every virtual row except the first. |
+| `not-last-row?` | Every virtual row except the last. |
+| `interior-row?` | Virtual rows between data rows. |
+| `not-interior-row?` | First or last virtual row. |
+| `all-rows?` | Every virtual row. |
+
+Example Markdown table:
+
+```clojure
+(layout (str "name qty\n"
+             "apple 12\n"
+             "pear 4")
+        layouts/layout-markdown-left)
+;; => ["| name  | qty |"
+;;     "|:----- |:--- |"
+;;     "| apple | 12  |"
+;;     "| pear  | 4   |"]
+```
+
+## Built-In Layouts
+
+Built-in layouts are available in `clj-string-layout.layout`.
+
+Box-drawing layouts:
+
+| Var | Alignment | Fill-aware |
+| --- | --- | --- |
+| `layout-ascii-box-left` | Left | No |
+| `layout-ascii-box-center` | Center | No |
+| `layout-ascii-box-right` | Right | No |
+| `layout-ascii-box-fill-left` | Left | Yes |
+| `layout-ascii-box-fill-center` | Center | Yes |
+| `layout-ascii-box-fill-right` | Right | Yes |
+
+Norton Commander-style layouts:
+
+| Var | Alignment | Fill-aware |
+| --- | --- | --- |
+| `layout-norton-commander-left` | Left | No |
+| `layout-norton-commander-center` | Center | No |
+| `layout-norton-commander-right` | Right | No |
+| `layout-norton-commander-fill-left` | Left | Yes |
+| `layout-norton-commander-fill-center` | Center | Yes |
+| `layout-norton-commander-fill-right` | Right | Yes |
+
+Markdown layouts:
+
+| Var | Alignment | Fill-aware |
+| --- | --- | --- |
+| `layout-markdown-left` | Left | No |
+| `layout-markdown-center` | Center | No |
+| `layout-markdown-right` | Right | No |
+| `layout-markdown-fill-left` | Left | Yes |
+| `layout-markdown-fill-center` | Center | Yes |
+| `layout-markdown-fill-right` | Right | Yes |
+
+HTML layouts:
+
+| Var | Behavior |
+| --- | --- |
+| `layout-html-table` | Emits `<table>`, one `<tr>` per input row, and verbatim `<td>` contents. |
+| `layout-html-table-readable` | Same shape, but left-aligns cell contents for more readable source output. |
+
+HTML example:
+
+```clojure
+(layout "Alice why\na raven" layouts/layout-html-table)
+;; => ["<table>"
+;;     "  <tr><td>Alice</td><td>why</td></tr>"
+;;     "  <tr><td>a</td><td>raven</td></tr>"
+;;     "</table>"]
+```
+
+## Raw Output
+
+Set `:raw? true` if you need the pieces before they are joined:
+
+```clojure
+(layout "a b" {:raw? true
+               :layout {:cols ["| [L] | [R] |"]}})
+;; => [["| " "a" " | " "b" " |"]]
+```
+
+This is useful when a later step needs to decorate specific cells without re-parsing the final string.
+
+## Development
+
+Run the test suite:
+
+```sh
+clojure -M:test
+```
+
+Run the linter:
+
+```sh
+clojure -M:lint
+```
+
+Build the jar:
+
+```sh
+clojure -T:build jar
+```
+
+Install locally:
+
+```sh
+clojure -T:build install
+```
+
+Deploy to Clojars after setting Clojars credentials for `deps-deploy`:
+
+```sh
+clojure -T:build deploy
+```
+
+## Design Notes
+
+The library intentionally keeps the public API small. Most users need only `clj-string-layout.core/layout` and the reusable predicates/layouts in `clj-string-layout.layout`.
+
+The `f` and `F` characters are reserved as fill markers in layout delimiter positions. If you need literal delimiter text containing `f`, prefer using it inside data cells or consider defining an escaped literal syntax before relying on that layout publicly.
 
 ## License
 
-Copyright © 2017 Matias Bjarland
+Copyright © 2017-2026 Matias Bjarland
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
-
-
---------------
-
-
-#### NOTE TO SELF: TODO - documentation
-
-* high level aim - general layout, not specific to any format
-* parsing and normalizing of data
-* layout-config syntax (width, word-split-char, etc) 
-* col layout syntax
-* row layout syntax
-* repeating groups
-* fills 
-* predicates
-* performance
-* clojars release version 
-* prepackaged layouts 
-
+Distributed under the Eclipse Public License 1.0.
