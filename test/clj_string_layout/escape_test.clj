@@ -16,6 +16,18 @@
   (is (= ""
          (escape/markdown-cell nil))))
 
+(deftest csv-cell-escaping
+  (is (= "plain"
+         (escape/csv-cell "plain")))
+  (is (= "\"a,b\""
+         (escape/csv-cell "a,b")))
+  (is (= "\"a\"\"b\""
+         (escape/csv-cell "a\"b")))
+  (is (= "\"a\nb\""
+         (escape/csv-cell "a\nb")))
+  (is (= ""
+         (escape/csv-cell nil))))
+
 (deftest map-cells-and-layout-integration
   (is (= [["&lt;a&gt;" "x&amp;y"]]
          (escape/map-cells escape/html [["<a>" "x&y"]])))

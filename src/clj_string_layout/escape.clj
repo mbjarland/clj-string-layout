@@ -37,6 +37,18 @@
       (str/replace "|" "\\|")
       (str/replace "\n" "<br>")))
 
+(defn csv-cell
+  "Escapes a value for an RFC 4180-style CSV cell.
+
+  nil is treated as an empty string and all other values are coerced with str.
+  Values containing comma, double quote, CR, or LF are wrapped in double quotes,
+  and embedded double quotes are doubled."
+  [value]
+  (let [value (cell-string value)]
+    (if (some #(str/includes? value %) ["," "\"" "\r" "\n"])
+      (str "\"" (str/replace value "\"" "\"\"") "\"")
+      value)))
+
 (defn map-cells
   "Applies f eagerly to every cell in rows.
 

@@ -1,6 +1,7 @@
 (ns clj-string-layout.core-test
   (:require [clj-string-layout.core :refer [explain-layout layout layout-seq layout-str
                                             parse-layout]]
+            [clj-string-layout.escape :as escape]
             [clj-string-layout.impl.parser :as parser]
             [clj-string-layout.impl.render :as render]
             [clj-string-layout.layout :as layouts]
@@ -325,6 +326,47 @@
           "  <tr><td>a</td><td>raven</td></tr>"
           "</table>"]
          (layout "Alice why\na raven" presets/layout-html-table))))
+
+(deftest built-in-plain-separated-and-ascii-layouts
+  (is (= ["name   qty"
+          "apple  12 "]
+         (layout [["name" "qty"] ["apple" "12"]]
+                 presets/layout-plain-left)))
+  (is (= [" name  qty"
+          "apple   12"]
+         (layout [["name" "qty"] ["apple" "12"]]
+                 presets/layout-plain-right)))
+  (is (= ["a\tb\tc"]
+         (layout [["a" "b" "c"]] presets/layout-tsv)))
+  (is (= ["a|b|c"]
+         (layout [["a" "b" "c"]] presets/layout-pipe-separated)))
+  (is (= ["a,\"b,c\",\"d\"\"e\""]
+         (layout (escape/map-cells escape/csv-cell [["a" "b,c" "d\"e"]])
+                 presets/layout-csv)))
+  (is (= ["+---+---+"
+          "| a | b |"
+          "+---+---+"]
+         (layout [["a" "b"]] presets/layout-ascii-grid-center)))
+  (is (= [" name   | qty"
+          "------+----"
+          " apple  | 12 "]
+         (layout [["name" "qty"] ["apple" "12"]]
+                 presets/layout-psql-left)))
+  (is (= ["=====  ==="
+          "name   qty"
+          "=====  ==="
+          "apple  12 "
+          "=====  ==="]
+         (layout [["name" "qty"] ["apple" "12"]]
+                 presets/layout-rst-simple)))
+  (is (= ["| name  | qty |"
+          "|-----+---|"
+          "| apple | 12  |"]
+         (layout [["name" "qty"] ["apple" "12"]]
+                 presets/layout-org-left)))
+  (is (= presets/layout-tsv layouts/layout-tsv))
+  (is (= presets/layout-pipe-separated layouts/layout-pipe-separated))
+  (is (= presets/layout-ascii-grid-center layouts/layout-ascii-grid-center)))
 
 (deftest built-in-layouts-and-predicates
   (is (layouts/first-row? [0 3]))

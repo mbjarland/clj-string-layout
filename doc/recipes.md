@@ -2,6 +2,8 @@
 
 This page collects common layouts you can paste into a REPL and adapt.
 
+For syntax details, see the [layout language reference](layout-language.md).
+
 ```clojure
 (require '[clj-string-layout.core :refer [layout layout-seq layout-str]]
          '[clj-string-layout.escape :as escape]
@@ -21,6 +23,46 @@ Use `[L]`, `[C]`, and `[R]` for left, center, and right alignment.
 ;; => ["name   qty  price"
 ;;     "apple   12  $1.50"
 ;;     "pear     4  $2.00"]
+```
+
+The same shape is available as a preset:
+
+```clojure
+(layout [["name" "qty"]
+         ["apple" "12"]]
+        layouts/layout-plain-left)
+;; => ["name   qty"
+;;     "apple  12 "]
+```
+
+## CSV And TSV
+
+Use `layout-tsv` for tab-separated output when cell contents are already safe:
+
+```clojure
+(layout [["a" "b" "c"]]
+        layouts/layout-tsv)
+;; => ["a\tb\tc"]
+```
+
+Use `layout-csv` with `escape/csv-cell` for CSV data:
+
+```clojure
+(layout (escape/map-cells escape/csv-cell
+                          [["name" "notes"]
+                           ["apple" "red, green"]])
+        layouts/layout-csv)
+;; => ["name,notes"
+;;     "apple,\"red, green\""]
+```
+
+Use `layout-pipe-separated` for compact pipe-separated output that is not a
+Markdown table:
+
+```clojure
+(layout [["a" "b" "c"]]
+        layouts/layout-pipe-separated)
+;; => ["a|b|c"]
 ```
 
 ## Width-Filled Rows
@@ -80,6 +122,51 @@ Use a built-in preset when you want a complete table shape.
 ;;     "├───────┼─────┤"
 ;;     "│ apple │ 12  │"
 ;;     "└───────┴─────┘"]
+```
+
+Use `layout-ascii-grid-*` when output must stay in plain ASCII:
+
+```clojure
+(layout [["a" "b"]]
+        layouts/layout-ascii-grid-center)
+;; => ["+---+---+"
+;;     "| a | b |"
+;;     "+---+---+"]
+```
+
+Use `layout-psql-*` for terminal output similar to PostgreSQL's `psql`:
+
+```clojure
+(layout [["name" "qty"]
+         ["apple" "12"]]
+        layouts/layout-psql-left)
+;; => [" name   | qty"
+;;     "------+----"
+;;     " apple  | 12 "]
+```
+
+Use `layout-org-*` for Org mode tables:
+
+```clojure
+(layout [["name" "qty"]
+         ["apple" "12"]]
+        layouts/layout-org-left)
+;; => ["| name  | qty |"
+;;     "|-----+---|"
+;;     "| apple | 12  |"]
+```
+
+Use `layout-rst-simple` for reStructuredText simple tables:
+
+```clojure
+(layout [["name" "qty"]
+         ["apple" "12"]]
+        layouts/layout-rst-simple)
+;; => ["=====  ==="
+;;     "name   qty"
+;;     "=====  ==="
+;;     "apple  12 "
+;;     "=====  ==="]
 ```
 
 The `*-fill-*` presets consume `:width`.

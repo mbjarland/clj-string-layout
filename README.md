@@ -9,7 +9,8 @@
 
 The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
-For more copy-and-paste examples, see the [recipe book](doc/recipes.md).
+For more copy-and-paste examples, see the [recipe book](doc/recipes.md). For
+planned improvements, see the [project TODO](doc/TODO.md).
 
 ## Installation
 
@@ -118,6 +119,10 @@ virtual row without counting the input. Use `escape/map-cell-seq` instead of
 `escape/map-cells` when escaping a large lazy input.
 
 ## The Layout Language
+
+This section covers the core pieces. For a more structured reference with more
+examples and troubleshooting notes, see the
+[layout language reference](doc/layout-language.md).
 
 Layout strings are made from four pieces:
 
@@ -282,7 +287,24 @@ Example Markdown table:
 
 ## Built-In Layouts
 
-Built-in layouts are available in `clj-string-layout.layout`.
+Built-in layouts are available in `clj-string-layout.presets` and re-exported
+from `clj-string-layout.layout` for compatibility.
+
+Plain column layouts:
+
+| Var | Alignment | Behavior |
+| --- | --- | --- |
+| `layout-plain-left` | Left | Two spaces between columns, no borders. |
+| `layout-plain-center` | Center | Two spaces between columns, no borders. |
+| `layout-plain-right` | Right | Two spaces between columns, no borders. |
+
+Separated-value layouts:
+
+| Var | Separator | Behavior |
+| --- | --- | --- |
+| `layout-tsv` | Tab | Emits verbatim tab-separated cells. |
+| `layout-csv` | Comma | Emits verbatim comma-separated cells. Escape data with `escape/csv-cell`. |
+| `layout-pipe-separated` | Pipe | Emits compact pipe-separated cells without Markdown header rows. |
 
 Box-drawing layouts:
 
@@ -305,6 +327,27 @@ Norton Commander-style layouts:
 | `layout-norton-commander-fill-left` | Left | Yes |
 | `layout-norton-commander-fill-center` | Center | Yes |
 | `layout-norton-commander-fill-right` | Right | Yes |
+
+ASCII grid layouts using only `+`, `-`, and `|`:
+
+| Var | Alignment | Fill-aware |
+| --- | --- | --- |
+| `layout-ascii-grid-left` | Left | No |
+| `layout-ascii-grid-center` | Center | No |
+| `layout-ascii-grid-right` | Right | No |
+| `layout-ascii-grid-fill-left` | Left | Yes |
+| `layout-ascii-grid-fill-center` | Center | Yes |
+| `layout-ascii-grid-fill-right` | Right | Yes |
+
+Terminal and documentation layouts:
+
+| Var | Format | Behavior |
+| --- | --- | --- |
+| `layout-psql-left` | PostgreSQL psql | Left-aligned cells with a separator after the first row. |
+| `layout-psql-right` | PostgreSQL psql | Right-aligned cells with a separator after the first row. |
+| `layout-rst-simple` | reStructuredText | Simple table with top, header, and bottom rules. |
+| `layout-org-left` | Org mode | Left-aligned table with a separator after the first row. |
+| `layout-org-right` | Org mode | Right-aligned table with a separator after the first row. |
 
 Markdown layouts:
 
