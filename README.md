@@ -477,6 +477,21 @@ Use `parse-layout` or `explain-layout` while developing custom layout strings:
 ;; => {:valid? false, :message "...", :data {:type :layout-parse-error, ...}}
 ```
 
+## Command Line
+
+Use the `:cli` alias to format CSV, TSV, or whitespace-separated data from stdin
+or a file:
+
+```sh
+clojure -M:cli -- --input csv --format markdown --headers data.csv
+clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
+```
+
+Supported input formats are `csv`, `tsv`, and `whitespace`. Supported output
+formats are the high-level table formats such as `plain`, `markdown`,
+`ascii-grid`, `csv`, `tsv`, `org`, `rst`, and `html`. Run
+`clojure -M:cli -- --help` for the complete option list.
+
 ## Development
 
 Run the test suite:

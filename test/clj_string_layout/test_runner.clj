@@ -1,5 +1,6 @@
 (ns clj-string-layout.test-runner
-  (:require [clj-string-layout.core-test]
+  (:require [clj-string-layout.cli-test]
+            [clj-string-layout.core-test]
             [clj-string-layout.escape-test]
             [clj-string-layout.property-test]
             [clj-string-layout.table-test]
@@ -7,7 +8,8 @@
             [clojure.test :as test]))
 
 (defn -main [& _]
-  (let [{:keys [fail error]} (test/run-tests 'clj-string-layout.core-test
+  (let [{:keys [fail error]} (test/run-tests 'clj-string-layout.cli-test
+                                              'clj-string-layout.core-test
                                               'clj-string-layout.escape-test
                                               'clj-string-layout.property-test
                                               'clj-string-layout.table-test
