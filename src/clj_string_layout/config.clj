@@ -12,7 +12,7 @@
    :width 80
    :raw? false})
 
-(defn merge-defaults [layout-config]
+(defn- merge-defaults [layout-config]
   (let [layout-config (merge default-layout-config layout-config)
         {:keys [align-char]} layout-config]
     (update layout-config :fill-char (fnil identity align-char))))
@@ -27,20 +27,28 @@
                    :path [:layout :cols]
                    :value cols})))
 
+(defn- option-map [path options]
+  (when (odd? (count options))
+    (layout-error "Layout specification options must be key/value pairs"
+                  {:type :invalid-layout-config
+                   :path path
+                   :options options}))
+  (apply hash-map options))
+
 (defn- validate-row-spec! [idx row-spec]
   (when-not (spec-vector? row-spec)
     (layout-error "Row layout specs must be vectors starting with a string"
                   {:type :invalid-layout-config
                    :path [:layout :rows idx]
                    :value row-spec}))
-  (let [options (apply hash-map (rest row-spec))]
+  (let [options (option-map [:layout :rows idx] (rest row-spec))]
     (when-not (ifn? (:apply-for options))
       (layout-error "Row layout specs must include an :apply-for predicate"
                     {:type :invalid-layout-config
                      :path [:layout :rows idx :apply-for]
                      :value (:apply-for options)}))))
 
-(defn validate-raw-config! [layout-config]
+(defn- validate-raw-config! [layout-config]
   (when-not (map? layout-config)
     (layout-error "Layout config must be a map"
                   {:type :invalid-layout-config
@@ -62,10 +70,10 @@
   (count (filter column-entry? (:layout repeat-entry))))
 
 (defn- layout-options [spec]
-  (apply hash-map (rest spec)))
+  (option-map [:layout :cols] (rest spec)))
 
 (defn- repeat-predicates [layout-config]
-    (let [options (layout-options (get-in layout-config [:layout :cols]))
+  (let [options (layout-options (get-in layout-config [:layout :cols]))
         predicates (if (contains? options :repeat-for)
                      (:repeat-for options)
                      (:apply-for options))]
@@ -139,7 +147,7 @@
 (defn- split-pattern [split-char]
   (re-pattern (Pattern/quote (str split-char))))
 
-(defn normalize-row-lens [col-count rows]
+(defn- normalize-row-lens [col-count rows]
   (mapv #(into [] (take col-count (concat % (repeat "")))) rows))
 
 (defn normalize-rows [layout-config rows]

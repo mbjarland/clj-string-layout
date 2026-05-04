@@ -27,7 +27,7 @@
           0
           layout))
 
-(defn calculate-fills
+(defn- calculate-fills
   "Distributes fill-width across fill-count slots using fill-chars."
   [fill-width fill-count fill-chars]
   (if (zero? fill-count)
@@ -81,7 +81,7 @@
     []
     layout))
 
-(defn expand-fills [width col-widths fill-chars layout]
+(defn- expand-fills [width col-widths fill-chars layout]
   (let [fill-count (fill-slot-count layout)]
     (if (zero? fill-count)
       (merge-adjacent-text layout)
@@ -120,7 +120,7 @@
                  :idx idx
                  :last-idx last-idx}))
 
-(defn expand-repeats [col-count layout]
+(defn- expand-repeats [col-count layout]
   (if (not-any? repeat-entry? layout)
     layout
     (let [[lhs repeats rhs] (partition-layout layout)
@@ -148,7 +148,7 @@
                        :layout expanded}))
       expanded)))
 
-(defn calculate-col-widths [rows]
+(defn- calculate-col-widths [rows]
   (apply mapv #(apply max (map count %&)) rows))
 
 (defn- column-extra-width [column]
@@ -244,12 +244,13 @@
         prepare-col-layout #(->> %
                                  (expand-repeats col-count)
                                  (expand-fills width col-widths (repeat fill-char)))
-        prepare-row-spec #(-> %
-                              (update :layout (partial expand-repeats col-count))
-                              ((fn [row-spec]
-                                 (expand-row-fills layout-config col-widths row-spec)))
-                              ((fn [row-spec]
-                                 (render-row-layout col-widths row-spec))))
+        expand-row-spec (partial expand-row-fills layout-config col-widths)
+        render-row-spec (partial render-row-layout col-widths)
+        prepare-row-spec (fn [row-spec]
+                           (-> row-spec
+                               (update :layout #(expand-repeats col-count %))
+                               expand-row-spec
+                               render-row-spec))
         layout-config (update-in layout-config [:layout :cols :layout]
                                  prepare-col-layout)]
     (when-not (= col-count (count-columns (get-in layout-config [:layout :cols :layout])))

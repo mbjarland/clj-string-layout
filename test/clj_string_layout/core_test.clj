@@ -53,7 +53,7 @@
 
 (deftest calculate-fills-test
   (are [fill-width fill-count fill-chars expected]
-       (= expected (render/calculate-fills fill-width fill-count fill-chars))
+       (= expected (#'render/calculate-fills fill-width fill-count fill-chars))
     0 1 [\*] [""]
     1 1 [\*] ["*"]
     2 1 [\*] ["**"]
@@ -198,6 +198,16 @@
            (:type (ex-data (try
                              (layout "a b" {:layout {:cols ["{[L]} {[R]}"
                                                       :repeat-for [layouts/all-cols?]]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "odd layout option count"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a b" {:layout {:cols ["[L]" :repeat-for]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "column count mismatch"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a b c" {:layout {:cols ["[L] [R]"]}})
                              (catch clojure.lang.ExceptionInfo e e)))))))
   (testing "non-string row values"
     (is (= :invalid-rows
