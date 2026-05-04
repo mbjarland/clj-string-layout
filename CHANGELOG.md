@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- Added high-level `clj-string-layout.table` APIs with named formats, column specs, map-row support, and overflow policies.
 - Added a dedicated layout language reference with structured examples and troubleshooting notes.
 - Added plain column, TSV, CSV, pipe-separated, ASCII grid, psql, Org mode, and reStructuredText preset layouts.
 - Added `clj-string-layout.escape/csv-cell` for CSV cell escaping.

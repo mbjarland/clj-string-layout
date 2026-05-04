@@ -29,10 +29,33 @@ Require the namespaces you need:
 (require '[clj-string-layout.core :refer [layout layout-seq]]
          '[clj-string-layout.escape :as escape]
          '[clj-string-layout.layout :as layouts]
-         '[clj-string-layout.predicates :as pred])
+         '[clj-string-layout.predicates :as pred]
+         '[clj-string-layout.table :as table])
 ```
 
 The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum runtime.
+
+## High-Level Table API
+
+Use `clj-string-layout.table` when you want common table formats without writing
+layout strings directly:
+
+```clojure
+(table/table {:format :markdown
+              :columns [{:key :name :title "Name"}
+                        {:key :qty :title "Qty" :align :right}]
+              :rows [{:name "apple" :qty 12}
+                     {:name "pear" :qty 4}]})
+;; => ["| Name  | Qty |"
+;;     "|:----- | ---:|"
+;;     "| apple |  12 |"
+;;     "| pear  |   4 |"]
+```
+
+Named formats include `:plain`, `:markdown`, `:ascii-grid`, `:csv`, `:tsv`,
+`:pipe`, `:psql`, `:org`, `:rst`, and `:html`. See the
+[table API guide](doc/table-api.md) for column specs, formatters, escaping, and
+overflow policies.
 
 ## Quick Start
 

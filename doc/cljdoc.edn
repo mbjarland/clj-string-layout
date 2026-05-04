@@ -1,5 +1,6 @@
 {:cljdoc.doc/tree
   [["Readme" {:file "README.md"}]
+   ["Table API" {:file "doc/table-api.md"}]
    ["Layout Language" {:file "doc/layout-language.md"}]
    ["Recipes" {:file "doc/recipes.md"}]
    ["Project TODO" {:file "doc/TODO.md"}]

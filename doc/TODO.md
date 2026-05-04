@@ -6,10 +6,10 @@ to users outside the core Clojure library audience.
 
 ## User-Facing API
 
-- [ ] Add high-level `table`, `table-str`, and `table-seq` APIs.
-- [ ] Add a named format registry for formats such as `:markdown`, `:ascii-grid`, `:csv`, and `:html`.
-- [ ] Add column specs for map rows, titles, alignment, fixed widths, and per-column formatting.
-- [ ] Add overflow policies such as `:clip`, `:ellipsis`, `:wrap`, and `:error`.
+- [x] Add high-level `table`, `table-str`, and `table-seq` APIs.
+- [x] Add a named format registry for formats such as `:markdown`, `:ascii-grid`, `:csv`, and `:html`.
+- [x] Add column specs for map rows, titles, alignment, fixed widths, and per-column formatting.
+- [x] Add overflow policies such as `:clip`, `:ellipsis`, `:wrap`, and `:error`.
 
 ## Width And Escaping
 
