@@ -8,7 +8,8 @@ For syntax details, see the [layout language reference](layout-language.md).
 (require '[clj-string-layout.core :refer [layout layout-seq layout-str]]
          '[clj-string-layout.escape :as escape]
          '[clj-string-layout.layout :as layouts]
-         '[clj-string-layout.predicates :as pred])
+         '[clj-string-layout.predicates :as pred]
+         '[clj-string-layout.width :as width])
 ```
 
 ## Simple Columns
@@ -220,6 +221,21 @@ width differs from string length.
          :layout {:cols ["[R] [L]"]}})
 ;; => ["界 x "
 ;;     "ab yy"]
+```
+
+## ANSI Colored Output
+
+Use `width/ansi-width` when values contain terminal color/style sequences that
+should not count as visible columns.
+
+```clojure
+(def red (str "\u001B[31m" "red" "\u001B[0m"))
+
+(layout [[red "x"]
+         ["blue" "yy"]]
+        {:display-width width/ansi-width
+         :layout {:cols ["[L] [L]"]}})
+;; The first row displays as "red  x " with "red" colored red.
 ```
 
 ## Raw Output For Styling

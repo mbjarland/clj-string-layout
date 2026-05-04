@@ -30,7 +30,8 @@ Require the namespaces you need:
          '[clj-string-layout.escape :as escape]
          '[clj-string-layout.layout :as layouts]
          '[clj-string-layout.predicates :as pred]
-         '[clj-string-layout.table :as table])
+         '[clj-string-layout.table :as table]
+         '[clj-string-layout.width :as width])
 ```
 
 The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum runtime.
@@ -122,17 +123,17 @@ Options:
 | `:fill-char` | space | Character used for `f` fill markers unless overridden by a row layout. |
 | `:word-split-char` | space | Character used to split string input into words. |
 | `:row-split-char` | newline | Character used to split string input into rows. |
-| `:display-width` | `count` | Function from string to display width. Override this for terminal-width-aware alignment of wide glyphs. |
+| `:display-width` | `count` | Function from string to display width. Override this for ANSI-styled text or wide glyphs. |
 | `:col-widths` | `nil` | Optional explicit column display widths. Useful for fixed schemas and streaming large data sets. |
 | `:row-count` | `nil` | Optional data row count for lazy output with row layouts. |
 | `:raw?` | `false` | Return each output row as a vector of pieces instead of joined strings. Useful when post-processing cells, for example adding ANSI colors. |
 
 By default, widths are measured with Clojure's `count`, preserving plain string
-length behavior. For monospace terminal output containing wide glyphs, pass a
-`:display-width` function that returns a non-negative integer for each string.
-The function is used for cell values, literal delimiters, padding, and fill
-width calculations. Alignment and fill characters should occupy one display
-column.
+length behavior. For colored terminal output containing ANSI escape sequences,
+pass `:display-width width/ansi-width`. For monospace terminal output containing
+wide glyphs, pass a function that returns a non-negative integer for each string.
+The function is used for cell values, literal delimiters, padding, and fill width
+calculations. Alignment and fill characters should occupy one display column.
 
 Use `layout-seq` with `:col-widths` for large data sets when the schema widths
 are known ahead of time. Without explicit widths, exact alignment still needs to

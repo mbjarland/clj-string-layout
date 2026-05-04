@@ -13,7 +13,7 @@ to users outside the core Clojure library audience.
 
 ## Width And Escaping
 
-- [ ] Add ANSI-aware display-width helpers for colored terminal output.
+- [x] Add ANSI-aware display-width helpers for colored terminal output.
 - [ ] Add Unicode display-width helpers for wide glyphs.
 - [ ] Add more escaping helpers for TSV, Org mode, reStructuredText, and log-safe output.
 
