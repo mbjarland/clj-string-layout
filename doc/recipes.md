@@ -208,16 +208,13 @@ HTML cells are emitted verbatim by design. Escape user-provided values first.
 
 ## Wide Glyphs
 
-By default, widths use `count`. Pass `:display-width` when terminal display
-width differs from string length.
+By default, widths use `count`. Pass `width/unicode-width` when terminal display
+width differs from string length because values contain wide glyphs.
 
 ```clojure
-(defn demo-width [s]
-  (reduce + (map #(if (= \界 %) 2 1) s)))
-
 (layout [["界" "x"]
          ["ab" "yy"]]
-        {:display-width demo-width
+        {:display-width width/unicode-width
          :layout {:cols ["[R] [L]"]}})
 ;; => ["界 x "
 ;;     "ab yy"]
@@ -226,7 +223,8 @@ width differs from string length.
 ## ANSI Colored Output
 
 Use `width/ansi-width` when values contain terminal color/style sequences that
-should not count as visible columns.
+should not count as visible columns. If the colored values may also contain wide
+glyphs, use `width/terminal-width` instead.
 
 ```clojure
 (def red (str "\u001B[31m" "red" "\u001B[0m"))

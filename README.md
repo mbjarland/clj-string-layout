@@ -131,9 +131,10 @@ Options:
 By default, widths are measured with Clojure's `count`, preserving plain string
 length behavior. For colored terminal output containing ANSI escape sequences,
 pass `:display-width width/ansi-width`. For monospace terminal output containing
-wide glyphs, pass a function that returns a non-negative integer for each string.
-The function is used for cell values, literal delimiters, padding, and fill width
-calculations. Alignment and fill characters should occupy one display column.
+wide glyphs, pass `:display-width width/unicode-width`. If output may contain
+both, use `width/terminal-width`. The function is used for cell values, literal
+delimiters, padding, and fill width calculations. Alignment and fill characters
+should occupy one display column.
 
 Use `layout-seq` with `:col-widths` for large data sets when the schema widths
 are known ahead of time. Without explicit widths, exact alignment still needs to
