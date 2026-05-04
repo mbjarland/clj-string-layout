@@ -2,6 +2,7 @@
   (:require [clj-string-layout.core :refer [layout]]
             [clj-string-layout.layout :as layouts]
             [clj-string-layout.parser :as parser]
+            [clj-string-layout.predicates :as pred]
             [clj-string-layout.render :as render]
             [clojure.test :refer [are deftest is testing]]))
 
@@ -170,6 +171,16 @@
           "  <tr><td>a</td><td>raven</td></tr>"
           "</table>"]
          (layout "Alice why\na raven" layouts/layout-html-table))))
+
+(deftest built-in-layouts-and-predicates
+  (is (layouts/first-row? [0 3]))
+  (is (pred/first-row? [0 3]))
+  (is (layouts/all-cols? [2 4]))
+  (is (pred/all-cols? [2 4]))
+  (is (= ["┌───┬───┐"
+          "│ a │ b │"
+          "└───┴───┘"]
+         (layout "a b" layouts/layout-ascii-box-center))))
 
 (deftest validation-errors
   (testing "missing column layout"

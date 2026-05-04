@@ -1,133 +1,108 @@
-(ns clj-string-layout.layout)
+(ns clj-string-layout.layout
+  (:require [clj-string-layout.predicates :as pred]))
 
-; layout predicates
+;; Predicate aliases are kept here so existing callers can continue requiring
+;; only clj-string-layout.layout for built-in layouts and predicates.
+(def first-row? pred/first-row?)
+(def not-first-row? pred/not-first-row?)
+(def second-row? pred/second-row?)
+(def last-row? pred/last-row?)
+(def not-last-row? pred/not-last-row?)
+(def interior-row? pred/interior-row?)
+(def not-interior-row? pred/not-interior-row?)
+(def all-rows? pred/all-rows?)
 
-(defn -first? [[idx _]] (zero? idx))
-(def -not-first? (complement -first?))
+(def first-col? pred/first-col?)
+(def not-first-col? pred/not-first-col?)
+(def second-col? pred/second-col?)
+(def last-col? pred/last-col?)
+(def not-last-col? pred/not-last-col?)
+(def interior-col? pred/interior-col?)
+(def not-interior-col? pred/not-interior-col?)
+(def all-cols? pred/all-cols?)
 
-(defn -second? [[idx _]] (= idx 1))
-(defn -last? [[idx last]] (= idx last))
-(def -not-last? (complement -last?))
-(defn -interior? [pair] (and (-not-first? pair)
-                             (-not-last? pair)))
-(def -not-interior? (complement -interior?))
-(defn -all? [_] true)
+(defn- align-token [align fill?]
+  (str "[" align (when fill? "f") "]"))
 
-; row layout predicates
-(def first-row? -first?)
-(def not-first-row? -not-first?)
-(def second-row? -second?)
-(def last-row? -last?)
-(def not-last-row? -not-last?)
-(def interior-row? -interior?)
-(def not-interior-row? -not-interior?)
-(def all-rows? -all?)
+(defn- row-token [ch fill?]
+  (str "[" ch (when fill? "f") "]"))
 
-; col layout predicates
-(def first-col? -first?)
-(def not-first-col? -not-first?)
-(def second-col? -second?)
-(def last-col? -last?)
-(def not-last-col? -not-last?)
-(def interior-col? -interior?)
-(def not-interior-col? -not-interior?)
-(def all-cols? -all?)
+(defn- bordered-cols [{:keys [left sep right]} align fill?]
+  (let [token (align-token align fill?)]
+    (str left "{ " token " " sep "} " token " " right)))
 
+(defn- bordered-row [{:keys [left fill sep right]} fill?]
+  (let [token (row-token fill fill?)]
+    (str left "{" fill token fill sep "}" fill token fill right)))
 
+(defn- bordered-layout [chars align fill?]
+  {:layout {:cols [(bordered-cols (:cols chars) align fill?)
+                   :repeat-for [all-cols?]]
+            :rows [[(bordered-row (:top chars) fill?) :apply-for first-row?]
+                   [(bordered-row (:middle chars) fill?) :apply-for interior-row?]
+                   [(bordered-row (:bottom chars) fill?) :apply-for last-row?]]}})
 
-(def layout-ascii-box-left
-  {:layout {:cols   ["│{ [L] │} [L] │" :apply-for [all-cols?]]
-            :rows  [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
-                    ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
-                    ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
-(def layout-ascii-box-center
-  {:layout {:cols  ["│{ [C] │} [C] │" :apply-for [all-cols?]]
-            :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
-                   ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
-                   ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
-(def layout-ascii-box-right
-  {:layout {:cols  ["│{ [R] │} [R] │" :apply-for [all-cols?]]
-            :rows [["┌{─[─]─┬}─[─]─┐" :apply-for first-row?]
-                   ["├{─[─]─┼}─[─]─┤" :apply-for interior-row?]
-                   ["└{─[─]─┴}─[─]─┘" :apply-for last-row?]]}})
+(def ^:private ascii-box-chars
+  {:cols {:left "│" :sep "│" :right "│"}
+   :top {:left "┌" :fill "─" :sep "┬" :right "┐"}
+   :middle {:left "├" :fill "─" :sep "┼" :right "┤"}
+   :bottom {:left "└" :fill "─" :sep "┴" :right "┘"}})
 
-(def layout-ascii-box-fill-left
-  {:layout {:cols   ["│{ [Lf] │} [Lf] │" :apply-for [all-cols?]]
-            :rows  [["┌{─[─f]─┬}─[─f]─┐" :apply-for first-row?]
-                    ["├{─[─f]─┼}─[─f]─┤" :apply-for interior-row?]
-                    ["└{─[─f]─┴}─[─f]─┘" :apply-for last-row?]]}})
-(def layout-ascii-box-fill-center
-  {:layout {:cols  ["│{ [Cf] │} [Cf] │" :apply-for [all-cols?]]
-            :rows [["┌{─[─f]─┬}─[─f]─┐" :apply-for first-row?]
-                   ["├{─[─f]─┼}─[─f]─┤" :apply-for interior-row?]
-                   ["└{─[─f]─┴}─[─f]─┘" :apply-for last-row?]]}})
-(def layout-ascii-box-fill-right
-  {:layout {:cols  ["│{ [Rf] │} [Rf] │" :apply-for [all-cols?]]
-            :rows [["┌{─[─f]─┬}─[─f]─┐" :apply-for first-row?]
-                   ["├{─[─f]─┼}─[─f]─┤" :apply-for interior-row?]
-                   ["└{─[─f]─┴}─[─f]─┘" :apply-for last-row?]]}})
+(def ^:private norton-commander-chars
+  {:cols {:left "║" :sep "│" :right "║"}
+   :top {:left "╔" :fill "═" :sep "╤" :right "╗"}
+   :middle {:left "╟" :fill "─" :sep "┼" :right "╢"}
+   :bottom {:left "╚" :fill "═" :sep "╧" :right "╝"}})
 
+(def layout-ascii-box-left (bordered-layout ascii-box-chars "L" false))
+(def layout-ascii-box-center (bordered-layout ascii-box-chars "C" false))
+(def layout-ascii-box-right (bordered-layout ascii-box-chars "R" false))
+
+(def layout-ascii-box-fill-left (bordered-layout ascii-box-chars "L" true))
+(def layout-ascii-box-fill-center (bordered-layout ascii-box-chars "C" true))
+(def layout-ascii-box-fill-right (bordered-layout ascii-box-chars "R" true))
 
 (def layout-norton-commander-left
-  {:layout {:cols  ["║{ [L] │} [L] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
-                   ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
-                   ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "L" false))
 (def layout-norton-commander-center
-  {:layout {:cols  ["║{ [C] │} [C] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
-                   ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
-                   ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "C" false))
 (def layout-norton-commander-right
-  {:layout {:cols  ["║{ [R] │} [R] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═]═╤}═[═]═╗" :apply-for first-row?]
-                   ["╟{─[─]─┼}─[─]─╢" :apply-for interior-row?]
-                   ["╚{═[═]═╧}═[═]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "R" false))
 
 (def layout-norton-commander-fill-left
-  {:layout {:cols  ["║{ [Lf] │} [Lf] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                   ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                   ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "L" true))
 (def layout-norton-commander-fill-center
-  {:layout {:cols  ["║{ [Cf] │} [Cf] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                   ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                   ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "C" true))
 (def layout-norton-commander-fill-right
-  {:layout {:cols  ["║{ [Rf] │} [Rf] ║" :apply-for [all-cols?]]
-            :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                   ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                   ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})
+  (bordered-layout norton-commander-chars "R" true))
 
+(defn- markdown-cols [align fill?]
+  (str "|{ " (align-token align fill?) " |}"))
 
-(def layout-markdown-left
-  {:layout {:cols  ["|{ [L] |}" :apply-for [all-cols?]]
-            :rows [["|{:[-] |}" :apply-for second-row?]]}})
-(def layout-markdown-center
-  {:layout {:cols  ["|{ [C] |}" :apply-for [all-cols?]]
-            :rows [["|{:[-]:|}" :apply-for second-row?]]}})
-(def layout-markdown-right
-  {:layout {:cols  ["|{ [R] |}" :apply-for [all-cols?]]
-            :rows [["|{ [-]:|}" :apply-for second-row?]]}})
+(defn- markdown-row [align fill?]
+  (let [token (row-token "-" fill?)]
+    (case align
+      "L" (str "|{:" token " |}")
+      "C" (str "|{:" token ":|}")
+      "R" (str "|{ " token ":|}"))))
 
-(def layout-markdown-fill-left
-  {:layout {:cols  ["|{ [Lf] |}" :apply-for [all-cols?]]
-            :rows [["|{:[-f] |}" :apply-for second-row?]]}})
-(def layout-markdown-fill-center
-  {:layout {:cols  ["|{ [Cf] |}" :apply-for [all-cols?]]
-            :rows [["|{:[-f]:|}" :apply-for second-row?]]}})
-(def layout-markdown-fill-right
-  {:layout {:cols  ["|{ [Rf] |}" :apply-for [all-cols?]]
-            :rows [["|{ [-f]:|}" :apply-for second-row?]]}})
+(defn- markdown-layout [align fill?]
+  {:layout {:cols [(markdown-cols align fill?) :repeat-for [all-cols?]]
+            :rows [[(markdown-row align fill?) :apply-for second-row?]]}})
 
+(def layout-markdown-left (markdown-layout "L" false))
+(def layout-markdown-center (markdown-layout "C" false))
+(def layout-markdown-right (markdown-layout "R" false))
 
-(def layout-html-table
-  {:layout {:cols  ["  <tr>{<td>[V]</td>}</tr>" :apply-for [all-cols?]]
+(def layout-markdown-fill-left (markdown-layout "L" true))
+(def layout-markdown-fill-center (markdown-layout "C" true))
+(def layout-markdown-fill-right (markdown-layout "R" true))
+
+(defn- html-table-layout [align]
+  {:layout {:cols [(str "  <tr>{<td>[" align "]</td>}</tr>")
+                   :repeat-for [all-cols?]]
             :rows [["<table>" :apply-for first-row?]
                    ["</table>" :apply-for last-row?]]}})
 
-(def layout-html-table-readable
-  {:layout {:cols  ["  <tr>{<td>[L]</td>}</tr>" :apply-for [all-cols?]]
-            :rows [["<table>" :apply-for first-row?]
-                   ["</table>" :apply-for last-row?]]}})
+(def layout-html-table (html-table-layout "V"))
+(def layout-html-table-readable (html-table-layout "L"))
