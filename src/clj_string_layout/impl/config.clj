@@ -1,6 +1,6 @@
-(ns clj-string-layout.config
-  (:require [clj-string-layout.error :refer [layout-error]]
-            [clj-string-layout.parser :as parser]
+(ns clj-string-layout.impl.config
+  (:require [clj-string-layout.impl.error :refer [layout-error]]
+            [clj-string-layout.impl.parser :as parser]
             [clojure.string :as str])
   (:import [java.util.regex Pattern]))
 

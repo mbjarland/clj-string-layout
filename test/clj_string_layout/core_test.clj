@@ -1,9 +1,10 @@
 (ns clj-string-layout.core-test
   (:require [clj-string-layout.core :refer [layout]]
+            [clj-string-layout.impl.parser :as parser]
+            [clj-string-layout.impl.render :as render]
             [clj-string-layout.layout :as layouts]
-            [clj-string-layout.parser :as parser]
             [clj-string-layout.predicates :as pred]
-            [clj-string-layout.render :as render]
+            [clj-string-layout.presets :as presets]
             [clojure.test :refer [are deftest is testing]]))
 
 (defn- column
@@ -170,7 +171,7 @@
           "  <tr><td>Alice</td><td>why</td></tr>"
           "  <tr><td>a</td><td>raven</td></tr>"
           "</table>"]
-         (layout "Alice why\na raven" layouts/layout-html-table))))
+         (layout "Alice why\na raven" presets/layout-html-table))))
 
 (deftest built-in-layouts-and-predicates
   (is (layouts/first-row? [0 3]))
@@ -180,7 +181,8 @@
   (is (= ["┌───┬───┐"
           "│ a │ b │"
           "└───┴───┘"]
-         (layout "a b" layouts/layout-ascii-box-center))))
+         (layout "a b" presets/layout-ascii-box-center)))
+  (is (= presets/layout-ascii-box-center layouts/layout-ascii-box-center)))
 
 (deftest validation-errors
   (testing "missing column layout"

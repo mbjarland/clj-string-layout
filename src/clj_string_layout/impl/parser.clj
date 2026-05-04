@@ -1,5 +1,5 @@
-(ns clj-string-layout.parser
-  (:require [clj-string-layout.error :refer [layout-error]]
+(ns clj-string-layout.impl.parser
+  (:require [clj-string-layout.impl.error :refer [layout-error]]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))
 

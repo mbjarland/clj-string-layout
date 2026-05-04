@@ -2,8 +2,8 @@
   ^{:doc "A library for laying out string data in table-like formats"
     :author "Matias Bjarland"}
   clj-string-layout.core
-  (:require [clj-string-layout.config :as config]
-            [clj-string-layout.render :as render]))
+  (:require [clj-string-layout.impl.config :as config]
+            [clj-string-layout.impl.render :as render]))
 
 (def default-layout-config
   "Default layout config. Merged with the layout config passed to layout."

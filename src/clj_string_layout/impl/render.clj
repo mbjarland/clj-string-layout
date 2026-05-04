@@ -1,5 +1,5 @@
-(ns clj-string-layout.render
-  (:require [clj-string-layout.error :refer [layout-error]]
+(ns clj-string-layout.impl.render
+  (:require [clj-string-layout.impl.error :refer [layout-error]]
             [clojure.string :as str]))
 
 (defn- text-entry? [entry]

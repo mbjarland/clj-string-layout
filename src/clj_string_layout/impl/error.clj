@@ -1,4 +1,4 @@
-(ns clj-string-layout.error)
+(ns clj-string-layout.impl.error)
 
 (defn layout-error
   ([message]

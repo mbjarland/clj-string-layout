@@ -1,108 +1,151 @@
 (ns clj-string-layout.layout
-  (:require [clj-string-layout.predicates :as pred]))
+  (:require [clj-string-layout.predicates :as pred]
+            [clj-string-layout.presets :as presets]))
 
-;; Predicate aliases are kept here so existing callers can continue requiring
-;; only clj-string-layout.layout for built-in layouts and predicates.
-(def first-row? pred/first-row?)
-(def not-first-row? pred/not-first-row?)
-(def second-row? pred/second-row?)
-(def last-row? pred/last-row?)
-(def not-last-row? pred/not-last-row?)
-(def interior-row? pred/interior-row?)
-(def not-interior-row? pred/not-interior-row?)
-(def all-rows? pred/all-rows?)
+;; This namespace keeps the historical API that exposed both predicates and
+;; built-in layouts from one place. New code can require predicates and presets
+;; directly when it wants clearer namespaces.
 
-(def first-col? pred/first-col?)
-(def not-first-col? pred/not-first-col?)
-(def second-col? pred/second-col?)
-(def last-col? pred/last-col?)
-(def not-last-col? pred/not-last-col?)
-(def interior-col? pred/interior-col?)
-(def not-interior-col? pred/not-interior-col?)
-(def all-cols? pred/all-cols?)
+(def first-row?
+  "Compatibility alias for clj-string-layout.predicates/first-row?."
+  pred/first-row?)
 
-(defn- align-token [align fill?]
-  (str "[" align (when fill? "f") "]"))
+(def not-first-row?
+  "Compatibility alias for clj-string-layout.predicates/not-first-row?."
+  pred/not-first-row?)
 
-(defn- row-token [ch fill?]
-  (str "[" ch (when fill? "f") "]"))
+(def second-row?
+  "Compatibility alias for clj-string-layout.predicates/second-row?."
+  pred/second-row?)
 
-(defn- bordered-cols [{:keys [left sep right]} align fill?]
-  (let [token (align-token align fill?)]
-    (str left "{ " token " " sep "} " token " " right)))
+(def last-row?
+  "Compatibility alias for clj-string-layout.predicates/last-row?."
+  pred/last-row?)
 
-(defn- bordered-row [{:keys [left fill sep right]} fill?]
-  (let [token (row-token fill fill?)]
-    (str left "{" fill token fill sep "}" fill token fill right)))
+(def not-last-row?
+  "Compatibility alias for clj-string-layout.predicates/not-last-row?."
+  pred/not-last-row?)
 
-(defn- bordered-layout [chars align fill?]
-  {:layout {:cols [(bordered-cols (:cols chars) align fill?)
-                   :repeat-for [all-cols?]]
-            :rows [[(bordered-row (:top chars) fill?) :apply-for first-row?]
-                   [(bordered-row (:middle chars) fill?) :apply-for interior-row?]
-                   [(bordered-row (:bottom chars) fill?) :apply-for last-row?]]}})
+(def interior-row?
+  "Compatibility alias for clj-string-layout.predicates/interior-row?."
+  pred/interior-row?)
 
-(def ^:private ascii-box-chars
-  {:cols {:left "│" :sep "│" :right "│"}
-   :top {:left "┌" :fill "─" :sep "┬" :right "┐"}
-   :middle {:left "├" :fill "─" :sep "┼" :right "┤"}
-   :bottom {:left "└" :fill "─" :sep "┴" :right "┘"}})
+(def not-interior-row?
+  "Compatibility alias for clj-string-layout.predicates/not-interior-row?."
+  pred/not-interior-row?)
 
-(def ^:private norton-commander-chars
-  {:cols {:left "║" :sep "│" :right "║"}
-   :top {:left "╔" :fill "═" :sep "╤" :right "╗"}
-   :middle {:left "╟" :fill "─" :sep "┼" :right "╢"}
-   :bottom {:left "╚" :fill "═" :sep "╧" :right "╝"}})
+(def all-rows?
+  "Compatibility alias for clj-string-layout.predicates/all-rows?."
+  pred/all-rows?)
 
-(def layout-ascii-box-left (bordered-layout ascii-box-chars "L" false))
-(def layout-ascii-box-center (bordered-layout ascii-box-chars "C" false))
-(def layout-ascii-box-right (bordered-layout ascii-box-chars "R" false))
+(def first-col?
+  "Compatibility alias for clj-string-layout.predicates/first-col?."
+  pred/first-col?)
 
-(def layout-ascii-box-fill-left (bordered-layout ascii-box-chars "L" true))
-(def layout-ascii-box-fill-center (bordered-layout ascii-box-chars "C" true))
-(def layout-ascii-box-fill-right (bordered-layout ascii-box-chars "R" true))
+(def not-first-col?
+  "Compatibility alias for clj-string-layout.predicates/not-first-col?."
+  pred/not-first-col?)
+
+(def second-col?
+  "Compatibility alias for clj-string-layout.predicates/second-col?."
+  pred/second-col?)
+
+(def last-col?
+  "Compatibility alias for clj-string-layout.predicates/last-col?."
+  pred/last-col?)
+
+(def not-last-col?
+  "Compatibility alias for clj-string-layout.predicates/not-last-col?."
+  pred/not-last-col?)
+
+(def interior-col?
+  "Compatibility alias for clj-string-layout.predicates/interior-col?."
+  pred/interior-col?)
+
+(def not-interior-col?
+  "Compatibility alias for clj-string-layout.predicates/not-interior-col?."
+  pred/not-interior-col?)
+
+(def all-cols?
+  "Compatibility alias for clj-string-layout.predicates/all-cols?."
+  pred/all-cols?)
+
+(def layout-ascii-box-left
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-left."
+  presets/layout-ascii-box-left)
+
+(def layout-ascii-box-center
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-center."
+  presets/layout-ascii-box-center)
+
+(def layout-ascii-box-right
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-right."
+  presets/layout-ascii-box-right)
+
+(def layout-ascii-box-fill-left
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-fill-left."
+  presets/layout-ascii-box-fill-left)
+
+(def layout-ascii-box-fill-center
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-fill-center."
+  presets/layout-ascii-box-fill-center)
+
+(def layout-ascii-box-fill-right
+  "Compatibility alias for clj-string-layout.presets/layout-ascii-box-fill-right."
+  presets/layout-ascii-box-fill-right)
 
 (def layout-norton-commander-left
-  (bordered-layout norton-commander-chars "L" false))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-left."
+  presets/layout-norton-commander-left)
+
 (def layout-norton-commander-center
-  (bordered-layout norton-commander-chars "C" false))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-center."
+  presets/layout-norton-commander-center)
+
 (def layout-norton-commander-right
-  (bordered-layout norton-commander-chars "R" false))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-right."
+  presets/layout-norton-commander-right)
 
 (def layout-norton-commander-fill-left
-  (bordered-layout norton-commander-chars "L" true))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-fill-left."
+  presets/layout-norton-commander-fill-left)
+
 (def layout-norton-commander-fill-center
-  (bordered-layout norton-commander-chars "C" true))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-fill-center."
+  presets/layout-norton-commander-fill-center)
+
 (def layout-norton-commander-fill-right
-  (bordered-layout norton-commander-chars "R" true))
+  "Compatibility alias for clj-string-layout.presets/layout-norton-commander-fill-right."
+  presets/layout-norton-commander-fill-right)
 
-(defn- markdown-cols [align fill?]
-  (str "|{ " (align-token align fill?) " |}"))
+(def layout-markdown-left
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-left."
+  presets/layout-markdown-left)
 
-(defn- markdown-row [align fill?]
-  (let [token (row-token "-" fill?)]
-    (case align
-      "L" (str "|{:" token " |}")
-      "C" (str "|{:" token ":|}")
-      "R" (str "|{ " token ":|}"))))
+(def layout-markdown-center
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-center."
+  presets/layout-markdown-center)
 
-(defn- markdown-layout [align fill?]
-  {:layout {:cols [(markdown-cols align fill?) :repeat-for [all-cols?]]
-            :rows [[(markdown-row align fill?) :apply-for second-row?]]}})
+(def layout-markdown-right
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-right."
+  presets/layout-markdown-right)
 
-(def layout-markdown-left (markdown-layout "L" false))
-(def layout-markdown-center (markdown-layout "C" false))
-(def layout-markdown-right (markdown-layout "R" false))
+(def layout-markdown-fill-left
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-fill-left."
+  presets/layout-markdown-fill-left)
 
-(def layout-markdown-fill-left (markdown-layout "L" true))
-(def layout-markdown-fill-center (markdown-layout "C" true))
-(def layout-markdown-fill-right (markdown-layout "R" true))
+(def layout-markdown-fill-center
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-fill-center."
+  presets/layout-markdown-fill-center)
 
-(defn- html-table-layout [align]
-  {:layout {:cols [(str "  <tr>{<td>[" align "]</td>}</tr>")
-                   :repeat-for [all-cols?]]
-            :rows [["<table>" :apply-for first-row?]
-                   ["</table>" :apply-for last-row?]]}})
+(def layout-markdown-fill-right
+  "Compatibility alias for clj-string-layout.presets/layout-markdown-fill-right."
+  presets/layout-markdown-fill-right)
 
-(def layout-html-table (html-table-layout "V"))
-(def layout-html-table-readable (html-table-layout "L"))
+(def layout-html-table
+  "Compatibility alias for clj-string-layout.presets/layout-html-table."
+  presets/layout-html-table)
+
+(def layout-html-table-readable
+  "Compatibility alias for clj-string-layout.presets/layout-html-table-readable."
+  presets/layout-html-table-readable)
