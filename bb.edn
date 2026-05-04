@@ -1,0 +1,16 @@
+{:tasks
+ {format
+  {:doc "Format CSV, TSV, or whitespace input with clj-string-layout.cli"
+   :task (apply shell "clojure" "-M:cli" *command-line-args*)}
+
+  test
+  {:doc "Run the Clojure test suite"
+   :task (shell "clojure -M:test")}
+
+  lint
+  {:doc "Run clj-kondo"
+   :task (shell "clojure -M:lint")}
+
+  jar
+  {:doc "Build the jar"
+   :task (shell "clojure -T:build jar")}}}

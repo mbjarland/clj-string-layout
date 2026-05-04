@@ -492,6 +492,16 @@ formats are the high-level table formats such as `plain`, `markdown`,
 `ascii-grid`, `csv`, `tsv`, `org`, `rst`, and `html`. Run
 `clojure -M:cli -- --help` for the complete option list.
 
+Babashka users can run the same formatter through `bb.edn`:
+
+```sh
+bb format -- --input csv --format markdown --headers data.csv
+bb format -- --input tsv --format ascii-grid < data.tsv
+```
+
+Additional Babashka shortcuts are available as `bb test`, `bb lint`, and
+`bb jar`.
+
 ## Development
 
 Run the test suite:
