@@ -2,7 +2,7 @@
 
 [![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
 [![Release](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml)
-[![Clojars](https://img.shields.io/clojars/v/com.github.mbjarland/clj-string-layout.svg)](https://clojars.org/com.github.mbjarland/clj-string-layout)
+[![Clojars](https://img.shields.io/clojars/v/io.github.mbjarland/clj-string-layout.svg)](https://clojars.org/io.github.mbjarland/clj-string-layout)
 [![License](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](LICENSE)
 
 `clj-string-layout` is a small Clojure library for turning rows of strings into aligned text layouts: simple columns, box-drawing tables, Markdown tables, HTML table snippets, and custom formats defined with a compact layout language.
@@ -16,8 +16,11 @@ For more copy-and-paste examples, see the [recipe book](doc/recipes.md).
 Add the library to `deps.edn`:
 
 ```clojure
-{:deps {com.github.mbjarland/clj-string-layout {:mvn/version "1.0.3"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.0.4"}}}
 ```
+
+Versions before `1.0.4` used the older `com.github.mbjarland` Maven group.
+Use `io.github.mbjarland` for new installations.
 
 Require the namespaces you need:
 
@@ -438,8 +441,8 @@ clojure -T:deploy deploy
 
 Releases are published by GitHub Actions when a version tag is pushed. The tag
 must be prefixed with `v` and must match `version.edn`. For example,
-`version.edn` containing `{:version "1.0.3"}` must be released with tag
-`v1.0.3`.
+`version.edn` containing `{:version "1.0.4"}` must be released with tag
+`v1.0.4`.
 
 Required repository secrets:
 
@@ -451,8 +454,8 @@ Required repository secrets:
 Release steps:
 
 ```sh
-git tag -a v1.0.3 -m "Release v1.0.3"
-git push origin v1.0.3
+git tag -a v1.0.4 -m "Release v1.0.4"
+git push origin v1.0.4
 ```
 
 The release workflow then runs linting, tests, and jar builds on Java 11, 17,

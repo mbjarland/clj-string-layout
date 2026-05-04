@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-05-04
+
 ### Added
 
 - Added `layout-str`, `layout-seq`, `parse-layout`, and `explain-layout` public helpers.
@@ -26,6 +28,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Split the internals into parser, config, render, error, and predicate namespaces with a tagged internal layout representation.
 - Added `:repeat-for` as the clearer key for repeat-group column predicates while keeping column-layout `:apply-for` compatibility.
 - Moved the release version to `version.edn` and kept deploy-only dependencies out of normal jar builds.
+- Changed the published Maven coordinate from `com.github.mbjarland/clj-string-layout` to `io.github.mbjarland/clj-string-layout`.
 
 ### Fixed
 
@@ -40,5 +43,6 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/1.0.2...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.0.4
 [1.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/1.0.2

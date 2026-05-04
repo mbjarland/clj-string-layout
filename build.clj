@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.tools.build.api :as b]))
 
-(def lib 'com.github.mbjarland/clj-string-layout)
+(def lib 'io.github.mbjarland/clj-string-layout)
 (def version (:version (edn/read-string (slurp "version.edn"))))
 
 (def class-dir "target/classes")
