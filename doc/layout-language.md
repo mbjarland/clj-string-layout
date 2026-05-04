@@ -247,6 +247,9 @@ Use `explain-layout` to capture parse errors without throwing:
 ;; => {:valid? false, :message "...", :data {:type :layout-parse-error, ...}}
 ```
 
+For structured exception data across parsing, validation, table rendering, and
+the CLI, see the [errors reference](errors.md).
+
 ## Troubleshooting
 
 | Symptom | Likely Fix |

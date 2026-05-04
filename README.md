@@ -478,6 +478,9 @@ Use `parse-layout` or `explain-layout` while developing custom layout strings:
 ;; => {:valid? false, :message "...", :data {:type :layout-parse-error, ...}}
 ```
 
+For structured validation and parse error shapes, see the
+[errors reference](doc/errors.md).
+
 ## Command Line
 
 Use the `:cli` alias to format CSV, TSV, or whitespace-separated data from stdin

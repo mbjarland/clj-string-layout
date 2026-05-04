@@ -3,6 +3,7 @@
    ["Table API" {:file "doc/table-api.md"}]
    ["Examples Gallery" {:file "doc/examples-gallery.md"}]
    ["Layout Language" {:file "doc/layout-language.md"}]
+   ["Errors" {:file "doc/errors.md"}]
    ["Recipes" {:file "doc/recipes.md"}]
    ["Project TODO" {:file "doc/TODO.md"}]
    ["Changelog" {:file "CHANGELOG.md"}]]}

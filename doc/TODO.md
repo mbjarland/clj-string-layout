@@ -23,4 +23,4 @@ to users outside the core Clojure library audience.
 - [x] Add a Babashka-compatible entry point and `bb.edn` tasks.
 - [x] Add an examples gallery that shows output styles side-by-side.
 - [x] Add performance benchmarks and a repeatable `:bench` alias.
-- [ ] Document structured `ex-data` validation and parse error shapes.
+- [x] Document structured `ex-data` validation and parse error shapes.
