@@ -12,6 +12,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Added TSV, Org mode, reStructuredText, and log-safe escaping helpers.
 - Added a command-line formatter for CSV, TSV, and whitespace-separated input.
 - Added Babashka `bb.edn` tasks for formatting, testing, linting, and jar builds.
+- Added an examples gallery comparing built-in table output styles side by side.
 - Added a dedicated layout language reference with structured examples and troubleshooting notes.
 - Added plain column, TSV, CSV, pipe-separated, ASCII grid, psql, Org mode, and reStructuredText preset layouts.
 - Added `clj-string-layout.escape/csv-cell` for CSV cell escaping.

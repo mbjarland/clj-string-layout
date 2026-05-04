@@ -21,6 +21,6 @@ to users outside the core Clojure library audience.
 
 - [x] Add a command-line tool for formatting CSV/TSV/stdin data.
 - [x] Add a Babashka-compatible entry point and `bb.edn` tasks.
-- [ ] Add an examples gallery that shows output styles side-by-side.
+- [x] Add an examples gallery that shows output styles side-by-side.
 - [ ] Add performance benchmarks and a repeatable `:bench` alias.
 - [ ] Document structured `ex-data` validation and parse error shapes.

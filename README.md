@@ -9,8 +9,9 @@
 
 The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
-For more copy-and-paste examples, see the [recipe book](doc/recipes.md). For
-planned improvements, see the [project TODO](doc/TODO.md).
+For more copy-and-paste examples, see the [recipe book](doc/recipes.md) and
+[examples gallery](doc/examples-gallery.md). For planned improvements, see the
+[project TODO](doc/TODO.md).
 
 ## Installation
 
