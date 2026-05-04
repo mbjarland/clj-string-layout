@@ -1,13 +1,26 @@
 (ns clj-string-layout.core-test
-  (:require [clojure.test :refer [are deftest is]]
-            [clj-string-layout.core :refer [calculate-fills f-expand-fills
-                                            f-parse-layout-string layout]]
-            [clj-string-layout.layout :refer [all-cols? first-row?
-                                              interior-row? last-row?]]))
+  (:require [clj-string-layout.core :refer [layout]]
+            [clj-string-layout.layout :as layouts]
+            [clj-string-layout.parser :as parser]
+            [clj-string-layout.render :as render]
+            [clojure.test :refer [are deftest is testing]]))
+
+(defn- column
+  ([align]
+   (column align 0))
+  ([align fills]
+   {:type :column :align align :fills fills :fill-widths []}))
+
+(defn- text [value]
+  {:type :text :value value})
+
+(def fill {:type :fill})
 
 (deftest invalid-layout-strings
   (are [row-layout? layout-string]
-       (thrown? Exception ((f-parse-layout-string row-layout?) [layout-string]))
+       (thrown-with-msg? clojure.lang.ExceptionInfo
+                         #"Error parsing layout string"
+                         (parser/parse-layout-spec row-layout? [layout-string]))
     false "[]"
     false "[x]"
     false "[x"
@@ -18,34 +31,28 @@
     false "{ [c] "
     false " [c] }"))
 
-(deftest parse-col-and-row-layout-strings
+(deftest parse-layout-strings-to-ir
   (are [layout-string row? expected-layout]
-       (= {:layout expected-layout} ((f-parse-layout-string row?) [layout-string]))
-    "[L]" false [{:col [{:align :l}]}]
-    "[C]" false [{:col [{:align :c}]}]
-    "[R]" false [{:col [{:align :r}]}]
-    "[l]" false [{:col [{:align :l}]}]
-    "[c]" false [{:col [{:align :c}]}]
-    "[r]" false [{:col [{:align :r}]}]
-    "f[L]f" false [{:del [:f]} {:col [{:align :l}]} {:del [:f]}]
-    "[fLf]" false [{:col [:f {:align :l} :f]}]
-    "[L]" true [{:col [{:align \L}]}]
-    "[*]" true [{:col [{:align \*}]}]
-    "a[L]b" false [{:del ["a"]} {:col [{:align :l}]} {:del ["b"]}]
-    "[L][C][R]" false [{:col [{:align :l}]} {:col [{:align :c}]} {:col [{:align :r}]}]
-    "|[L]|[C]|" false [{:del ["|"]} {:col [{:align :l}]} {:del ["|"]} {:col [{:align :c}]} {:del ["|"]}]
-    "[L]|[C]|" false [{:col [{:align :l}]} {:del ["|"]} {:col [{:align :c}]} {:del ["|"]}]
-    "|[L]|[C]" false [{:del ["|"]} {:col [{:align :l}]} {:del ["|"]} {:col [{:align :c}]}]
-    "[L]|[C]" false [{:col [{:align :l}]} {:del ["|"]} {:col [{:align :c}]}]
-    "|[L][C]|" false [{:del ["|"]} {:col [{:align :l}]} {:col [{:align :c}]} {:del ["|"]}]
-    "-[l]-f-[r]-" false [{:del ["-"]} {:col [{:align :l}]} {:del ["-" :f "-"]} {:col [{:align :r}]} {:del ["-"]}]
-    "--[l]--f--[r]--" false [{:del ["--"]} {:col [{:align :l}]} {:del ["--" :f "--"]} {:col [{:align :r}]} {:del ["--"]}]
-    "--[l]f--f--f[r]--" false [{:del ["--"]} {:col [{:align :l}]} {:del [:f "--" :f "--" :f]} {:col [{:align :r}]} {:del ["--"]}]
-    "|f[fl]f|f[rf]f|" false [{:del ["|" :f]} {:col [:f {:align :l}]} {:del [:f "|" :f]} {:col [{:align :r} :f]} {:del [:f "|"]}]))
+       (= {:layout expected-layout} (parser/parse-layout-spec row? [layout-string]))
+    "[L]" false [(column :l)]
+    "[C]" false [(column :c)]
+    "[R]" false [(column :r)]
+    "[l]" false [(column :l)]
+    "[c]" false [(column :c)]
+    "[r]" false [(column :r)]
+    "f[L]f" false [fill (column :l) fill]
+    "[fLf]" false [(column :l 2)]
+    "[L]" true [(column \L)]
+    "[*]" true [(column \*)]
+    "a[L]b" false [(text "a") (column :l) (text "b")]
+    "[L][C][R]" false [(column :l) (column :c) (column :r)]
+    "|[L]|[C]|" false [(text "|") (column :l) (text "|") (column :c) (text "|")]
+    "-[l]-f-[r]-" false [(text "-") (column :l) (text "-") fill (text "-") (column :r) (text "-")]
+    "|f[fl]f|f[rf]f|" false [(text "|") fill (column :l 1) fill (text "|") fill (column :r 1) fill (text "|")]))
 
 (deftest calculate-fills-test
   (are [fill-width fill-count fill-chars expected]
-       (= expected (calculate-fills fill-width fill-count fill-chars))
+       (= expected (render/calculate-fills fill-width fill-count fill-chars))
     0 1 [\*] [""]
     1 1 [\*] ["*"]
     2 1 [\*] ["**"]
@@ -62,23 +69,6 @@
     10 3 [\* \+ \-] ["***" "+++" "----"]
     7 2 [\* \+] ["***" "++++"]
     20 6 [\1 \2 \3 \4 \5 \6] ["111" "222" "3333" "444" "555" "6666"]))
-
-(deftest expand-fills-test
-  (are [layout width col-widths fill-chars expected]
-       (= expected ((f-expand-fills width col-widths fill-chars) layout))
-    [] 5 [0 0] [\*] []
-    [{:del [" "]}] 5 [0 0] [\*] [{:del " "}]
-    [{:del ["-"]}] 5 [0 0] [\*] [{:del "-"}]
-    [{:del [:f]}] 5 [0 0] [\*] [{:del "*****"}]
-    [{:del [:f]}] 5 [1 1] [\*] [{:del "***"}]
-    [{:del [" "]} {:del [:f]}] 5 [0 0] [\*] [{:del " "} {:del "****"}]
-    [{:del [" " :f]}] 5 [0 0] [\*] [{:del " ****"}]
-    [{:del [" " :f]}] 5 [1 1] [\*] [{:del " **"}]
-    [{:del [:f " "]}] 5 [0 0] [\*] [{:del "**** "}]
-    [{:del [:f " "]}] 5 [1 1] [\* \*] [{:del "** "}]
-    [{:del [:f " " :f]}] 5 [1 1] [\* \*] [{:del "* *"}]
-    [{:del [:f " " :f]}] 9 [1 1] [\* \*] [{:del "*** ***"}]
-    [{:del [:f " " :f]}] 10 [1 1] [\* \*] [{:del "*** ****"}]))
 
 (deftest simple-layout-expressions
   (are [rows align-c split-c col-layout width expected]
@@ -106,8 +96,19 @@
     "a b\naa bb" \space \space ["[R] [R]f"] 10 [" a  b     " "aa bb     "]
     "a b\naa bb" \space \space ["[R] [R]f"] 0 [" a  b" "aa bb"]
     "a b\naa bb" \space \space ["[l]-f-f-[r]"] 0 ["a --- b" "aa---bb"]
-    "a b\naa bb" \space \space ["[l]-f-f-[r]"] 0 ["a --- b" "aa---bb"]
     "a*b\naa*bb" \* \* ["[l]*f*f*[r]"] 0 ["a*****b" "aa***bb"]))
+
+(deftest custom-split-chars-are-treated-literally
+  (is (= ["a   b" "aa bb"]
+         (layout "a|b.aa|bb"
+                 {:word-split-char \|
+                  :row-split-char \.
+                  :layout {:cols ["[L] [R]"]}}))))
+
+(deftest raw-layout-output
+  (is (= [["| " "a" " | " "b" " |"]]
+         (layout "a b" {:raw? true
+                        :layout {:cols ["| [L] | [R] |"]}}))))
 
 (deftest left-justified-column-layout
   (is (= [" Alice, why     is    "
@@ -132,10 +133,10 @@
             "╚════════════╧═════════════╧═══════════╝"]
            (layout data
                    {:width 40
-                    :layout {:cols ["║{ [Lf] │} [Lf] ║" :apply-for [all-cols?]]
-                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})))
+                    :layout {:cols ["║{ [Lf] │} [Lf] ║" :apply-for [layouts/all-cols?]]
+                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for layouts/first-row?]
+                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for layouts/interior-row?]
+                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for layouts/last-row?]]}})))
     (is (= ["╔════════════╤═════════════╤═══════════╗"
             "║   Alice,   │     why     │     is    ║"
             "╟────────────┼─────────────┼───────────╢"
@@ -145,10 +146,10 @@
             "╚════════════╧═════════════╧═══════════╝"]
            (layout data
                    {:width 40
-                    :layout {:cols ["║{ [Cf] │} [Cf] ║" :apply-for [all-cols?]]
-                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})))
+                    :layout {:cols ["║{ [Cf] │} [Cf] ║" :apply-for [layouts/all-cols?]]
+                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for layouts/first-row?]
+                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for layouts/interior-row?]
+                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for layouts/last-row?]]}})))
     (is (= ["╔════════════╤═════════════╤═══════════╗"
             "║     Alice, │         why │        is ║"
             "╟────────────┼─────────────┼───────────╢"
@@ -158,7 +159,37 @@
             "╚════════════╧═════════════╧═══════════╝"]
            (layout data
                    {:width 40
-                    :layout {:cols ["║{ [Rf] │} [Rf] ║" :apply-for [all-cols?]]
-                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for first-row?]
-                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for interior-row?]
-                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for last-row?]]}})))))
+                    :layout {:cols ["║{ [Rf] │} [Rf] ║" :apply-for [layouts/all-cols?]]
+                             :rows [["╔{═[═f]═╤}═[═f]═╗" :apply-for layouts/first-row?]
+                                    ["╟{─[─f]─┼}─[─f]─╢" :apply-for layouts/interior-row?]
+                                    ["╚{═[═f]═╧}═[═f]═╝" :apply-for layouts/last-row?]]}})))))
+
+(deftest built-in-html-layout
+  (is (= ["<table>"
+          "  <tr><td>Alice</td><td>why</td></tr>"
+          "  <tr><td>a</td><td>raven</td></tr>"
+          "</table>"]
+         (layout "Alice why\na raven" layouts/layout-html-table))))
+
+(deftest validation-errors
+  (testing "missing column layout"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a b" {})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "repeat group without predicate"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a b" {:layout {:cols ["{[L]} [R]"]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "repeat predicate count mismatch"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a b" {:layout {:cols ["{[L]} {[R]}"
+                                                      :repeat-for [layouts/all-cols?]]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "non-string row values"
+    (is (= :invalid-rows
+           (:type (ex-data (try
+                             (layout [["a" 1]] {:layout {:cols ["[L] [R]"]}})
+                             (catch clojure.lang.ExceptionInfo e e))))))))
