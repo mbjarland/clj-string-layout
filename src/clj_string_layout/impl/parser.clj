@@ -6,7 +6,8 @@
 (def grammar
   "layout = delim? ((col | repeat) delim?)*
    repeat = <'{'> delim? (col delim?)* <'}'>
-   delim  = (fill | #'[^\\[\\]{}fF]+')+
+   delim  = (escaped | fill | #'[^\\\\\\[\\]{}fF]+')+
+   escaped = <'\\\\'> #'.'
    fill   = <'F'> (#'[\\d]+')?
    col    = <'['> fill? align fill? <']'>")
 
@@ -30,6 +31,7 @@
   (insta/transform
     {:layout vector
      :fill (fn [& _] {:type :fill})
+     :escaped identity
      :repeat (fn [& entries] {:type :repeat :layout (vec entries)})
      :delim (fn [& parts] {:type :delimiter :parts (vec parts)})
      :col (fn [& parts] {:type :column* :parts (vec parts)})

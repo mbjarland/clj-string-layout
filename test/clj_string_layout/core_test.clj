@@ -1,5 +1,6 @@
 (ns clj-string-layout.core-test
-  (:require [clj-string-layout.core :refer [layout]]
+  (:require [clj-string-layout.core :refer [explain-layout layout layout-str
+                                            parse-layout]]
             [clj-string-layout.impl.parser :as parser]
             [clj-string-layout.impl.render :as render]
             [clj-string-layout.layout :as layouts]
@@ -51,6 +52,20 @@
     "|[L]|[C]|" false [(text "|") (column :l) (text "|") (column :c) (text "|")]
     "-[l]-f-[r]-" false [(text "-") (column :l) (text "-") fill (text "-") (column :r) (text "-")]
     "|f[fl]f|f[rf]f|" false [(text "|") fill (column :l 1) fill (text "|") fill (column :r 1) fill (text "|")]))
+
+(deftest escaped-layout-literals
+  (is (= [(text "f") (column :l) (text "F")]
+         (parse-layout "\\f[L]\\F")))
+  (is (= [(text "{") (column :l) (text "}")]
+         (parse-layout "\\{[L]\\}")))
+  (is (= ["faF"]
+         (layout "a" {:layout {:cols ["\\f[L]\\F"]}}))))
+
+(deftest layout-diagnostics
+  (is (= [(column :l)] (parse-layout "[L]")))
+  (is (:valid? (explain-layout "[L]")))
+  (is (false? (:valid? (explain-layout "[x]"))))
+  (is (= :layout-parse-error (-> (explain-layout "[x]") :data :type))))
 
 (deftest calculate-fills-test
   (are [fill-width fill-count fill-chars expected]
@@ -111,6 +126,10 @@
   (is (= [["| " "a" " | " "b" " |"]]
          (layout "a b" {:raw? true
                         :layout {:cols ["| [L] | [R] |"]}}))))
+
+(deftest string-layout-output
+  (is (= "a   b\naa bb"
+         (layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}}))))
 
 (deftest left-justified-column-layout
   (is (= [" Alice, why     is    "

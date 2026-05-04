@@ -100,18 +100,27 @@ Layout strings are made from four pieces:
 | Column marker | `[L]`, `[C]`, `[R]`, `[V]` | Placeholder for a data column. |
 | Fill marker | `f` or `F` | Expands to absorb remaining width. |
 | Repeat group | <code>{ [L] &#124;}</code> | Repeats a sub-layout for a variable number of columns. |
+| Escaped literal | `\f`, `\{`, `\]` | Emits the following character literally. |
 
 The current grammar is:
 
 ```clojure
 layout = delim? ((col | repeat) delim?)*
-repeat = <'{'> delim? (col delim?)* <'}'>
-delim  = (fill | #'[^\\[\\]{}fF]+')+
+repeat  = <'{'> delim? (col delim?)* <'}'>
+delim   = (escaped | fill | #'[^\\\\[\\]{}fF]+')+
+escaped = <'\\\\'> #'.'
 fill   = <'F'> (#'[\\d]+')?
 col    = <'['> fill? align fill? <']'>
 ```
 
 Column layouts and row layouts share this structure, but they interpret `align` differently.
+
+Use a backslash when delimiter text needs a reserved character literally:
+
+```clojure
+(layout "a" {:layout {:cols ["\\f[L]\\F"]}})
+;; => ["faF"]
+```
 
 ## Column Layouts
 
@@ -309,6 +318,25 @@ Set `:raw? true` if you need the pieces before they are joined:
 ```
 
 This is useful when a later step needs to decorate specific cells without re-parsing the final string.
+
+## Convenience And Diagnostics
+
+Use `layout-str` when you want a single newline-delimited string:
+
+```clojure
+(layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}})
+;; => "a   b\naa bb"
+```
+
+Use `parse-layout` or `explain-layout` while developing custom layout strings:
+
+```clojure
+(parse-layout "[L]f[R]")
+;; => [{:type :column, :align :l, ...} {:type :fill} ...]
+
+(explain-layout "[x]")
+;; => {:valid? false, :message "...", :data {:type :layout-parse-error, ...}}
+```
 
 ## Development
 
