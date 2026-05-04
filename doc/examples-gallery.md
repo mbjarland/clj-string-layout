@@ -9,13 +9,19 @@ layouts, see the [recipe book](recipes.md) and
 [layout language reference](layout-language.md).
 
 ```clojure
-(require '[clj-string-layout.table :as table])
+(require '[clj-string-layout.predicates :as pred]
+         '[clj-string-layout.table :as table])
 
 (def sample
   {:headers ["Name" "Qty" "Price"]
    :rows [["apple" 12 "$1.50"]
           ["pear" 4 "$2.00"]]})
 ```
+
+The backing layout snippets below show the equivalent lower-level
+`clj-string-layout.core/layout` config for the sample's three left-aligned
+columns. The high-level table API still handles headers, map rows, escaping, and
+column specs before rendering.
 
 ## Plain
 
@@ -29,6 +35,12 @@ apple  12   $1.50
 pear   4    $2.00
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols ["[L]  [L]  [L]"]}}
+```
+
 ## Markdown
 
 ```clojure
@@ -40,6 +52,13 @@ pear   4    $2.00
 |:----- |:--- |:----- |
 | apple | 12  | $1.50 |
 | pear  | 4   | $2.00 |
+```
+
+Backing layout:
+
+```clojure
+{:layout {:cols ["| [L] | [L] | [L] |"]
+          :rows [["|:[-] |:[-] |:[-] |" :apply-for pred/second-row?]]}}
 ```
 
 ## ASCII Grid
@@ -58,6 +77,13 @@ pear   4    $2.00
 +-------+-----+-------+
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols ["| [L] | [L] | [L] |"]
+          :rows [["+-[-]-+-[-]-+-[-]-+" :apply-for pred/all-rows?]]}}
+```
+
 ## ASCII Box
 
 ```clojure
@@ -72,6 +98,15 @@ pear   4    $2.00
 ├───────┼─────┼───────┤
 │ pear  │ 4   │ $2.00 │
 └───────┴─────┴───────┘
+```
+
+Backing layout:
+
+```clojure
+{:layout {:cols ["│ [L] │ [L] │ [L] │"]
+          :rows [["┌─[─]─┬─[─]─┬─[─]─┐" :apply-for pred/first-row?]
+                 ["├─[─]─┼─[─]─┼─[─]─┤" :apply-for pred/interior-row?]
+                 ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for pred/last-row?]]}}
 ```
 
 ## ASCII Double Box
@@ -90,6 +125,15 @@ pear   4    $2.00
 ╚═══════╩═════╩═══════╝
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols ["║ [L] ║ [L] ║ [L] ║"]
+          :rows [["╔═[═]═╦═[═]═╦═[═]═╗" :apply-for pred/first-row?]
+                 ["╠═[═]═╬═[═]═╬═[═]═╣" :apply-for pred/interior-row?]
+                 ["╚═[═]═╩═[═]═╩═[═]═╝" :apply-for pred/last-row?]]}}
+```
+
 ## CSV
 
 ```clojure
@@ -100,6 +144,13 @@ pear   4    $2.00
 Name,Qty,Price
 apple,12,$1.50
 pear,4,$2.00
+```
+
+Backing layout:
+
+```clojure
+{:layout {:cols ["{[V]}{,[V]}"
+                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
 ```
 
 ## TSV
@@ -114,6 +165,13 @@ apple	12	$1.50
 pear	4	$2.00
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols ["{[V]}{\t[V]}"
+                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
+```
+
 ## Pipe
 
 ```clojure
@@ -124,6 +182,13 @@ pear	4	$2.00
 Name|Qty|Price
 apple|12|$1.50
 pear|4|$2.00
+```
+
+Backing layout:
+
+```clojure
+{:layout {:cols ["{[V]}{|[V]}"
+                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
 ```
 
 ## psql
@@ -139,6 +204,13 @@ pear|4|$2.00
  pear   | 4   | $2.00
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols [" [L] { | [L]}" :repeat-for [pred/not-first-col?]]
+          :rows [["[-]{-+-[-]}" :apply-for pred/second-row?]]}}
+```
+
 ## Org Mode
 
 ```clojure
@@ -150,6 +222,14 @@ pear|4|$2.00
 |-----+---+-----|
 | apple | 12  | $1.50 |
 | pear  | 4   | $2.00 |
+```
+
+Backing layout:
+
+```clojure
+{:layout {:cols ["{| [L] }{| [L] }|"
+                 :repeat-for [pred/first-col? pred/not-first-col?]]
+          :rows [["{|[-]}{+[-]}|" :apply-for pred/second-row?]]}}
 ```
 
 ## reStructuredText
@@ -167,6 +247,16 @@ pear   4    $2.00
 =====  ===  =====
 ```
 
+Backing layout:
+
+```clojure
+{:layout {:cols ["{[L]}{  [L]}"
+                 :repeat-for [pred/first-col? pred/not-first-col?]]
+          :rows [["{[=]}{  [=]}" :apply-for pred/first-row?]
+                 ["{[=]}{  [=]}" :apply-for pred/second-row?]
+                 ["{[=]}{  [=]}" :apply-for pred/last-row?]]}}
+```
+
 ## HTML
 
 ```clojure
@@ -180,6 +270,17 @@ pear   4    $2.00
   <tr><td>pear</td><td>4</td><td>$2.00</td></tr>
 </table>
 ```
+
+Backing renderer:
+
+```clojure
+{:format :html
+ :layout :html}
+```
+
+The high-level HTML format is rendered directly so it can emit `<th>` for the
+header row and `<td>` for data rows. Lower-level HTML presets are available when
+you want to render every row as data cells with the layout DSL.
 
 ## Alignment
 
@@ -199,4 +300,11 @@ Column specs can align values independently of the selected format.
 |:----- | ---:| -----:|
 | apple |  12 | $1.50 |
 | pear  |   4 | $2.00 |
+```
+
+Backing layout for those column alignments:
+
+```clojure
+{:layout {:cols ["| [L] | [R] | [R] |"]
+          :rows [["|:[-] | [-]:| [-]:|" :apply-for pred/second-row?]]}}
 ```
