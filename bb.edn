@@ -11,6 +11,10 @@
   {:doc "Run clj-kondo"
    :task (shell "clojure -M:lint")}
 
+  bench
+  {:doc "Run repeatable benchmarks"
+   :task (shell "clojure -M:bench")}
+
   jar
   {:doc "Build the jar"
    :task (shell "clojure -T:build jar")}}}

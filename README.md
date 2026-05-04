@@ -523,6 +523,12 @@ Build the jar:
 clojure -T:build jar
 ```
 
+Run repeatable benchmarks:
+
+```sh
+clojure -M:bench
+```
+
 Install locally:
 
 ```sh

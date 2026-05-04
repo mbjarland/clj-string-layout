@@ -12,9 +12,13 @@
   :cli
   {:main-opts ["-m" "clj-string-layout.cli"]}
 
+  :bench
+  {:extra-paths ["bench"]
+   :main-opts ["-m" "clj-string-layout.bench"]}
+
   :lint
   {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2026.04.15"}}
-   :main-opts ["-m" "clj-kondo.main" "--lint" "src" "test" "build.clj"]}
+   :main-opts ["-m" "clj-kondo.main" "--lint" "src" "test" "bench" "build.clj"]}
 
   :build
   {:deps {io.github.clojure/tools.build {:mvn/version "0.10.13"}}
