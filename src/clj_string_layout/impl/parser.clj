@@ -1,4 +1,4 @@
-(ns clj-string-layout.impl.parser
+(ns ^:no-doc clj-string-layout.impl.parser
   (:require [clj-string-layout.impl.error :refer [layout-error]]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))

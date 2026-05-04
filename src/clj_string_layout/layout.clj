@@ -1,4 +1,10 @@
 (ns clj-string-layout.layout
+  "Compatibility namespace for the historical public API.
+
+  Earlier versions exposed both predicates and built-in layout maps from this
+  namespace. New code can require clj-string-layout.predicates and
+  clj-string-layout.presets directly for clearer intent, while existing code can
+  continue using these aliases."
   (:require [clj-string-layout.predicates :as pred]
             [clj-string-layout.presets :as presets]))
 

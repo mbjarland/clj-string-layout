@@ -1,4 +1,4 @@
-(ns clj-string-layout.impl.config
+(ns ^:no-doc clj-string-layout.impl.config
   (:require [clj-string-layout.impl.error :refer [layout-error]]
             [clj-string-layout.impl.parser :as parser]
             [clojure.string :as str])

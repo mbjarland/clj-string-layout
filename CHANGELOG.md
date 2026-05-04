@@ -12,6 +12,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Added HTML and Markdown cell escaping helpers in `clj-string-layout.escape`.
 - Added a GitHub-readable recipe book with common layout examples.
 - Added deterministic randomized and property-based test coverage for layout invariants.
+- Added a tag-triggered GitHub Actions release workflow for Clojars and GitHub Releases.
 
 ### Changed
 
@@ -21,6 +22,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Removed the Specter runtime dependency by rewriting the internal transformations with standard Clojure data operations.
 - Reworked CI to run linting, tests, and jar builds on Java 11, 17, and 21.
 - Expanded README documentation for the layout language, predicates, built-in layouts, development commands, and release flow.
+- Expanded public API docstrings and marked internal implementation namespaces as hidden from generated docs.
 - Split the internals into parser, config, render, error, and predicate namespaces with a tagged internal layout representation.
 - Added `:repeat-for` as the clearer key for repeat-group column predicates while keeping column-layout `:apply-for` compatibility.
 - Moved the release version to `version.edn` and kept deploy-only dependencies out of normal jar builds.

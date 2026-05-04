@@ -1,6 +1,7 @@
 # clj-string-layout
 
 [![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
+[![Release](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml)
 [![Clojars](https://img.shields.io/clojars/v/com.github.mbjarland/clj-string-layout.svg)](https://clojars.org/com.github.mbjarland/clj-string-layout)
 [![License](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](LICENSE)
 
@@ -432,6 +433,31 @@ Deploy to Clojars after setting Clojars credentials for `deps-deploy`:
 ```sh
 clojure -T:deploy deploy
 ```
+
+## Release Process
+
+Releases are published by GitHub Actions when a version tag is pushed. The tag
+must be prefixed with `v` and must match `version.edn`. For example,
+`version.edn` containing `{:version "1.0.3"}` must be released with tag
+`v1.0.3`.
+
+Required repository secrets:
+
+| Secret | Meaning |
+| --- | --- |
+| `CLOJARS_USERNAME` | Clojars account name used for deployment. |
+| `CLOJARS_PASSWORD` | Clojars deploy token or password used by `deps-deploy`. |
+
+Release steps:
+
+```sh
+git tag -a v1.0.3 -m "Release v1.0.3"
+git push origin v1.0.3
+```
+
+The release workflow then runs linting, tests, and jar builds on Java 11, 17,
+and 21. After verification passes, it rebuilds the jar on Java 11, deploys to
+Clojars, and creates a GitHub Release with the jar attached.
 
 ## Design Notes
 

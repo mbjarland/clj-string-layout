@@ -1,5 +1,10 @@
 (ns
-  ^{:doc "A library for laying out string data in table-like formats"
+  ^{:doc "Public entry points for rendering rows of strings with the clj-string-layout DSL.
+
+  Most applications use layout for vector output, layout-str for newline joined
+  output, or layout-seq for large inputs with explicit column widths. The
+  parse-layout and explain-layout helpers are intended for developing and
+  debugging custom layout strings."
     :author "Matias Bjarland"}
   clj-string-layout.core
   (:require [clj-string-layout.impl.config :as config]
@@ -8,44 +13,67 @@
             [clojure.string :as str]))
 
 (def default-layout-config
-  "Default layout config. Merged with the layout config passed to layout."
+  "Default configuration merged into every layout config.
+
+  Important keys include :width, :align-char, :fill-char, :display-width,
+  :col-widths, :row-count, :word-split-char, :row-split-char, and :raw?. The
+  :layout key is intentionally not defaulted and must be supplied by callers."
   config/default-layout-config)
 
 (defn layout
-  "Lays out rows of text in columns.
+  "Renders rows of strings into a vector of layout lines.
 
-  Rows can be a string, split by :row-split-char and :word-split-char, or a
-  sequence of row sequences containing strings. The layout config describes
-  column layout and optional virtual row layouts. When :raw? is true, rows are
-  returned as vectors of pieces instead of joined strings."
+  rows may be a string, split with :row-split-char and :word-split-char, or a
+  sequence of row sequences containing strings. Short rows are padded with empty
+  cells to the widest input row unless explicit :col-widths are supplied.
+
+  layout-config must include [:layout :cols], a vector whose first item is a
+  layout string. Optional [:layout :rows] entries insert virtual rows such as
+  table borders. See clj-string-layout.predicates for repeat and row predicate
+  helpers.
+
+  Returns a vector of strings by default. With :raw? true, returns a vector of
+  row-piece vectors instead, which is useful for post-processing individual
+  cells before joining."
   [rows layout-config]
   (let [layout-config (config/compile-layout-config layout-config)
         rows (config/normalize-rows layout-config rows)]
     (render/render-layout layout-config rows)))
 
 (defn layout-seq
-  "Lazily lays out rows of text in columns.
+  "Renders rows of strings as a lazy sequence of layout lines.
 
-  This has the same rendering semantics as layout, but returns a lazy sequence.
-  For large data sets, pass :col-widths to avoid retaining all rows while
-  computing exact automatic column widths. If row layouts are used, pass
-  :row-count to avoid counting the rendered data rows up front."
+  The rendering rules are the same as layout. For large data sets, pass
+  :col-widths so rows can be rendered without first retaining the whole input to
+  compute automatic widths. If virtual row layouts are present, pass :row-count
+  so last-row? style predicates can be evaluated without counting the input.
+
+  Without :col-widths, exact automatic widths still require realizing all rows
+  before the first output row can be produced. With :raw? true, returns lazy
+  row-piece vectors instead of joined strings."
   [rows layout-config]
   (let [layout-config (config/compile-layout-config layout-config)
         rows (config/normalize-row-seq layout-config rows)]
     (render/render-layout-seq layout-config rows)))
 
 (defn layout-str
-  "Lays out rows and joins the resulting lines with newlines."
+  "Renders rows and joins the resulting lines with newline characters.
+
+  This is a convenience wrapper around layout for consumers that expect a
+  single string rather than a vector of lines."
   [rows layout-config]
   (str/join \newline (layout rows layout-config)))
 
 (defn parse-layout
-  "Parses a layout string and returns the internal diagnostic representation.
+  "Parses a layout string into the diagnostic layout representation.
 
   Column layout parsing is used by default. Pass true as the first argument to
-  parse a row layout. The returned representation is intended for debugging
-  custom layouts, not as a stable rendering API."
+  parse a row layout, where the character inside brackets is treated as the row
+  drawing character instead of a column alignment marker.
+
+  The returned data is useful for debugging custom layouts and error reports,
+  but it is not a stable rendering API. Prefer layout, layout-str, or layout-seq
+  for application code."
   ([layout-string]
    (parse-layout false layout-string))
   ([row-layout? layout-string]
@@ -54,8 +82,10 @@
 (defn explain-layout
   "Returns parse diagnostics for a layout string without throwing.
 
-  The result is {:valid? true :layout ...} when parsing succeeds, otherwise
-  {:valid? false :message ... :data ...}."
+  Column layout parsing is used by default. Pass true as the first argument to
+  explain a row layout. Returns {:valid? true :layout ...} when parsing
+  succeeds, otherwise {:valid? false :message ... :data ...}. The :data value is
+  the ex-data map that parse-layout would have thrown."
   ([layout-string]
    (explain-layout false layout-string))
   ([row-layout? layout-string]
