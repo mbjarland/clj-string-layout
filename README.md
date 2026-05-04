@@ -91,14 +91,14 @@ Options:
 
 ## The Layout Language
 
-Layout strings are made from three pieces:
+Layout strings are made from four pieces:
 
 | Piece | Example | Meaning |
 | --- | --- | --- |
-| Literal delimiter text | `" | "`, `"</td>"`, `"┌"` | Text emitted exactly as part of the output. |
+| Literal delimiter text | <code>" &#124; "</code>, <code>"&lt;/td&gt;"</code>, <code>"┌"</code> | Text emitted exactly as part of the output. |
 | Column marker | `[L]`, `[C]`, `[R]`, `[V]` | Placeholder for a data column. |
 | Fill marker | `f` or `F` | Expands to absorb remaining width. |
-| Repeat group | `{ [L] |}` | Repeats a sub-layout for a variable number of columns. |
+| Repeat group | <code>{ [L] &#124;}</code> | Repeats a sub-layout for a variable number of columns. |
 
 The current grammar is:
 
