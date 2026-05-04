@@ -1,7 +1,12 @@
-# Examples Gallery
+# High-Level Table Examples Gallery
 
-This gallery uses the same data for each built-in high-level table format so the
-output shapes are easy to compare.
+This gallery shows the high-level `clj-string-layout.table` API. It uses the
+same data for each named table format so the output shapes are easy to compare.
+
+Use this API when you want common named table formats without writing layout DSL
+strings. For the lower-level `clj-string-layout.core/layout` API and custom DSL
+layouts, see the [recipe book](recipes.md) and
+[layout language reference](layout-language.md).
 
 ```clojure
 (require '[clj-string-layout.table :as table])
@@ -51,6 +56,38 @@ pear   4    $2.00
 +-------+-----+-------+
 | pear  | 4   | $2.00 |
 +-------+-----+-------+
+```
+
+## ASCII Box
+
+```clojure
+(table/table (assoc sample :format :ascii-box))
+```
+
+```text
+┌───────┬─────┬───────┐
+│ Name  │ Qty │ Price │
+├───────┼─────┼───────┤
+│ apple │ 12  │ $1.50 │
+├───────┼─────┼───────┤
+│ pear  │ 4   │ $2.00 │
+└───────┴─────┴───────┘
+```
+
+## ASCII Double Box
+
+```clojure
+(table/table (assoc sample :format :ascii-double-box))
+```
+
+```text
+╔═══════╦═════╦═══════╗
+║ Name  ║ Qty ║ Price ║
+╠═══════╬═════╬═══════╣
+║ apple ║ 12  ║ $1.50 ║
+╠═══════╬═════╬═══════╣
+║ pear  ║ 4   ║ $2.00 ║
+╚═══════╩═════╩═══════╝
 ```
 
 ## CSV

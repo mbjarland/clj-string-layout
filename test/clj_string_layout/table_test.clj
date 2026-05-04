@@ -5,6 +5,8 @@
 
 (deftest named-formats
   (is (contains? (table/formats) :markdown))
+  (is (contains? (table/formats) :ascii-box))
+  (is (contains? (table/formats) :ascii-double-box))
   (is (= :left (:default-align (table/format-info :plain))))
   (is (= :unknown-table-format
          (:type (ex-data (try
@@ -72,6 +74,24 @@
          (table/table {:format :html
                        :headers ["<Name>"]
                        :rows [["a&b"]]}))))
+
+(deftest box-drawing-table-format
+  (is (= ["┌───┬───┐"
+          "│ A │ B │"
+          "├───┼───┤"
+          "│ x │ y │"
+          "└───┴───┘"]
+         (table/table {:format :ascii-box
+                       :headers ["A" "B"]
+                       :rows [["x" "y"]]})))
+  (is (= ["╔═══╦═══╗"
+          "║ A ║ B ║"
+          "╠═══╬═══╣"
+          "║ x ║ y ║"
+          "╚═══╩═══╝"]
+         (table/table {:format :ascii-double-box
+                       :headers ["A" "B"]
+                       :rows [["x" "y"]]}))))
 
 (deftest string-and-seq-entry-points
   (let [spec {:format :ascii-grid

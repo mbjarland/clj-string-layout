@@ -13,6 +13,8 @@
 (def ^:private format-defaults
   {:plain {:escape identity :layout :generated :default-align :left}
    :markdown {:escape escape/markdown-cell :layout :generated :default-align :left}
+   :ascii-box {:escape identity :layout :generated :default-align :left}
+   :ascii-double-box {:escape identity :layout :generated :default-align :left}
    :ascii-grid {:escape identity :layout :generated :default-align :left}
    :csv {:escape escape/csv-cell :layout presets/layout-csv :default-align :verbatim}
    :tsv {:escape escape/tsv-cell :layout presets/layout-tsv :default-align :verbatim}
@@ -170,6 +172,10 @@
     (:right :r "right" "r") " [-]:"
     ":[-] "))
 
+(defn- generated-rule [left sep right fill columns]
+  (let [marker (str "[" fill "]")]
+    (str left fill (str/join (str fill sep fill) (repeat (count columns) marker)) fill right)))
+
 (defn- generated-layout [format columns default-align]
   (let [aligns (alignments columns default-align)]
     (case format
@@ -177,8 +183,22 @@
       :markdown {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
                           :rows [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
                                   :apply-for pred/second-row?]]}}
+      :ascii-box {:layout {:cols [(str "│ " (generated-cols aligns " │ ") " │")]
+                            :rows [[(generated-rule "┌" "┬" "┐" "─" columns)
+                                    :apply-for pred/first-row?]
+                                   [(generated-rule "├" "┼" "┤" "─" columns)
+                                    :apply-for pred/interior-row?]
+                                   [(generated-rule "└" "┴" "┘" "─" columns)
+                                    :apply-for pred/last-row?]]}}
+      :ascii-double-box {:layout {:cols [(str "║ " (generated-cols aligns " ║ ") " ║")]
+                                    :rows [[(generated-rule "╔" "╦" "╗" "═" columns)
+                                            :apply-for pred/first-row?]
+                                           [(generated-rule "╠" "╬" "╣" "═" columns)
+                                            :apply-for pred/interior-row?]
+                                           [(generated-rule "╚" "╩" "╝" "═" columns)
+                                            :apply-for pred/last-row?]]}}
       :ascii-grid {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
-                            :rows [[(str "+-" (str/join "-+-" (repeat (count columns) "[-]")) "-+")
+                            :rows [[(generated-rule "+" "+" "+" "-" columns)
                                     :apply-for pred/all-rows?]]}}
       nil)))
 

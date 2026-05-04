@@ -36,13 +36,15 @@ Available formats are discoverable at runtime:
 
 ```clojure
 (table/formats)
-;; => #{:plain :markdown :ascii-grid :csv :tsv :pipe :psql :org :rst :html}
+;; => #{:plain :markdown :ascii-box :ascii-double-box :ascii-grid :csv :tsv :pipe :psql :org :rst :html}
 ```
 
 | Format | Output |
 | --- | --- |
 | `:plain` | Whitespace-separated aligned columns. |
 | `:markdown` | Markdown pipe table. |
+| `:ascii-box` | Unicode box-drawing table with `┌─┬─┐` borders. |
+| `:ascii-double-box` | Unicode box-drawing table with `╔═╦═╗` borders. |
 | `:ascii-grid` | ASCII `+---+` table. |
 | `:csv` | Comma-separated values, CSV-escaped by default. |
 | `:tsv` | Tab-separated values. |

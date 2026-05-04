@@ -7,6 +7,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Added
 
 - Added high-level `clj-string-layout.table` APIs with named formats, column specs, map-row support, and overflow policies.
+- Added high-level `:ascii-box` and `:ascii-double-box` table formats with Unicode box-drawing borders.
 - Added `clj-string-layout.width/ansi-width` and `strip-ansi` helpers for ANSI-styled terminal output.
 - Added Unicode-aware `codepoint-width`, `unicode-width`, and `terminal-width` display-width helpers.
 - Added TSV, Org mode, reStructuredText, and log-safe escaping helpers.

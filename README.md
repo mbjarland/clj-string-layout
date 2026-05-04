@@ -9,7 +9,8 @@
 
 The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
-For more copy-and-paste examples, see the [recipe book](doc/recipes.md) and
+For lower-level `layout` examples, see the [recipe book](doc/recipes.md). For
+high-level `table` format comparisons, see the
 [examples gallery](doc/examples-gallery.md). For planned improvements, see the
 [project TODO](doc/TODO.md).
 
@@ -54,8 +55,9 @@ layout strings directly:
 ;;     "| pear  |   4 |"]
 ```
 
-Named formats include `:plain`, `:markdown`, `:ascii-grid`, `:csv`, `:tsv`,
-`:pipe`, `:psql`, `:org`, `:rst`, and `:html`. See the
+Named formats include `:plain`, `:markdown`, `:ascii-box`,
+`:ascii-double-box`, `:ascii-grid`, `:csv`, `:tsv`, `:pipe`, `:psql`, `:org`,
+`:rst`, and `:html`. See the
 [table API guide](doc/table-api.md) for column specs, formatters, escaping, and
 overflow policies.
 
@@ -493,7 +495,8 @@ clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
 
 Supported input formats are `csv`, `tsv`, and `whitespace`. Supported output
 formats are the high-level table formats such as `plain`, `markdown`,
-`ascii-grid`, `csv`, `tsv`, `org`, `rst`, and `html`. Run
+`ascii-box`, `ascii-double-box`, `ascii-grid`, `csv`, `tsv`, `org`, `rst`, and
+`html`. Run
 `clojure -M:cli -- --help` for the complete option list.
 
 Babashka users can run the same formatter through `bb.edn`:
