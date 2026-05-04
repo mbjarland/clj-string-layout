@@ -20,7 +20,8 @@ Require the namespaces you need:
 
 ```clojure
 (require '[clj-string-layout.core :refer [layout]]
-         '[clj-string-layout.layout :as layouts])
+         '[clj-string-layout.layout :as layouts]
+         '[clj-string-layout.predicates :as pred])
 ```
 
 The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum runtime.
@@ -163,7 +164,7 @@ When multiple fill markers are present, remaining width is distributed across th
 Repeat groups make layouts adapt to the number of input columns. They are wrapped in `{...}`.
 
 ```clojure
-{:layout {:cols ["|{ [L] |}" :apply-for [layouts/all-cols?]]}}
+{:layout {:cols ["|{ [L] |}" :repeat-for [pred/all-cols?]]}}
 ```
 
 For three columns, the repeating section is expanded three times:
@@ -176,14 +177,14 @@ Repeat groups are useful for table-like formats where the same cell pattern shou
 
 ```clojure
 (layout "a b c\n1 2 3"
-        {:layout {:cols ["|{ [C] |}" :apply-for [layouts/all-cols?]]}})
+        {:layout {:cols ["|{ [C] |}" :repeat-for [pred/all-cols?]]}})
 ;; => ["| a | b | c |"
 ;;     "| 1 | 2 | 3 |"]
 ```
 
-The `:apply-for` value controls which columns a repeat group handles. The predicate receives `[idx last-idx]`.
+The `:repeat-for` value controls which columns a repeat group handles. The predicate receives `[idx last-idx]`. The older `:apply-for` key is still accepted on column layouts for compatibility, but `:repeat-for` is clearer because row layouts also use `:apply-for` for virtual row predicates.
 
-Column predicates supplied by `clj-string-layout.layout`:
+Column predicates are supplied by `clj-string-layout.predicates` and are also re-exported by `clj-string-layout.layout` for compatibility:
 
 | Predicate | Matches |
 | --- | --- |
@@ -207,7 +208,7 @@ You can also pass your own predicate:
 Row layouts live at `[:layout :rows]`. They insert virtual rows before, between, or after data rows.
 
 ```clojure
-{:layout {:cols ["│{ [L] │}" :apply-for [layouts/all-cols?]]
+{:layout {:cols ["│{ [L] │}" :repeat-for [pred/all-cols?]]
           :rows [["┌{─[─]─┬}─[─]─┐" :apply-for layouts/first-row?]
                  ["├{─[─]─┼}─[─]─┤" :apply-for layouts/interior-row?]
                  ["└{─[─]─┴}─[─]─┘" :apply-for layouts/last-row?]]}}
@@ -217,7 +218,7 @@ Row layout column markers use the character inside brackets as a drawing charact
 
 Row predicates receive `[idx last-idx]`, where the indexes refer to virtual row positions. With three data rows, the virtual row positions are `0`, `1`, `2`, and `3`. `0` is before the first data row, `3` is after the last data row, and the interior positions are between data rows.
 
-Row predicates supplied by `clj-string-layout.layout`:
+Row predicates are supplied by `clj-string-layout.predicates` and are also re-exported by `clj-string-layout.layout` for compatibility:
 
 | Predicate | Matches |
 | --- | --- |
@@ -338,12 +339,12 @@ clojure -T:build install
 Deploy to Clojars after setting Clojars credentials for `deps-deploy`:
 
 ```sh
-clojure -T:build deploy
+clojure -T:deploy deploy
 ```
 
 ## Design Notes
 
-The library intentionally keeps the public API small. Most users need only `clj-string-layout.core/layout` and the reusable predicates/layouts in `clj-string-layout.layout`.
+The library intentionally keeps the public API small. Most users need only `clj-string-layout.core/layout`, reusable predicates in `clj-string-layout.predicates`, and preset layouts in `clj-string-layout.layout`.
 
 The `f` and `F` characters are reserved as fill markers in layout delimiter positions. If you need literal delimiter text containing `f`, prefer using it inside data cells or consider defining an escaped literal syntax before relying on that layout publicly.
 

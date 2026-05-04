@@ -13,6 +13,10 @@
    :main-opts ["-m" "clj-kondo.main" "--lint" "src" "test" "build.clj"]}
 
   :build
+  {:deps {io.github.clojure/tools.build {:mvn/version "0.10.13"}}
+   :ns-default build}
+
+  :deploy
   {:deps {io.github.clojure/tools.build {:mvn/version "0.10.13"}
           slipset/deps-deploy {:mvn/version "0.2.3"}}
    :ns-default build}}}

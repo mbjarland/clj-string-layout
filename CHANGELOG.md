@@ -12,6 +12,9 @@ All notable changes to this project are documented here. The format follows [Kee
 - Removed the Specter runtime dependency by rewriting the internal transformations with standard Clojure data operations.
 - Reworked CI to run linting, tests, and jar builds on Java 11, 17, and 21.
 - Expanded README documentation for the layout language, predicates, built-in layouts, development commands, and release flow.
+- Split the internals into parser, config, render, error, and predicate namespaces with a tagged internal layout representation.
+- Added `:repeat-for` as the clearer key for repeat-group column predicates while keeping column-layout `:apply-for` compatibility.
+- Moved the release version to `version.edn` and kept deploy-only dependencies out of normal jar builds.
 
 ### Fixed
 

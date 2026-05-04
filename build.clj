@@ -1,9 +1,9 @@
 (ns build
-  (:require [clojure.tools.build.api :as b]
-            [deps-deploy.deps-deploy :as deploy]))
+  (:require [clojure.edn :as edn]
+            [clojure.tools.build.api :as b]))
 
 (def lib 'com.github.mbjarland/clj-string-layout)
-(def version "1.0.3")
+(def version (:version (edn/read-string (slurp "version.edn"))))
 
 (def class-dir "target/classes")
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
@@ -52,6 +52,7 @@
 
 (defn deploy [_]
   (jar nil)
-  (deploy/deploy {:installer :remote
-                  :artifact jar-file
-                  :pom-file (b/pom-path {:lib lib :class-dir class-dir})}))
+  (let [deploy! (requiring-resolve 'deps-deploy.deps-deploy/deploy)]
+    (deploy! {:installer :remote
+              :artifact jar-file
+              :pom-file (b/pom-path {:lib lib :class-dir class-dir})})))
