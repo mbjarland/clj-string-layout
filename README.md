@@ -8,6 +8,8 @@
 
 The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
+For more copy-and-paste examples, see the [recipe book](doc/recipes.md).
+
 ## Installation
 
 Add the library to `deps.edn`:
@@ -19,7 +21,8 @@ Add the library to `deps.edn`:
 Require the namespaces you need:
 
 ```clojure
-(require '[clj-string-layout.core :refer [layout]]
+(require '[clj-string-layout.core :refer [layout layout-seq]]
+         '[clj-string-layout.escape :as escape]
          '[clj-string-layout.layout :as layouts]
          '[clj-string-layout.predicates :as pred])
 ```
@@ -73,6 +76,8 @@ Use a built-in layout for common output formats:
  :word-split-char \space
  :row-split-char  \newline
  :display-width   count
+ :col-widths      nil
+ :row-count       nil
  :width           80
  :raw?            false
  :layout {:cols ["[L] [C] [R]"]
@@ -90,6 +95,8 @@ Options:
 | `:word-split-char` | space | Character used to split string input into words. |
 | `:row-split-char` | newline | Character used to split string input into rows. |
 | `:display-width` | `count` | Function from string to display width. Override this for terminal-width-aware alignment of wide glyphs. |
+| `:col-widths` | `nil` | Optional explicit column display widths. Useful for fixed schemas and streaming large data sets. |
+| `:row-count` | `nil` | Optional data row count for lazy output with row layouts. |
 | `:raw?` | `false` | Return each output row as a vector of pieces instead of joined strings. Useful when post-processing cells, for example adding ANSI colors. |
 
 By default, widths are measured with Clojure's `count`, preserving plain string
@@ -98,6 +105,13 @@ length behavior. For monospace terminal output containing wide glyphs, pass a
 The function is used for cell values, literal delimiters, padding, and fill
 width calculations. Alignment and fill characters should occupy one display
 column.
+
+Use `layout-seq` with `:col-widths` for large data sets when the schema widths
+are known ahead of time. Without explicit widths, exact alignment still needs to
+scan all rows before the first output row can be rendered. If the layout inserts
+virtual rows, pass `:row-count` as well so row predicates can identify the last
+virtual row without counting the input. Use `escape/map-cell-seq` instead of
+`escape/map-cells` when escaping a large lazy input.
 
 ## The Layout Language
 
@@ -316,6 +330,22 @@ HTML example:
 ;;     "</table>"]
 ```
 
+HTML and Markdown presets emit cell contents verbatim by default. Escape input
+cells before rendering when the data is not already safe for the target format:
+
+```clojure
+(layout (escape/map-cells escape/html [["<Alice>" "tea & cake"]])
+        layouts/layout-html-table)
+;; => ["<table>"
+;;     "  <tr><td>&lt;Alice&gt;</td><td>tea &amp; cake</td></tr>"
+;;     "</table>"]
+
+(layout (escape/map-cells escape/markdown-cell [["name" "a|b"]])
+        layouts/layout-markdown-left)
+;; => ["| name | a\\|b |"
+;;     "|:---- |:----- |"]
+```
+
 ## Raw Output
 
 Set `:raw? true` if you need the pieces before they are joined:
@@ -327,6 +357,30 @@ Set `:raw? true` if you need the pieces before they are joined:
 ```
 
 This is useful when a later step needs to decorate specific cells without re-parsing the final string.
+
+## Large Data Sets
+
+Automatic column widths require all rows to be inspected before output can be
+rendered. For very large data sets with known schema widths, use `layout-seq`
+and provide `:col-widths` to render rows lazily:
+
+```clojure
+(def rows (map vector ["a" "bb" "ccc"]))
+
+(take 2 (layout-seq rows {:col-widths [3]
+                          :layout {:cols ["[L]"]}}))
+;; => ("a  " "bb ")
+```
+
+If the layout has virtual rows, pass `:row-count` so predicates such as
+`last-row?` work without counting the input first:
+
+```clojure
+(layout-seq rows {:col-widths [3]
+                  :row-count 3
+                  :layout {:cols ["[L]"]
+                           :rows [["[-]" :apply-for layouts/all-rows?]]}})
+```
 
 ## Convenience And Diagnostics
 

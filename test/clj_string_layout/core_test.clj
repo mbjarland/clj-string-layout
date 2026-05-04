@@ -1,5 +1,5 @@
 (ns clj-string-layout.core-test
-  (:require [clj-string-layout.core :refer [explain-layout layout layout-str
+  (:require [clj-string-layout.core :refer [explain-layout layout layout-seq layout-str
                                             parse-layout]]
             [clj-string-layout.impl.parser :as parser]
             [clj-string-layout.impl.render :as render]
@@ -37,6 +37,11 @@
 
 (defn- raw-cell [pieces col-idx]
   (nth pieces (* 2 col-idx)))
+
+(defn- unchunked [xs]
+  (lazy-seq
+    (when-let [xs (seq xs)]
+      (cons (first xs) (unchunked (rest xs))))))
 
 (deftest invalid-layout-strings
   (are [row-layout? layout-string]
@@ -190,6 +195,76 @@
                   :width 6
                   :layout {:cols ["[L]f[R]"]}}))))
 
+(deftest explicit-column-widths-and-lazy-output
+  (is (= ["a  |bb"
+          "ccc|d "]
+         (layout [["a" "bb"] ["ccc" "d"]]
+                 {:col-widths [3 2]
+                  :layout {:cols ["[L]|[L]"]}})))
+  (let [calls (atom 0)
+        rows (map vector (unchunked ["a" "bb" "ccc"]))
+        rendered (layout-seq rows {:col-widths [3]
+                                   :display-width (fn [value]
+                                                    (swap! calls inc)
+                                                    (count value))
+                                   :layout {:cols ["[L]"]}})]
+    (is (zero? @calls))
+    (is (= "a  " (first rendered)))
+    (is (= 1 @calls))
+    (is (= ["a  " "bb " "ccc"] (doall rendered)))
+    (is (= 3 @calls)))
+  (is (= ["---"
+          "a  "
+          "---"
+          "bb "
+          "---"]
+         (doall (layout-seq (map vector ["a" "bb"])
+                            {:col-widths [3]
+                             :row-count 2
+                             :layout {:cols ["[L]"]
+                                      :rows [["[-]" :apply-for pred/all-rows?]]}})))))
+
+(deftest repeat-groups-with-specific-predicates
+  (is (= ["a, b, c"]
+         (layout [["a" "b" "c"]]
+                 {:layout {:cols ["{[L]}{, [L]}"
+                                  :repeat-for [pred/first-col?
+                                               pred/not-first-col?]]}})))
+  (is (= ["[a]|b|[c]"]
+         (layout [["a" "b" "c"]]
+                 {:layout {:cols ["{\\[[L]\\]}{|[L]}{|\\[[L]\\]}"
+                                  :repeat-for [pred/first-col?
+                                               pred/interior-col?
+                                               pred/last-col?]]}}))))
+
+(deftest row-layout-fill-options
+  (is (= ["+----+----+"
+          "| aa | bb |"
+          "+----+----+"]
+         (layout [["aa" "bb"]]
+                 {:layout {:cols ["| [L] | [L] |"
+                                  :repeat-for [pred/all-cols?]]
+                           :rows [["+{-[-]-+}"
+                                   :apply-for pred/all-rows?]]}})))
+  (is (= ["====----=="
+          "aabb"]
+         (layout [["aa" "bb"]]
+                 {:width 10
+                  :layout {:cols ["[L][R]"]
+                           :rows [["f[=]f[-]f"
+                                   :apply-for pred/first-row?
+                                   :fill-chars [\= \- \=]]]}}))))
+
+(deftest predicate-semantics
+  (let [locs [[0 3] [1 3] [2 3] [3 3]]]
+    (is (= [true false false false] (mapv pred/first-row? locs)))
+    (is (= [false true false false] (mapv pred/second-row? locs)))
+    (is (= [false false false true] (mapv pred/last-row? locs)))
+    (is (= [false true true false] (mapv pred/interior-row? locs)))
+    (is (= [true true true true] (mapv pred/all-rows? locs)))
+    (is (= (mapv pred/first-row? locs) (mapv pred/first-col? locs)))
+    (is (= (mapv pred/interior-row? locs) (mapv pred/interior-col? locs)))))
+
 (deftest left-justified-column-layout
   (is (= [" Alice, why     is    "
           " a      raven   like  "
@@ -289,6 +364,40 @@
            (:type (ex-data (try
                              (layout "a" {:display-width 1
                                           :layout {:cols ["[L]"]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "invalid display width return value"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a" {:display-width (constantly -1)
+                                          :layout {:cols ["[L]"]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "invalid explicit column widths"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a" {:col-widths []
+                                          :layout {:cols ["[L]"]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "too many row cells for explicit column widths"
+    (is (= :invalid-rows
+           (:type (ex-data (try
+                             (layout [["a" "b"]] {:col-widths [1]
+                                                  :layout {:cols ["[L]"]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "row-count mismatch in eager layout"
+    (is (= :invalid-rows
+           (:type (ex-data (try
+                             (layout [["a"]] {:row-count 2
+                                             :layout {:cols ["[L]"]
+                                                      :rows [["[-]" :apply-for pred/all-rows?]]}})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "row-count mismatch in lazy layout"
+    (is (= :invalid-rows
+           (:type (ex-data (try
+                             (doall (layout-seq (map vector ["a" "b"])
+                                                {:col-widths [1]
+                                                 :row-count 1
+                                                 :layout {:cols ["[L]"]
+                                                          :rows [["[-]" :apply-for pred/all-rows?]]}}))
                              (catch clojure.lang.ExceptionInfo e e)))))))
   (testing "column count mismatch"
     (is (= :invalid-layout-config

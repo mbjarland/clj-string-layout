@@ -10,6 +10,8 @@
    :word-split-char \space
    :row-split-char \newline
    :display-width count
+   :col-widths nil
+   :row-count nil
    :width 80
    :raw? false})
 
@@ -60,6 +62,20 @@
                   {:type :invalid-layout-config
                    :path [:display-width]
                    :value (:display-width layout-config)}))
+  (when-some [col-widths (:col-widths layout-config)]
+    (when-not (and (sequential? col-widths)
+                   (seq col-widths)
+                   (every? #(and (integer? %) (not (neg? %))) col-widths))
+      (layout-error "Layout :col-widths must be a non-empty sequence of non-negative integers"
+                    {:type :invalid-layout-config
+                     :path [:col-widths]
+                     :value col-widths})))
+  (when-some [row-count (:row-count layout-config)]
+    (when-not (and (integer? row-count) (not (neg? row-count)))
+      (layout-error "Layout :row-count must be a non-negative integer"
+                    {:type :invalid-layout-config
+                     :path [:row-count]
+                     :value row-count})))
   (doseq [[idx row-spec] (map-indexed vector (get-in layout-config [:layout :rows]))]
     (validate-row-spec! idx row-spec)))
 
@@ -156,6 +172,30 @@
 (defn- normalize-row-lens [col-count rows]
   (mapv #(into [] (take col-count (concat % (repeat "")))) rows))
 
+(defn- normalize-row-values [row-idx row]
+  (when-not (sequential? row)
+    (layout-error "Rows must be a string or a sequence of row sequences"
+                  {:type :invalid-rows
+                   :path [row-idx]
+                   :value row}))
+  (doseq [[col-idx value] (map-indexed vector row)]
+    (when-not (string? value)
+      (layout-error "Row values must be strings"
+                    {:type :invalid-rows
+                     :path [row-idx col-idx]
+                     :value value})))
+  (vec row))
+
+(defn- normalize-row-to-width [col-count row-idx row]
+  (let [row (normalize-row-values row-idx row)]
+    (when (> (count row) col-count)
+      (layout-error "Row contains more cells than :col-widths"
+                    {:type :invalid-rows
+                     :path [row-idx]
+                     :col-count col-count
+                     :actual (count row)}))
+    (into [] (take col-count (concat row (repeat ""))))))
+
 (defn normalize-rows [layout-config rows]
   (let [rows (if (string? rows)
                (mapv #(str/split % (split-pattern (:word-split-char layout-config)))
@@ -165,21 +205,30 @@
       (layout-error "Rows must contain at least one row"
                     {:type :invalid-rows
                      :value rows}))
-    (doseq [[row-idx row] (map-indexed vector rows)]
-      (when-not (sequential? row)
-        (layout-error "Rows must be a string or a sequence of row sequences"
-                      {:type :invalid-rows
-                       :path [row-idx]
-                       :value row}))
-      (doseq [[col-idx value] (map-indexed vector row)]
-        (when-not (string? value)
-          (layout-error "Row values must be strings"
+    (if-some [col-count (some-> (:col-widths layout-config) count)]
+      (mapv (fn [[row-idx row]]
+              (normalize-row-to-width col-count row-idx row))
+            (map-indexed vector rows))
+      (let [rows (mapv (fn [[row-idx row]]
+                         (normalize-row-values row-idx row))
+                       (map-indexed vector rows))
+            max-cols (apply max (map count rows))]
+        (when (zero? max-cols)
+          (layout-error "Rows must contain at least one column"
                         {:type :invalid-rows
-                         :path [row-idx col-idx]
-                         :value value}))))
-    (let [max-cols (apply max (map count rows))]
-      (when (zero? max-cols)
-        (layout-error "Rows must contain at least one column"
+                         :value rows}))
+        (normalize-row-lens max-cols rows)))))
+
+(defn normalize-row-seq [layout-config rows]
+  (if (string? rows)
+    (normalize-rows layout-config rows)
+    (do
+      (when-not (and (sequential? rows) (seq rows))
+        (layout-error "Rows must contain at least one row"
                       {:type :invalid-rows
                        :value rows}))
-      (normalize-row-lens max-cols rows))))
+      (if-some [col-count (some-> (:col-widths layout-config) count)]
+        (map (fn [[row-idx row]]
+               (normalize-row-to-width col-count row-idx row))
+             (map-indexed vector rows))
+        (normalize-rows layout-config rows)))))

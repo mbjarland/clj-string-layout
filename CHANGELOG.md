@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+
+- Added `layout-str`, `layout-seq`, `parse-layout`, and `explain-layout` public helpers.
+- Added escaped layout literals for reserved delimiter characters such as `\f`, `\F`, `\{`, and `\}`.
+- Added configurable `:display-width`, explicit `:col-widths`, and `:row-count` options for wide glyphs and large data sets.
+- Added HTML and Markdown cell escaping helpers in `clj-string-layout.escape`.
+- Added a GitHub-readable recipe book with common layout examples.
+- Added deterministic randomized and property-based test coverage for layout invariants.
+
 ### Changed
 
 - Migrated the project from Leiningen to Clojure CLI, `deps.edn`, and `tools.build`.

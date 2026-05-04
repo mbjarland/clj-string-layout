@@ -33,7 +33,9 @@
                 :src-dirs ["src"]
                 :pom-data pom-data})
   (b/copy-dir {:src-dirs ["src"]
-               :target-dir class-dir})
+                :target-dir class-dir})
+  (b/copy-dir {:src-dirs ["doc"]
+               :target-dir (str class-dir "/doc")})
   (doseq [file ["README.md" "CHANGELOG.md" "LICENSE"]]
     (b/copy-file {:src file
                   :target (str class-dir "/" file)}))

@@ -23,6 +23,18 @@
         rows (config/normalize-rows layout-config rows)]
     (render/render-layout layout-config rows)))
 
+(defn layout-seq
+  "Lazily lays out rows of text in columns.
+
+  This has the same rendering semantics as layout, but returns a lazy sequence.
+  For large data sets, pass :col-widths to avoid retaining all rows while
+  computing exact automatic column widths. If row layouts are used, pass
+  :row-count to avoid counting the rendered data rows up front."
+  [rows layout-config]
+  (let [layout-config (config/compile-layout-config layout-config)
+        rows (config/normalize-row-seq layout-config rows)]
+    (render/render-layout-seq layout-config rows)))
+
 (defn layout-str
   "Lays out rows and joins the resulting lines with newlines."
   [rows layout-config]

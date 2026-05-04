@@ -12,7 +12,9 @@
   (= :repeat (:type entry)))
 
 (defn- repeat-string [n ch]
-  (apply str (repeat n ch)))
+  (if (pos? n)
+    (.repeat (str ch) n)
+    ""))
 
 (defn- display-width [layout-config value]
   (let [width ((:display-width layout-config) value)]
@@ -161,37 +163,49 @@
                        :layout expanded}))
       expanded)))
 
-(defn- calculate-col-widths [layout-config rows]
-  (apply mapv #(apply max (map (partial display-width layout-config) %&)) rows))
+(defn- calculate-row-widths [layout-config rows]
+  (mapv (fn [row]
+          (mapv #(display-width layout-config %) row))
+        rows))
+
+(defn- calculate-col-widths [row-widths]
+  (apply mapv max row-widths))
+
+(defn- configured-widths [layout-config rows]
+  (if-some [col-widths (:col-widths layout-config)]
+    {:col-widths (vec col-widths)}
+    (let [row-widths (calculate-row-widths layout-config rows)]
+      {:col-widths (calculate-col-widths row-widths)
+       :row-widths row-widths})))
 
 (defn- column-extra-width [column]
   (reduce + (:fill-widths column)))
 
-(defn- pad-right [layout-config value width ch]
-  (str value (repeat-string (max 0 (- width (display-width layout-config value))) ch)))
+(defn- pad-right [value value-width width ch]
+  (str value (repeat-string (max 0 (- width value-width)) ch)))
 
-(defn- pad-left [layout-config value width ch]
-  (str (repeat-string (max 0 (- width (display-width layout-config value))) ch) value))
+(defn- pad-left [value value-width width ch]
+  (str (repeat-string (max 0 (- width value-width)) ch) value))
 
-(defn- pad-center [layout-config value width ch]
-  (let [padding (max 0 (- width (display-width layout-config value)))
+(defn- pad-center [value value-width width ch]
+  (let [padding (max 0 (- width value-width))
         left (quot (inc padding) 2)
         right (- padding left)]
     (str (repeat-string left ch) value (repeat-string right ch))))
 
-(defn- align-word [layout-config column-width align-char word column idx]
+(defn- align-word [column-width align-char word word-width column idx]
   (let [width (+ column-width (column-extra-width column))]
     (case (:align column)
-      :l (pad-right layout-config word width align-char)
-      :r (pad-left layout-config word width align-char)
-      :c (pad-center layout-config word width align-char)
+      :l (pad-right word word-width width align-char)
+      :r (pad-left word word-width width align-char)
+      :c (pad-center word word-width width align-char)
       :v word
       (layout-error "Unsupported column alignment"
                     {:type :invalid-layout-config
                      :idx idx
                      :align (:align column)}))))
 
-(defn- render-data-row [layout-config col-widths row]
+(defn- render-data-row [layout-config col-widths cell-widths row]
   (let [align-char (:align-char layout-config)
         col-layout (get-in layout-config [:layout :cols :layout])]
     (first
@@ -199,18 +213,24 @@
         (fn [[out col-idx] entry]
           (case (:type entry)
             :text [(conj out (:value entry)) col-idx]
-            :column [(conj out (align-word layout-config
-                                            (nth col-widths col-idx)
+            :column [(conj out (align-word (nth col-widths col-idx)
                                             align-char
                                             (nth row col-idx)
+                                            (nth cell-widths col-idx)
                                             entry
-                                           col-idx))
+                                            col-idx))
                      (inc col-idx)]
             (layout-error "Invalid data-row layout element"
                           {:type :invalid-layout-state
                            :entry entry})))
         [[] 0]
         col-layout))))
+
+(defn- render-data-row* [layout-config col-widths row]
+  (render-data-row layout-config
+                   col-widths
+                   (mapv #(display-width layout-config %) row)
+                   row))
 
 (defn- row-fill-chars [row-layout fill-char fill-chars align-char]
   (let [fill-count (fill-slot-count row-layout)]
@@ -276,14 +296,29 @@
       (get-in layout-config [:layout :rows])
       (update-in [:layout :rows] #(mapv prepare-row-spec %)))))
 
+(defn- matching-row-layouts [row-specs idx cnt]
+  (keep (fn [{:keys [layout apply-for]}]
+          (when (apply-for [idx cnt]) layout))
+        row-specs))
+
+(defn- row-layout-count [layout-config rows]
+  (max 1 (or (:row-count layout-config) (count rows))))
+
+(defn- validate-row-count! [layout-config rows]
+  (when-some [row-count (:row-count layout-config)]
+    (when-not (= row-count (count rows))
+      (layout-error "Layout :row-count must match the number of data rows"
+                    {:type :invalid-rows
+                     :row-count row-count
+                     :actual (count rows)}))))
+
 (defn- apply-row-layouts [layout-config rows]
   (if-let [row-specs (get-in layout-config [:layout :rows])]
-    (let [cnt (max 1 (count rows))]
+    (let [_ (validate-row-count! layout-config rows)
+          cnt (row-layout-count layout-config rows)]
       (reduce
         (fn [out idx]
-          (let [matching-layouts (keep (fn [{:keys [layout apply-for]}]
-                                         (when (apply-for [idx cnt]) layout))
-                                       row-specs)
+          (let [matching-layouts (matching-row-layouts row-specs idx cnt)
                 out (into out matching-layouts)]
             (if (= idx cnt)
               out
@@ -292,10 +327,51 @@
         (range (inc cnt))))
     rows))
 
-(defn render-layout [layout-config rows]
-  (let [col-widths (calculate-col-widths layout-config rows)
+(defn- apply-row-layouts-seq [layout-config rows]
+  (if-let [row-specs (get-in layout-config [:layout :rows])]
+    (let [cnt (row-layout-count layout-config rows)]
+      (letfn [(step [idx rows]
+                (lazy-seq
+                  (when (<= idx cnt)
+                    (if (= idx cnt)
+                      (do
+                        (when (and (:row-count layout-config) (seq rows))
+                          (layout-error "Rows continued after :row-count"
+                                        {:type :invalid-rows
+                                         :row-count (:row-count layout-config)
+                                         :idx idx}))
+                        (matching-row-layouts row-specs idx cnt))
+                      (concat (matching-row-layouts row-specs idx cnt)
+                              (if-let [rows (seq rows)]
+                                (cons (first rows) (step (inc idx) (rest rows)))
+                                (layout-error "Rows ended before :row-count"
+                                              {:type :invalid-rows
+                                               :row-count (:row-count layout-config)
+                                               :idx idx})))))))]
+        (step 0 rows)))
+    rows))
+
+(defn render-layout-seq [layout-config rows]
+  (let [{:keys [col-widths row-widths]} (configured-widths layout-config rows)
         layout-config (prepare-layout-config layout-config col-widths)
-        data-rows (mapv #(render-data-row layout-config col-widths %) rows)
+        data-rows (if row-widths
+                    (map #(render-data-row layout-config col-widths %1 %2)
+                         row-widths
+                         rows)
+                    (map #(render-data-row* layout-config col-widths %) rows))
+        rows (apply-row-layouts-seq layout-config data-rows)]
+    (if (:raw? layout-config)
+      rows
+      (map str/join rows))))
+
+(defn render-layout [layout-config rows]
+  (let [{:keys [col-widths row-widths]} (configured-widths layout-config rows)
+        layout-config (prepare-layout-config layout-config col-widths)
+        data-rows (if row-widths
+                    (mapv #(render-data-row layout-config col-widths %1 %2)
+                          row-widths
+                          rows)
+                    (mapv #(render-data-row* layout-config col-widths %) rows))
         rows (apply-row-layouts layout-config data-rows)]
     (if (:raw? layout-config)
       rows
