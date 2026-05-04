@@ -133,6 +133,9 @@ syntax:
 | --- | --- |
 | `:markdown` | `escape/markdown-cell` |
 | `:csv` | `escape/csv-cell` |
+| `:tsv` | `escape/tsv-cell` |
+| `:org` | `escape/org-cell` |
+| `:rst` | `escape/rst-cell` |
 | `:html` | `escape/html` |
 
 Set `:escape? false` if you already escaped values yourself.

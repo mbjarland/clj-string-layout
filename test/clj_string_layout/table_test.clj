@@ -62,6 +62,9 @@
          (table/table {:format :csv
                        :headers ["a,b"]
                        :rows [["x\"y"]]})))
+  (is (= ["a\\tb"]
+         (table/table {:format :tsv
+                       :rows [["a\tb"]]})))
   (is (= ["<table>"
           "  <tr><th>&lt;Name&gt;</th></tr>"
           "  <tr><td>a&amp;b</td></tr>"

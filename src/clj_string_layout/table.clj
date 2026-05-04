@@ -15,11 +15,11 @@
    :markdown {:escape escape/markdown-cell :layout :generated :default-align :left}
    :ascii-grid {:escape identity :layout :generated :default-align :left}
    :csv {:escape escape/csv-cell :layout presets/layout-csv :default-align :verbatim}
-   :tsv {:escape identity :layout presets/layout-tsv :default-align :verbatim}
+   :tsv {:escape escape/tsv-cell :layout presets/layout-tsv :default-align :verbatim}
    :pipe {:escape identity :layout presets/layout-pipe-separated :default-align :verbatim}
    :psql {:escape identity :layout presets/layout-psql-left :default-align :left}
-   :org {:escape identity :layout presets/layout-org-left :default-align :left}
-   :rst {:escape identity :layout presets/layout-rst-simple :default-align :left}
+   :org {:escape escape/org-cell :layout presets/layout-org-left :default-align :left}
+   :rst {:escape escape/rst-cell :layout presets/layout-rst-simple :default-align :left}
    :html {:escape escape/html :layout :html :default-align :verbatim}})
 
 (defn formats

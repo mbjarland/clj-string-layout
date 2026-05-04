@@ -327,7 +327,7 @@ Separated-value layouts:
 
 | Var | Separator | Behavior |
 | --- | --- | --- |
-| `layout-tsv` | Tab | Emits verbatim tab-separated cells. |
+| `layout-tsv` | Tab | Emits verbatim tab-separated cells. Escape tabs and line breaks with `escape/tsv-cell`. |
 | `layout-csv` | Comma | Emits verbatim comma-separated cells. Escape data with `escape/csv-cell`. |
 | `layout-pipe-separated` | Pipe | Emits compact pipe-separated cells without Markdown header rows. |
 
@@ -402,8 +402,9 @@ HTML example:
 ;;     "</table>"]
 ```
 
-HTML and Markdown presets emit cell contents verbatim by default. Escape input
-cells before rendering when the data is not already safe for the target format:
+Markup and separated-value presets emit cell contents verbatim by default. Escape
+input cells before rendering when the data is not already safe for the target
+format:
 
 ```clojure
 (layout (escape/map-cells escape/html [["<Alice>" "tea & cake"]])
@@ -417,6 +418,9 @@ cells before rendering when the data is not already safe for the target format:
 ;; => ["| name | a\\|b |"
 ;;     "|:---- |:----- |"]
 ```
+
+Additional helpers include `escape/tsv-cell`, `escape/org-cell`,
+`escape/rst-cell`, and `escape/log-safe` for common single-line outputs.
 
 ## Raw Output
 

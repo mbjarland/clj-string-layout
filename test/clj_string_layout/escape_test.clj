@@ -28,6 +28,30 @@
   (is (= ""
          (escape/csv-cell nil))))
 
+(deftest tsv-cell-escaping
+  (is (= "a\\tb\\\\c\\nd"
+         (escape/tsv-cell "a\tb\\c\r\nd")))
+  (is (= ""
+         (escape/tsv-cell nil))))
+
+(deftest org-cell-escaping
+  (is (= "a\\vert{}b<br>c"
+         (escape/org-cell "a|b\r\nc")))
+  (is (= ""
+         (escape/org-cell nil))))
+
+(deftest rst-cell-escaping
+  (is (= "a\\\\b c"
+         (escape/rst-cell "a\\b\r\nc")))
+  (is (= ""
+         (escape/rst-cell nil))))
+
+(deftest log-safe-escaping
+  (is (= "a\\tb\\nc\\rd\\\\e\\u001B"
+         (escape/log-safe (str "a\tb\nc\rd\\e" "\u001B"))))
+  (is (= ""
+         (escape/log-safe nil))))
+
 (deftest map-cells-and-layout-integration
   (is (= [["&lt;a&gt;" "x&amp;y"]]
          (escape/map-cells escape/html [["<a>" "x&y"]])))

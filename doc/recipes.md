@@ -38,12 +38,17 @@ The same shape is available as a preset:
 
 ## CSV And TSV
 
-Use `layout-tsv` for tab-separated output when cell contents are already safe:
+Use `layout-tsv` for tab-separated output when cell contents are already safe, or
+combine it with `escape/tsv-cell` when values may contain tabs or line breaks:
 
 ```clojure
 (layout [["a" "b" "c"]]
         layouts/layout-tsv)
 ;; => ["a\tb\tc"]
+
+(layout (escape/map-cells escape/tsv-cell [["a\tb" "line\nbreak"]])
+        layouts/layout-tsv)
+;; => ["a\\tb\tline\\nbreak"]
 ```
 
 Use `layout-csv` with `escape/csv-cell` for CSV data:
@@ -157,6 +162,8 @@ Use `layout-org-*` for Org mode tables:
 ;;     "| apple | 12  |"]
 ```
 
+Use `escape/org-cell` when Org cell values may contain `|` or line breaks.
+
 Use `layout-rst-simple` for reStructuredText simple tables:
 
 ```clojure
@@ -169,6 +176,9 @@ Use `layout-rst-simple` for reStructuredText simple tables:
 ;;     "apple  12 "
 ;;     "=====  ==="]
 ```
+
+Use `escape/rst-cell` when simple-table values may contain backslashes or line
+breaks.
 
 The `*-fill-*` presets consume `:width`.
 
