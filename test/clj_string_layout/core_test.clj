@@ -6,7 +6,9 @@
             [clj-string-layout.layout :as layouts]
             [clj-string-layout.predicates :as pred]
             [clj-string-layout.presets :as presets]
-            [clojure.test :refer [are deftest is testing]]))
+            [clojure.string :as str]
+            [clojure.test :refer [are deftest is testing]])
+  (:import [java.util Random]))
 
 (defn- column
   ([align]
@@ -21,6 +23,20 @@
 
 (defn- sample-display-width [value]
   (reduce + (map #(if (= \界 %) 2 1) value)))
+
+(defn- random-word [^Random rng]
+  (apply str
+         (repeatedly (.nextInt rng 8)
+                     #(char (+ (int \a) (.nextInt rng 26))))))
+
+(defn- random-rows [^Random rng row-count col-count]
+  (mapv (fn [_]
+          (mapv (fn [_] (random-word rng))
+                (range col-count)))
+        (range row-count)))
+
+(defn- raw-cell [pieces col-idx]
+  (nth pieces (* 2 col-idx)))
 
 (deftest invalid-layout-strings
   (are [row-layout? layout-string]
@@ -133,6 +149,34 @@
 (deftest string-layout-output
   (is (= "a   b\naa bb"
           (layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}}))))
+
+(deftest randomized-layout-invariants
+  (let [rng (Random. 20260504)]
+    (dotimes [case-idx 100]
+      (let [col-count (inc (.nextInt rng 5))
+            row-count (inc (.nextInt rng 10))
+            rows (random-rows rng row-count col-count)
+            col-widths (apply mapv #(apply max (map count %&)) rows)
+            layout-string (str/join "|" (repeat col-count "[L]"))
+            rendered (layout rows {:raw? true
+                                   :layout {:cols [layout-string]}})]
+        (is (= row-count (count rendered))
+            (pr-str {:case case-idx :rows rows}))
+        (doseq [[row-idx [row pieces]] (map-indexed vector (map vector rows rendered))]
+          (is (= (dec (* 2 col-count)) (count pieces))
+              (pr-str {:case case-idx :row row-idx :pieces pieces}))
+          (doseq [col-idx (range col-count)]
+            (let [value (nth row col-idx)
+                  cell (raw-cell pieces col-idx)
+                  width (nth col-widths col-idx)]
+              (is (= width (count cell))
+                  (pr-str {:case case-idx :row row-idx :col col-idx :cell cell}))
+              (is (str/starts-with? cell value)
+                  (pr-str {:case case-idx :row row-idx :col col-idx :cell cell}))))
+          (doseq [piece (map #(nth pieces (inc (* 2 %)))
+                             (range (dec col-count)))]
+            (is (= "|" piece)
+                (pr-str {:case case-idx :row row-idx :pieces pieces}))))))))
 
 (deftest custom-display-width
   (is (= ["界 x "
