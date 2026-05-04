@@ -19,6 +19,9 @@
 
 (def fill {:type :fill})
 
+(defn- sample-display-width [value]
+  (reduce + (map #(if (= \界 %) 2 1) value)))
+
 (deftest invalid-layout-strings
   (are [row-layout? layout-string]
        (thrown-with-msg? clojure.lang.ExceptionInfo
@@ -129,7 +132,19 @@
 
 (deftest string-layout-output
   (is (= "a   b\naa bb"
-         (layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}}))))
+          (layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}}))))
+
+(deftest custom-display-width
+  (is (= ["界 x "
+          "ab yy"]
+         (layout [["界" "x"] ["ab" "yy"]]
+                 {:display-width sample-display-width
+                  :layout {:cols ["[R] [L]"]}})))
+  (is (= ["界   x"]
+         (layout [["界" "x"]]
+                 {:display-width sample-display-width
+                  :width 6
+                  :layout {:cols ["[L]f[R]"]}}))))
 
 (deftest left-justified-column-layout
   (is (= [" Alice, why     is    "
@@ -223,7 +238,13 @@
   (testing "odd layout option count"
     (is (= :invalid-layout-config
            (:type (ex-data (try
-                             (layout "a b" {:layout {:cols ["[L]" :repeat-for]}})
+                              (layout "a b" {:layout {:cols ["[L]" :repeat-for]}})
+                              (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing "invalid display width function"
+    (is (= :invalid-layout-config
+           (:type (ex-data (try
+                             (layout "a" {:display-width 1
+                                          :layout {:cols ["[L]"]}})
                              (catch clojure.lang.ExceptionInfo e e)))))))
   (testing "column count mismatch"
     (is (= :invalid-layout-config

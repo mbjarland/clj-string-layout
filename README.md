@@ -72,6 +72,7 @@ Use a built-in layout for common output formats:
  :fill-char       \space
  :word-split-char \space
  :row-split-char  \newline
+ :display-width   count
  :width           80
  :raw?            false
  :layout {:cols ["[L] [C] [R]"]
@@ -88,7 +89,15 @@ Options:
 | `:fill-char` | space | Character used for `f` fill markers unless overridden by a row layout. |
 | `:word-split-char` | space | Character used to split string input into words. |
 | `:row-split-char` | newline | Character used to split string input into rows. |
+| `:display-width` | `count` | Function from string to display width. Override this for terminal-width-aware alignment of wide glyphs. |
 | `:raw?` | `false` | Return each output row as a vector of pieces instead of joined strings. Useful when post-processing cells, for example adding ANSI colors. |
+
+By default, widths are measured with Clojure's `count`, preserving plain string
+length behavior. For monospace terminal output containing wide glyphs, pass a
+`:display-width` function that returns a non-negative integer for each string.
+The function is used for cell values, literal delimiters, padding, and fill
+width calculations. Alignment and fill characters should occupy one display
+column.
 
 ## The Layout Language
 
@@ -107,7 +116,7 @@ The current grammar is:
 ```clojure
 layout = delim? ((col | repeat) delim?)*
 repeat  = <'{'> delim? (col delim?)* <'}'>
-delim   = (escaped | fill | #'[^\\\\[\\]{}fF]+')+
+delim   = (escaped | fill | #'[^\\\\\\[\\]{}fF]+')+
 escaped = <'\\\\'> #'.'
 fill   = <'F'> (#'[\\d]+')?
 col    = <'['> fill? align fill? <']'>
@@ -374,7 +383,7 @@ clojure -T:deploy deploy
 
 The library intentionally keeps the public API small. Most users need only `clj-string-layout.core/layout`, reusable predicates in `clj-string-layout.predicates`, and preset layouts in `clj-string-layout.layout`.
 
-The `f` and `F` characters are reserved as fill markers in layout delimiter positions. If you need literal delimiter text containing `f`, prefer using it inside data cells or consider defining an escaped literal syntax before relying on that layout publicly.
+The `f` and `F` characters are reserved as fill markers in layout delimiter positions. Use escaped literals such as `\f` or `\F` when delimiter text needs those characters literally.
 
 ## License
 

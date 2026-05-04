@@ -14,6 +14,16 @@
 (defn- repeat-string [n ch]
   (apply str (repeat n ch)))
 
+(defn- display-width [layout-config value]
+  (let [width ((:display-width layout-config) value)]
+    (when-not (and (integer? width) (not (neg? width)))
+      (layout-error "Layout :display-width must return a non-negative integer"
+                    {:type :invalid-layout-config
+                     :path [:display-width]
+                     :value value
+                     :width width}))
+    width))
+
 (defn- count-columns [layout]
   (count (filter column-entry? layout)))
 
@@ -42,8 +52,11 @@
             (range fill-count)
             fill-chars))))
 
-(defn- layout-static-width [layout]
-  (transduce (keep #(when (text-entry? %) (count (:value %)))) + layout))
+(defn- layout-static-width [layout-config layout]
+  (transduce (keep #(when (text-entry? %)
+                     (display-width layout-config (:value %))))
+             +
+             layout))
 
 (defn- take-fill-strings [fills n entry]
   (when (< (count fills) n)
@@ -54,7 +67,7 @@
                    :remaining (count fills)}))
   [(take n fills) (drop n fills)])
 
-(defn- replace-fill-slots [layout fill-strings]
+(defn- replace-fill-slots [layout layout-config fill-strings]
   (first
     (reduce
       (fn [[out fill-strings] entry]
@@ -65,7 +78,7 @@
 
           :column
           (let [[column-fills fill-strings] (take-fill-strings fill-strings (:fills entry) entry)]
-            [(conj out (assoc entry :fill-widths (mapv count column-fills)))
+            [(conj out (assoc entry :fill-widths (mapv #(display-width layout-config %) column-fills)))
              fill-strings])
 
           [(conj out entry) fill-strings]))
@@ -81,7 +94,7 @@
     []
     layout))
 
-(defn- expand-fills [width col-widths fill-chars layout]
+(defn- expand-fills [layout-config width col-widths fill-chars layout]
   (let [fill-count (fill-slot-count layout)]
     (if (zero? fill-count)
       (merge-adjacent-text layout)
@@ -91,12 +104,12 @@
                         {:type :invalid-layout-config
                          :fill-count fill-count
                          :fill-chars fill-chars}))
-        (let [fill-width (max 0 (- width
-                                   (+ (reduce + col-widths)
-                                      (layout-static-width layout))))]
-          (-> layout
-              (replace-fill-slots (calculate-fills fill-width fill-count fill-chars))
-              merge-adjacent-text))))))
+         (let [fill-width (max 0 (- width
+                                    (+ (reduce + col-widths)
+                                       (layout-static-width layout-config layout))))]
+           (-> layout
+               (replace-fill-slots layout-config (calculate-fills fill-width fill-count fill-chars))
+               merge-adjacent-text))))))
 
 (defn- invalid-grouping! [layout]
   (layout-error "Repeat groups must form one contiguous repeat section"
@@ -148,30 +161,30 @@
                        :layout expanded}))
       expanded)))
 
-(defn- calculate-col-widths [rows]
-  (apply mapv #(apply max (map count %&)) rows))
+(defn- calculate-col-widths [layout-config rows]
+  (apply mapv #(apply max (map (partial display-width layout-config) %&)) rows))
 
 (defn- column-extra-width [column]
   (reduce + (:fill-widths column)))
 
-(defn- pad-right [value width ch]
-  (str value (repeat-string (max 0 (- width (count value))) ch)))
+(defn- pad-right [layout-config value width ch]
+  (str value (repeat-string (max 0 (- width (display-width layout-config value))) ch)))
 
-(defn- pad-left [value width ch]
-  (str (repeat-string (max 0 (- width (count value))) ch) value))
+(defn- pad-left [layout-config value width ch]
+  (str (repeat-string (max 0 (- width (display-width layout-config value))) ch) value))
 
-(defn- pad-center [value width ch]
-  (let [padding (max 0 (- width (count value)))
+(defn- pad-center [layout-config value width ch]
+  (let [padding (max 0 (- width (display-width layout-config value)))
         left (quot (inc padding) 2)
         right (- padding left)]
     (str (repeat-string left ch) value (repeat-string right ch))))
 
-(defn- align-word [column-width align-char word column idx]
+(defn- align-word [layout-config column-width align-char word column idx]
   (let [width (+ column-width (column-extra-width column))]
     (case (:align column)
-      :l (pad-right word width align-char)
-      :r (pad-left word width align-char)
-      :c (pad-center word width align-char)
+      :l (pad-right layout-config word width align-char)
+      :r (pad-left layout-config word width align-char)
+      :c (pad-center layout-config word width align-char)
       :v word
       (layout-error "Unsupported column alignment"
                     {:type :invalid-layout-config
@@ -186,10 +199,11 @@
         (fn [[out col-idx] entry]
           (case (:type entry)
             :text [(conj out (:value entry)) col-idx]
-            :column [(conj out (align-word (nth col-widths col-idx)
-                                           align-char
-                                           (nth row col-idx)
-                                           entry
+            :column [(conj out (align-word layout-config
+                                            (nth col-widths col-idx)
+                                            align-char
+                                            (nth row col-idx)
+                                            entry
                                            col-idx))
                      (inc col-idx)]
             (layout-error "Invalid data-row layout element"
@@ -216,7 +230,7 @@
         {:keys [layout fill-char fill-chars]
          :or {fill-char default-fill-char}} row-spec
         fill-chars (row-fill-chars layout fill-char fill-chars align-char)]
-    (update row-spec :layout #(expand-fills width col-widths fill-chars %))))
+    (update row-spec :layout #(expand-fills layout-config width col-widths fill-chars %))))
 
 (defn- render-row-layout [col-widths row-spec]
   (update row-spec
@@ -243,7 +257,7 @@
         fill-char (:fill-char layout-config)
         prepare-col-layout #(->> %
                                  (expand-repeats col-count)
-                                 (expand-fills width col-widths (repeat fill-char)))
+                                 (expand-fills layout-config width col-widths (repeat fill-char)))
         expand-row-spec (partial expand-row-fills layout-config col-widths)
         render-row-spec (partial render-row-layout col-widths)
         prepare-row-spec (fn [row-spec]
@@ -279,7 +293,7 @@
     rows))
 
 (defn render-layout [layout-config rows]
-  (let [col-widths (calculate-col-widths rows)
+  (let [col-widths (calculate-col-widths layout-config rows)
         layout-config (prepare-layout-config layout-config col-widths)
         data-rows (mapv #(render-data-row layout-config col-widths %) rows)
         rows (apply-row-layouts layout-config data-rows)]

@@ -9,6 +9,7 @@
    :fill-char \space
    :word-split-char \space
    :row-split-char \newline
+   :display-width count
    :width 80
    :raw? false})
 
@@ -54,6 +55,11 @@
                   {:type :invalid-layout-config
                    :value layout-config}))
   (validate-cols! (get-in layout-config [:layout :cols]))
+  (when-not (ifn? (:display-width layout-config))
+    (layout-error "Layout :display-width must be a function"
+                  {:type :invalid-layout-config
+                   :path [:display-width]
+                   :value (:display-width layout-config)}))
   (doseq [[idx row-spec] (map-indexed vector (get-in layout-config [:layout :rows]))]
     (validate-row-spec! idx row-spec)))
 
