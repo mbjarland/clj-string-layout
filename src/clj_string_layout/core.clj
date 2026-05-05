@@ -17,7 +17,11 @@
 
   Important keys include :width, :align-char, :fill-char, :display-width,
   :col-widths, :row-count, :word-split-char, :row-split-char, and :raw?. The
-  :layout key is intentionally not defaulted and must be supplied by callers."
+  :layout key is intentionally not defaulted and must be supplied by callers.
+
+  :align-char defaults to space. :fill-char defaults to whatever :align-char
+  resolves to (so by default :fill-char is also space). Pass :fill-char
+  explicitly when fill regions should use a different glyph than padded cells."
   config/default-layout-config)
 
 (defn layout

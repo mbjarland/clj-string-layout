@@ -123,7 +123,7 @@ Options:
 | `:layout` | required | A map with `:cols` and optional `:rows`. |
 | `:width` | `80` | Target width when the layout contains fill markers. Layouts can still exceed this if the data and literals are wider. |
 | `:align-char` | space | Character used to pad aligned data cells. |
-| `:fill-char` | space | Character used for `f` fill markers unless overridden by a row layout. |
+| `:fill-char` | `:align-char` | Character used for `f` fill markers unless overridden by a row layout. Defaults to whatever `:align-char` resolves to, so leaving both unset gives space-padded fills. |
 | `:word-split-char` | space | Character used to split string input into words. |
 | `:row-split-char` | newline | Character used to split string input into rows. |
 | `:display-width` | `count` | Function from string to display width. Override this for ANSI-styled text or wide glyphs. |
