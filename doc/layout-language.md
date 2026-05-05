@@ -25,11 +25,11 @@ than direct input values.
 
 | Form | Example | Meaning |
 | --- | --- | --- |
-| Literal text | `" | "` | Emitted exactly. |
+| Literal text | <code>" &#124; "</code> | Emitted exactly. |
 | Column marker | `[L]`, `[C]`, `[R]`, `[V]` | Placeholder for a data cell in column layouts. |
 | Row marker | `[-]`, `[=]`, `[*]` | Repeats the marker character to match a column width in row layouts. |
 | Fill marker | `f` or `F` | Absorbs extra width. |
-| Repeat group | `{ [L] |}` | Repeats a sub-layout for selected columns. |
+| Repeat group | <code>{ [L] &#124;}</code> | Repeats a sub-layout for selected columns. |
 | Escaped literal | `\f`, `\{`, `\]` | Emits a reserved character literally. |
 
 The grammar is:
