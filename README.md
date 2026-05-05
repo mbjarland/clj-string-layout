@@ -195,9 +195,9 @@ Supported column alignments:
 | Marker | Meaning |
 | --- | --- |
 | `[L]` | Left-align the cell within the column width. |
-| `[C]` | Center-align the cell within the column width. |
+| `[C]` | Center-align the cell within the column width. When the padding is odd the extra column biases left. |
 | `[R]` | Right-align the cell within the column width. |
-| `[V]` | Verbatim output. Do not pad the cell to the computed column width. |
+| `[V]` | Verbatim output. Do not pad the cell to the computed column width. Fill markers inside `[V]` are accepted by the grammar but have no rendered effect. |
 
 Examples:
 

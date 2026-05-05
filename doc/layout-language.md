@@ -50,9 +50,9 @@ Column markers are placeholders for data cells.
 | Marker | Behavior |
 | --- | --- |
 | `[L]` | Left-align within the computed column width. |
-| `[C]` | Center-align within the computed column width. |
+| `[C]` | Center-align within the computed column width. When the padding is odd, the extra column is placed on the **left**, so a 1-character value in a 4-wide column renders as `"  x "`. |
 | `[R]` | Right-align within the computed column width. |
-| `[V]` | Verbatim output; no padding is added. |
+| `[V]` | Verbatim output; no padding is added. The `f` fill marker is accepted inside `[V]` for grammar uniformity but has no rendered effect, since verbatim columns are never padded. |
 
 ```clojure
 (layout [["name" "qty" "price"]
