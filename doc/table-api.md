@@ -161,6 +161,18 @@ Set `:escape? false` if you already escaped values yourself.
 ;;     "</table>"]
 ```
 
+## Width, Display Width, And Raw Output
+
+`:width` and `:display-width` are forwarded to the layout engine for every
+format that emits visually padded text (plain, markdown, the box variants,
+ascii-grid, psql, org, and rst). They are intentionally ignored for `:html`,
+since HTML output is structural markup rather than padded text.
+
+`:raw?` is honored for every format. For visually padded formats it returns
+each row as a vector of pieces ready for cell decoration; for `:html` each
+output line becomes a single-piece vector so callers can wrap or annotate
+specific lines without re-parsing the rendered string.
+
 ## When To Use The DSL Directly
 
 Use the high-level table API when you need common output formats quickly. Use

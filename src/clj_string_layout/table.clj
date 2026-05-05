@@ -237,12 +237,13 @@
 (defn- html-row [tag row]
   (str "  <tr>" (apply str (map #(str "<" tag ">" % "</" tag ">") row)) "</tr>"))
 
-(defn- render-html [rows header?]
-  (let [[header rows] (if header? [(first rows) (rest rows)] [nil rows])]
-    (vec (concat ["<table>"]
-                 (when header [(html-row "th" header)])
-                 (map #(html-row "td" %) rows)
-                 ["</table>"]))))
+(defn- render-html [rows header? raw?]
+  (let [[header rows] (if header? [(first rows) (rest rows)] [nil rows])
+        lines (vec (concat ["<table>"]
+                           (when header [(html-row "th" header)])
+                           (map #(html-row "td" %) rows)
+                           ["</table>"]))]
+    (if raw? (mapv vector lines) lines)))
 
 (defn- table-plan [{:keys [rows] :as spec}]
   (let [format (default-format spec)
@@ -265,11 +266,16 @@
   Required input is usually :rows, with optional :headers, :columns, and
   :format. Supported formats are returned by formats. Column specs may contain
   :key, :title, :align, :format, :width, and :overflow. Overflow policies are
-  :none, :clip, :ellipsis, :wrap, and :error."
+  :none, :clip, :ellipsis, :wrap, and :error.
+
+  The :width and :display-width spec keys are forwarded to the layout engine
+  for every format that emits visually padded text. They are intentionally
+  ignored for :html output, where the result is structural markup rather than
+  padded text. :raw? is honored for every format, including :html."
   [spec]
   (let [{:keys [format rows header? layout-config]} (table-plan spec)]
     (if (= :html format)
-      (render-html rows header?)
+      (render-html rows header? (boolean (:raw? spec)))
       (core/layout rows (merge layout-config (select-keys spec [:width :display-width :raw?]))))))
 
 (defn table-str

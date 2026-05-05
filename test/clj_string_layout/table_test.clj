@@ -142,6 +142,16 @@
                            :headers ["A" "B"]
                            :rows [["x" "y"]]}))))))
 
+(deftest html-honors-raw
+  (is (= [["<table>"]
+          ["  <tr><th>A</th></tr>"]
+          ["  <tr><td>x</td></tr>"]
+          ["</table>"]]
+         (table/table {:format :html
+                       :headers ["A"]
+                       :rows [["x"]]
+                       :raw? true}))))
+
 (deftest string-and-seq-entry-points
   (let [spec {:format :ascii-grid
               :headers ["A" "B"]
