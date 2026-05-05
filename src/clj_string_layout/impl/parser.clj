@@ -34,7 +34,7 @@
      :escaped identity
      :repeat (fn [& entries] {:type :repeat :layout (vec entries)})
      :delim (fn [& parts] {:type :delimiter :parts (vec parts)})
-     :col (fn [& parts] {:type :column* :parts (vec parts)})
+     :col (fn [& parts] {:type :column-raw :parts (vec parts)})
      :align (fn [value]
               {:type :align
                :value (if row-layout?
@@ -77,7 +77,7 @@
 (defn- normalize-entry [entry]
   (case (:type entry)
     :delimiter (delimiter-entries entry)
-    :column* [(column-entry entry)]
+    :column-raw [(column-entry entry)]
     :repeat [(update entry :layout normalize-layout)]
     (layout-error "Invalid layout entry in parse tree"
                   {:type :invalid-layout-ir
