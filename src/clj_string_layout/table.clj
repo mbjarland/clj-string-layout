@@ -201,24 +201,28 @@
 (defn- align-tokens-for [aligns]
   (mapv align-token aligns))
 
-(defn- plain-cols [tokens]
-  (str/join "  " (map #(str "[" % "]") tokens)))
+(defn- bracket [token fill?]
+  (str "[" token (when fill? "f") "]"))
 
-(defn- markdown-rule-cell [align]
-  (case (align-token align)
-    "C" ":[-]:"
-    "R" " [-]:"
-    ":[-] "))
+(defn- plain-cols [tokens fill?]
+  (str/join "  " (map #(bracket % fill?) tokens)))
 
-(defn- markdown-cols [tokens]
-  (str "| " (str/join " | " (map #(str "[" % "]") tokens)) " |"))
+(defn- markdown-rule-cell [align fill?]
+  (let [token (str "[-" (when fill? "f") "]")]
+    (case (align-token align)
+      "C" (str ":" token ":")
+      "R" (str " " token ":")
+      (str ":" token " "))))
 
-(defn- markdown-rule [aligns]
-  (str "|" (str/join "|" (map markdown-rule-cell aligns)) "|"))
+(defn- markdown-cols [tokens fill?]
+  (str "| " (str/join " | " (map #(bracket % fill?) tokens)) " |"))
 
-(defn- bordered-format-layout [chars tokens n single-rule?]
-  (let [cols (box/aligned-cols (:cols chars) tokens)
-        rule (fn [edge] (box/aligned-rule (get chars edge) n))]
+(defn- markdown-rule [aligns fill?]
+  (str "|" (str/join "|" (map #(markdown-rule-cell % fill?) aligns)) "|"))
+
+(defn- bordered-format-layout [chars tokens n single-rule? fill?]
+  (let [cols (box/aligned-cols (:cols chars) tokens fill?)
+        rule (fn [edge] (box/aligned-rule (get chars edge) n fill?))]
     {:layout {:cols [cols]
               :rows (if single-rule?
                       [[(rule :top) :apply-for pred/all-rows?]]
@@ -235,24 +239,24 @@
    :ascii-double-box box/double-box-chars
    :ascii-grid box/ascii-grid-chars})
 
-(defn- generated-layout [format columns default-align header?]
+(defn- generated-layout [format columns default-align header? fill?]
   (let [aligns (alignments columns default-align)
         tokens (align-tokens-for aligns)
         n (count columns)]
     (case format
-      :plain {:layout {:cols [(plain-cols tokens)]}}
+      :plain {:layout {:cols [(plain-cols tokens fill?)]}}
       (:markdown :markdown-left :markdown-center :markdown-right)
-      (cond-> {:layout {:cols [(markdown-cols tokens)]}}
+      (cond-> {:layout {:cols [(markdown-cols tokens fill?)]}}
         header?
         (assoc-in [:layout :rows]
-                  [[(markdown-rule aligns) :apply-for pred/second-row?]]))
+                  [[(markdown-rule aligns fill?) :apply-for pred/second-row?]]))
 
       (:box :unicode-box :ascii-box
        :double-box :unicode-double-box :ascii-double-box)
-      (bordered-format-layout (get box-format-chars format) tokens n false)
+      (bordered-format-layout (get box-format-chars format) tokens n false fill?)
 
       :ascii-grid
-      (bordered-format-layout (get box-format-chars format) tokens n true)
+      (bordered-format-layout (get box-format-chars format) tokens n true fill?)
 
       nil)))
 
@@ -298,7 +302,8 @@
         {:keys [rows header-count footer-count]} (table-rows (assoc spec :rows rows) columns escape)
         header? (boolean (or (:headers spec) (seq (:columns spec))))
         layout-config (if (= :generated layout)
-                        (generated-layout format columns default-align header?)
+                        (generated-layout format columns default-align header?
+                                          (boolean (:fill? spec)))
                         layout)]
     {:format format
      :rows rows
@@ -331,7 +336,9 @@
   The :width and :display-width spec keys are forwarded to the layout engine
   for every format that emits visually padded text. They are intentionally
   ignored for :html output, where the result is structural markup rather than
-  padded text. :raw? is honored for every format, including :html."
+  padded text. Pass :fill? true together with :width to make the generated
+  formats expand toward that width. :raw? is honored for every format,
+  including :html."
   [spec]
   (let [{:keys [format rows header-count footer-count layout-config escape]} (table-plan spec)
         raw? (boolean (:raw? spec))

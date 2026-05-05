@@ -38,15 +38,20 @@
   "Build a fully-expanded box-drawing column layout from per-column align tokens.
 
   align-tokens is a sequence of single-character strings such as \"L\" or \"R\".
-  Returns a layout string like \"│ [L] │ [R] │\"."
-  [{:keys [left sep right]} align-tokens]
-  (let [tokens (map #(str "[" % "]") align-tokens)]
-    (str left " " (str/join (str " " sep " ") tokens) " " right)))
+  Pass fill? true to add an `f` fill marker inside each column bracket so the
+  layout can expand toward the configured :width. Returns a layout string like
+  \"│ [L] │ [R] │\" (or \"│ [Lf] │ [Rf] │\" with fill?)."
+  ([chars align-tokens] (aligned-cols chars align-tokens false))
+  ([{:keys [left sep right]} align-tokens fill?]
+   (let [tokens (map #(str "[" % (when fill? "f") "]") align-tokens)]
+     (str left " " (str/join (str " " sep " ") tokens) " " right))))
 
 (defn aligned-rule
   "Build a fully-expanded box-drawing rule for n columns.
 
-  Returns a layout string like \"┌─[─]─┬─[─]─┐\"."
-  [{:keys [left fill sep right]} n]
-  (let [marker (str "[" fill "]")]
-    (str left fill (str/join (str fill sep fill) (repeat n marker)) fill right)))
+  Returns a layout string like \"┌─[─]─┬─[─]─┐\" (or \"┌─[─f]─┬─[─f]─┐\" when
+  fill? is true so the rule expands alongside fill-aware column cells)."
+  ([chars n] (aligned-rule chars n false))
+  ([{:keys [left fill sep right]} n fill?]
+   (let [marker (str "[" fill (when fill? "f") "]")]
+     (str left fill (str/join (str fill sep fill) (repeat n marker)) fill right))))

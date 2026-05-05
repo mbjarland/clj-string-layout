@@ -249,6 +249,22 @@ format that emits visually padded text (plain, markdown, the box variants,
 ascii-grid, psql, org, and rst). They are intentionally ignored for `:html`,
 since HTML output is structural markup rather than padded text.
 
+Pass `:fill? true` together with `:width` to make the generated formats
+expand their column padding toward that width:
+
+```clojure
+(table/table {:format :box
+              :fill? true
+              :width 25
+              :headers ["Name" "Qty"]
+              :rows [["apple" "12"]]})
+;; ┌────────────┬──────────┐
+;; │ Name       │ Qty      │
+;; ├────────────┼──────────┤
+;; │ apple      │ 12       │
+;; └────────────┴──────────┘
+```
+
 `:raw?` is honored for every format. For visually padded formats it returns
 each row as a vector of pieces ready for cell decoration; for `:html` each
 output line becomes a single-piece vector so callers can wrap or annotate

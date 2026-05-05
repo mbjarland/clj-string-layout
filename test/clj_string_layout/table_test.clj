@@ -142,6 +142,15 @@
                            :headers ["A" "B"]
                            :rows [["x" "y"]]}))))))
 
+(deftest fill-expands-table-to-width
+  (let [lines (table/table {:format :box
+                            :fill? true
+                            :width 25
+                            :headers ["A" "B"]
+                            :rows [["x" "y"]]})]
+    (is (= 25 (count (first lines))))
+    (is (every? #(= 25 (count %)) lines))))
+
 (deftest cell-fn-decorates-cells
   (let [bold (fn [{:keys [section value]}]
                (if (= :header section) (str "**" value "**") value))]
