@@ -363,3 +363,15 @@
   streaming behavior with already-normalized rows and explicit column widths."
   [spec]
   (seq (table spec)))
+
+(defn table-into!
+  "Writes a rendered table to a java.io.Writer, one line per write.
+
+  Each line is followed by a single newline. Returns the writer. The table
+  is rendered eagerly via table; pair with clj-string-layout.core/layout-into!
+  for streaming behavior on the lower-level layout API."
+  [^java.io.Writer writer spec]
+  (doseq [line (table spec)]
+    (.write writer ^String (if (string? line) line (apply str line)))
+    (.write writer "\n"))
+  writer)

@@ -325,3 +325,21 @@ Use `layout-str` when the consumer wants one newline-delimited string.
             {:layout {:cols ["[L] [R]"]}})
 ;; => "a   b\naa bb"
 ```
+
+## Streaming To A Writer
+
+Use `layout-into!` to stream layout output to a `java.io.Writer` without
+building the full vector first. Combined with `layout-seq`'s `:col-widths`
+option this lets large data sets render line by line:
+
+```clojure
+(require '[clj-string-layout.core :refer [layout-into!]])
+
+(with-open [w (clojure.java.io/writer "out.txt")]
+  (layout-into! w huge-rows {:col-widths [12 8]
+                             :layout {:cols ["[L] [R]"]}}))
+```
+
+`clj-string-layout.table/table-into!` does the same for the high-level table
+API. Each line is written followed by a single `\n`, and the writer is
+returned so it can be threaded.

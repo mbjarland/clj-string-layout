@@ -225,6 +225,13 @@
                        :rows [["x"]]
                        :raw? true}))))
 
+(deftest table-into-writer
+  (let [sw (java.io.StringWriter.)]
+    (table/table-into! sw {:format :plain
+                           :headers ["A" "B"]
+                           :rows [["x" "y"]]})
+    (is (= "A  B\nx  y\n" (str sw)))))
+
 (deftest string-and-seq-entry-points
   (let [spec {:format :ascii-grid
               :headers ["A" "B"]

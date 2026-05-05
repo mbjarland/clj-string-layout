@@ -1,6 +1,7 @@
 (ns clj-string-layout.core-test
   (:require [clj-string-layout.core :refer [explain-layout explain-row-layout
-                                            layout layout-seq layout-str
+                                            layout layout-into! layout-seq
+                                            layout-str
                                             parse-layout parse-row-layout]]
             [clj-string-layout.escape :as escape]
             [clj-string-layout.impl.parser :as parser]
@@ -161,6 +162,11 @@
 (deftest string-layout-output
   (is (= "a   b\naa bb"
           (layout-str "a b\naa bb" {:layout {:cols ["[L] [R]"]}}))))
+
+(deftest layout-into-writer
+  (let [sw (java.io.StringWriter.)]
+    (layout-into! sw "a b\naa bb" {:layout {:cols ["[L] [R]"]}})
+    (is (= "a   b\naa bb\n" (str sw)))))
 
 (deftest randomized-layout-invariants
   (let [rng (Random. 20260504)]

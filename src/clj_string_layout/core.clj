@@ -68,6 +68,19 @@
   [rows layout-config]
   (str/join \newline (layout rows layout-config)))
 
+(defn layout-into!
+  "Writes rendered layout lines to a java.io.Writer, one line per write.
+
+  Each line is followed by a single newline. Honors layout-config the same
+  way as layout-seq, so :col-widths and :row-count let large lazy inputs
+  stream to the writer without realizing the whole output. Returns the
+  writer."
+  [^java.io.Writer writer rows layout-config]
+  (doseq [line (layout-seq rows layout-config)]
+    (.write writer ^String (if (string? line) line (apply str line)))
+    (.write writer "\n"))
+  writer)
+
 (defn parse-layout
   "Parses a column layout string into the diagnostic layout representation.
 
