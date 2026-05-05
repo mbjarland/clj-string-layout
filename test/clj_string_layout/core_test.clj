@@ -1,6 +1,7 @@
 (ns clj-string-layout.core-test
-  (:require [clj-string-layout.core :refer [explain-layout layout layout-seq layout-str
-                                            parse-layout]]
+  (:require [clj-string-layout.core :refer [explain-layout explain-row-layout
+                                            layout layout-seq layout-str
+                                            parse-layout parse-row-layout]]
             [clj-string-layout.escape :as escape]
             [clj-string-layout.impl.parser :as parser]
             [clj-string-layout.impl.render :as render]
@@ -90,7 +91,12 @@
   (is (= [(column :l)] (parse-layout "[L]")))
   (is (:valid? (explain-layout "[L]")))
   (is (false? (:valid? (explain-layout "[x]"))))
-  (is (= :layout-parse-error (-> (explain-layout "[x]") :data :type))))
+  (is (= :layout-parse-error (-> (explain-layout "[x]") :data :type)))
+  (testing "row-layout helpers"
+    (is (= [(column \-)] (parse-row-layout "[-]")))
+    (is (= (parse-layout true "[*]") (parse-row-layout "[*]")))
+    (is (:valid? (explain-row-layout "[*]")))
+    (is (= (explain-layout true "[*]") (explain-row-layout "[*]")))))
 
 (deftest calculate-fills-test
   (are [fill-width fill-count fill-chars expected]

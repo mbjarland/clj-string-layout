@@ -69,34 +69,57 @@
   (str/join \newline (layout rows layout-config)))
 
 (defn parse-layout
-  "Parses a layout string into the diagnostic layout representation.
-
-  Column layout parsing is used by default. Pass true as the first argument to
-  parse a row layout, where the character inside brackets is treated as the row
-  drawing character instead of a column alignment marker.
+  "Parses a column layout string into the diagnostic layout representation.
 
   The returned data is useful for debugging custom layouts and error reports,
   but it is not a stable rendering API. Prefer layout, layout-str, or layout-seq
-  for application code."
+  for application code. Use parse-row-layout for row-layout strings, where the
+  character inside brackets is the row drawing character rather than a column
+  alignment marker.
+
+  The 2-arity form (row-layout? layout-string) is kept for backwards
+  compatibility; new code should call parse-layout or parse-row-layout
+  explicitly."
   ([layout-string]
-   (parse-layout false layout-string))
+   (parser/parse-layout-string false layout-string))
   ([row-layout? layout-string]
    (parser/parse-layout-string row-layout? layout-string)))
 
-(defn explain-layout
-  "Returns parse diagnostics for a layout string without throwing.
+(defn parse-row-layout
+  "Parses a row layout string into the diagnostic layout representation.
 
-  Column layout parsing is used by default. Pass true as the first argument to
-  explain a row layout. Returns {:valid? true :layout ...} when parsing
-  succeeds, otherwise {:valid? false :message ... :data ...}. The :data value is
-  the ex-data map that parse-layout would have thrown."
+  Row-layout markers like [-] or [=] use the bracket character as the row
+  drawing glyph rather than a cell alignment. See parse-layout for the column
+  variant and the same caveats about API stability."
+  [layout-string]
+  (parser/parse-layout-string true layout-string))
+
+(defn- explain* [row-layout? layout-string]
+  (try
+    {:valid? true
+     :layout (parser/parse-layout-string row-layout? layout-string)}
+    (catch clojure.lang.ExceptionInfo e
+      {:valid? false
+       :message (ex-message e)
+       :data (ex-data e)})))
+
+(defn explain-layout
+  "Returns parse diagnostics for a column layout string without throwing.
+
+  Returns {:valid? true :layout ...} when parsing succeeds, otherwise
+  {:valid? false :message ... :data ...}. The :data value is the ex-data map
+  that parse-layout would have thrown. Use explain-row-layout for row layouts.
+
+  The 2-arity form (row-layout? layout-string) is kept for backwards
+  compatibility."
   ([layout-string]
-   (explain-layout false layout-string))
+   (explain* false layout-string))
   ([row-layout? layout-string]
-   (try
-     {:valid? true
-      :layout (parse-layout row-layout? layout-string)}
-     (catch clojure.lang.ExceptionInfo e
-       {:valid? false
-        :message (ex-message e)
-        :data (ex-data e)}))))
+   (explain* row-layout? layout-string)))
+
+(defn explain-row-layout
+  "Returns parse diagnostics for a row layout string without throwing.
+
+  Behaves like explain-layout but parses with row-layout semantics."
+  [layout-string]
+  (explain* true layout-string))
