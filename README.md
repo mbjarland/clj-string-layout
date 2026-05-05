@@ -9,10 +9,14 @@
 
 The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
 
-For lower-level `layout` examples, see the [recipe book](doc/recipes.md). For
-high-level `table` format comparisons, see the
-[examples gallery](doc/examples-gallery.md). For planned improvements, see the
-[project TODO](doc/TODO.md).
+- High-level [table API guide](doc/table-api.md) and
+  [examples gallery](doc/examples-gallery.md) for named formats.
+- [Layout language reference](doc/layout-language.md) for the DSL grammar.
+- [Recipe book](doc/recipes.md) for paste-able lower-level examples.
+- [Preset catalog](doc/presets.md) for every built-in layout var.
+- [CLI guide](doc/cli.md) for command-line formatting.
+- [Errors reference](doc/errors.md) for `ex-data` shapes.
+- [Project TODO](doc/TODO.md) for planned improvements.
 
 ## Installation
 
@@ -315,115 +319,23 @@ Example Markdown table:
 
 ## Built-In Layouts
 
-Built-in layouts are available in `clj-string-layout.presets` and re-exported
-from `clj-string-layout.layout` for compatibility.
-
-Plain column layouts:
-
-| Var | Alignment | Behavior |
-| --- | --- | --- |
-| `layout-plain-left` | Left | Two spaces between columns, no borders. |
-| `layout-plain-center` | Center | Two spaces between columns, no borders. |
-| `layout-plain-right` | Right | Two spaces between columns, no borders. |
-
-Separated-value layouts:
-
-| Var | Separator | Behavior |
-| --- | --- | --- |
-| `layout-tsv` | Tab | Emits verbatim tab-separated cells. Escape tabs and line breaks with `escape/tsv-cell`. |
-| `layout-csv` | Comma | Emits verbatim comma-separated cells. Escape data with `escape/csv-cell`. |
-| `layout-pipe-separated` | Pipe | Emits compact pipe-separated cells without Markdown header rows. |
-
-Box-drawing layouts:
-
-| Var | Alignment | Fill-aware |
-| --- | --- | --- |
-| `layout-ascii-box-left` | Left | No |
-| `layout-ascii-box-center` | Center | No |
-| `layout-ascii-box-right` | Right | No |
-| `layout-ascii-box-fill-left` | Left | Yes |
-| `layout-ascii-box-fill-center` | Center | Yes |
-| `layout-ascii-box-fill-right` | Right | Yes |
-
-Norton Commander-style layouts:
-
-| Var | Alignment | Fill-aware |
-| --- | --- | --- |
-| `layout-norton-commander-left` | Left | No |
-| `layout-norton-commander-center` | Center | No |
-| `layout-norton-commander-right` | Right | No |
-| `layout-norton-commander-fill-left` | Left | Yes |
-| `layout-norton-commander-fill-center` | Center | Yes |
-| `layout-norton-commander-fill-right` | Right | Yes |
-
-ASCII grid layouts using only `+`, `-`, and `|`:
-
-| Var | Alignment | Fill-aware |
-| --- | --- | --- |
-| `layout-ascii-grid-left` | Left | No |
-| `layout-ascii-grid-center` | Center | No |
-| `layout-ascii-grid-right` | Right | No |
-| `layout-ascii-grid-fill-left` | Left | Yes |
-| `layout-ascii-grid-fill-center` | Center | Yes |
-| `layout-ascii-grid-fill-right` | Right | Yes |
-
-Terminal and documentation layouts:
-
-| Var | Format | Behavior |
-| --- | --- | --- |
-| `layout-psql-left` | PostgreSQL psql | Left-aligned cells with a separator after the first row. |
-| `layout-psql-right` | PostgreSQL psql | Right-aligned cells with a separator after the first row. |
-| `layout-rst-simple` | reStructuredText | Simple table with top, header, and bottom rules. |
-| `layout-org-left` | Org mode | Left-aligned table with a separator after the first row. |
-| `layout-org-right` | Org mode | Right-aligned table with a separator after the first row. |
-
-Markdown layouts:
-
-| Var | Alignment | Fill-aware |
-| --- | --- | --- |
-| `layout-markdown-left` | Left | No |
-| `layout-markdown-center` | Center | No |
-| `layout-markdown-right` | Right | No |
-| `layout-markdown-fill-left` | Left | Yes |
-| `layout-markdown-fill-center` | Center | Yes |
-| `layout-markdown-fill-right` | Right | Yes |
-
-HTML layouts:
-
-| Var | Behavior |
-| --- | --- |
-| `layout-html-table` | Emits `<table>`, one `<tr>` per input row, and verbatim `<td>` contents. |
-| `layout-html-table-readable` | Same shape, but left-aligns cell contents for more readable source output. |
-
-HTML example:
+Built-in layouts live in `clj-string-layout.presets` (re-exported from
+`clj-string-layout.layout` for compatibility). The catalog includes plain
+column, separated-value, Markdown, HTML, ASCII grid, box-drawing, Norton
+Commander, psql, Org mode, and reStructuredText layouts.
 
 ```clojure
-(layout "Alice why\na raven" layouts/layout-html-table)
+(layout "Alice why\na raven" presets/layout-html-table)
 ;; => ["<table>"
 ;;     "  <tr><td>Alice</td><td>why</td></tr>"
 ;;     "  <tr><td>a</td><td>raven</td></tr>"
 ;;     "</table>"]
 ```
 
-Markup and separated-value presets emit cell contents verbatim by default. Escape
-input cells before rendering when the data is not already safe for the target
-format:
-
-```clojure
-(layout (escape/map-cells escape/html [["<Alice>" "tea & cake"]])
-        layouts/layout-html-table)
-;; => ["<table>"
-;;     "  <tr><td>&lt;Alice&gt;</td><td>tea &amp; cake</td></tr>"
-;;     "</table>"]
-
-(layout (escape/map-cells escape/markdown-cell [["name" "a|b"]])
-        layouts/layout-markdown-left)
-;; => ["| name | a\\|b |"
-;;     "|:---- |:----- |"]
-```
-
-Additional helpers include `escape/tsv-cell`, `escape/org-cell`,
-`escape/rst-cell`, and `escape/log-safe` for common single-line outputs.
+See the [preset catalog](doc/presets.md) for the full list, fill-aware
+variants, and per-format escaping notes. Markup and separated-value presets
+emit cell contents verbatim, so escape untrusted data first with the helpers
+in `clj-string-layout.escape`.
 
 ## Raw Output
 
@@ -485,30 +397,20 @@ For structured validation and parse error shapes, see the
 
 ## Command Line
 
-Use the `:cli` alias to format CSV, TSV, or whitespace-separated data from stdin
-or a file:
+Use the `:cli` alias (or `bb format`) to format CSV, TSV, or whitespace input
+from stdin or a file:
 
 ```sh
 clojure -M:cli -- --input csv --format markdown --headers data.csv
-clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
-```
-
-Supported input formats are `csv`, `tsv`, and `whitespace`. Supported output
-formats are the high-level table formats such as `plain`, `markdown`,
-`markdown-center`, `markdown-right`, `box`, `double-box`, `ascii-grid`, `csv`,
-`tsv`, `org`, `rst`, and `html`. `--from` and `--to` are aliases for `--input`
-and `--format`, and `--width N` sets the target width for fill-aware formats.
-Run `clojure -M:cli -- --help` for the complete option list.
-
-Babashka users can run the same formatter through `bb.edn`:
-
-```sh
-bb format -- --input csv --format markdown --headers data.csv
 bb format -- --input tsv --format ascii-grid < data.tsv
 ```
 
-Additional Babashka shortcuts are available as `bb test`, `bb lint`, and
-`bb jar`.
+`--from`/`--to` are aliases for `--input`/`--format`, and `--width N` sets the
+target width for fill-aware formats. See [the CLI guide](doc/cli.md) for the
+full option list, supported input/output formats, and the programmatic
+`cli/render` entry point.
+
+Other Babashka shortcuts are `bb test`, `bb lint`, `bb bench`, and `bb jar`.
 
 ## Development
 
@@ -575,7 +477,7 @@ Clojars, and creates a GitHub Release with the jar attached.
 
 ## Design Notes
 
-The library intentionally keeps the public API small. Most users need only `clj-string-layout.core/layout`, reusable predicates in `clj-string-layout.predicates`, and preset layouts in `clj-string-layout.layout`.
+The library intentionally keeps the public API small. Most users need only the high-level `clj-string-layout.table` API for named formats, or `clj-string-layout.core/layout` plus reusable predicates in `clj-string-layout.predicates` and preset layouts in `clj-string-layout.presets` for the lower-level DSL.
 
 The `f` and `F` characters are reserved as fill markers in layout delimiter positions. Use escaped literals such as `\f` or `\F` when delimiter text needs those characters literally.
 
