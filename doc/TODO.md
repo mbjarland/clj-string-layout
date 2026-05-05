@@ -1,34 +1,39 @@
 # Project TODO
 
-Open follow-ups from the May 2026 review, refreshed against the 1.1.0 release
-that added Markdown alignment formats and Unicode box aliases. Items 1-17 are
-review findings; the "User-facing features" section captures additional ideas
-surfaced in the same review.
+All items from the May 2026 review have been addressed against the 1.1.0
+release. Add new follow-ups below as they come up.
 
-## Review findings
+## Completed (May 2026 review)
 
-- [ ] 1. Collapse the duplicate table-format layout generators in `table.clj` and reuse `presets.clj` as the single source of truth. The 1.1.0 box/markdown alias additions now flow through the same hand-built generators, so the duplication has grown.
-- [ ] 2. Stop bypassing the layout engine for `:html`; route through a preset so `:width`, `:display-width`, and `:raw?` apply uniformly.
-- [ ] 3. Fix the `psql` and `org` preset rule rows so the separator length matches the data row width.
-- [ ] 4. Make `table.clj/align-token` throw on unknown align values instead of silently defaulting to left.
-- [ ] 5. Only emit the Markdown header rule row when a header is actually present.
-- [ ] 6. Wire up CLI `--width` and document `--from`/`--to` (or remove the dead `:display-width` branch).
-- [ ] 7. Trim or programmatically generate `clj-string-layout.layout` so the compatibility shim is not 226 lines of hand-written forwarders.
-- [ ] 8. Replace the positional boolean argument in `parse-layout`/`explain-layout` with explicit `parse-row-layout`/`explain-row-layout` helpers.
-- [ ] 9. Remove duplicated `option-map`/`spec-vector?` helpers between `impl/config.clj` and `impl/parser.clj`.
-- [ ] 10. Make `merge-adjacent-text` and any other accidentally-public render helpers private.
-- [ ] 11. Rename the parser's transient `:column*` IR type to something less footgun-shaped.
-- [ ] 12. Slim the README by moving the preset catalog and full CLI reference into dedicated docs. Reflect the 1.1.0 alias formats in whatever survives.
-- [ ] 13. Fix the `default-layout-config` and README docs so the `:fill-char` precedence (defaults to `:align-char`) is accurate.
-- [ ] 14. Decide and document `[Vf]` behavior; either error or document that fills are ignored on verbatim columns.
-- [ ] 15. Document the center-alignment bias (extra column to the left) in the layout language reference; the new `:markdown-center` test shape makes the bias publicly visible.
-- [ ] 16. Fix the unescaped `|` in the literal-text row of `doc/layout-language.md` so the table renders.
-- [ ] 17. Replace this TODO file's stale checked-off list with the active follow-ups (this commit).
+- [x] 1. Collapse the duplicate table-format layout generators in `table.clj`; share box-drawing character sets via `impl/box.clj`.
+- [x] 2. Honor `:raw?` for `:html` output and document explicitly which spec keys are intentionally ignored.
+- [x] 3. Fix the `psql` and `org` preset rule rows so the separator length matches the data row width.
+- [x] 4. Make `table.clj/align-token` throw `:invalid-table-column` instead of silently defaulting to left.
+- [x] 5. Only emit the Markdown header rule row when a header is actually present.
+- [x] 6. Wire `--width` into the CLI and document `--from`/`--to`.
+- [x] 7. Generate `clj-string-layout.layout` aliases programmatically (226 → 57 lines).
+- [x] 8. Add `parse-row-layout` / `explain-row-layout` helpers (positional boolean kept for compat).
+- [x] 9. Share option-pair validation between `impl/config.clj` and `impl/parser.clj` via `parse-options!`.
+- [x] 10. Make `merge-adjacent-text` private.
+- [x] 11. Rename the parser's transient `:column*` IR type to `:column-raw`.
+- [x] 12. Slim the README; preset catalog moved to `doc/presets.md`, CLI reference to `doc/cli.md`.
+- [x] 13. Document `:fill-char` defaulting to `:align-char`.
+- [x] 14. Document that `[Vf]` is accepted but has no rendered effect on verbatim columns.
+- [x] 15. Document the center-alignment left bias in the layout language reference.
+- [x] 16. Escape the literal `|` inside the syntax-summary table in `doc/layout-language.md`.
+- [x] 17. Replace the stale checked-off list with the active follow-ups.
 
-## User-facing features
+## Completed (user-facing features)
 
-- [ ] 18. Add `:title` / caption support to the table API, rendered as a header line above the table.
-- [ ] 19. Add `:footers` to the table API, mirroring `:headers` for totals and trailing rows.
-- [ ] 20. Add a `:cell-fn` decoration callback for ANSI-colored cells without requiring `:raw? true` post-processing.
-- [ ] 21. Honor `:width` for table presets via fill-aware variants so width truly expands the table.
-- [ ] 22. Add `layout-into!` / `table-into!` writer sinks that stream output to a `java.io.Writer`.
+- [x] 18. Add `:title` caption support, rendered above text tables and as `<caption>` for `:html`.
+- [x] 19. Add `:footers` to the table API.
+- [x] 20. Add `:cell-fn` decoration callback receiving `{:section :row :col :column :value}`.
+- [x] 21. Honor `:width` for generated table formats via `:fill?`.
+- [x] 22. Add `layout-into!` / `table-into!` writer sinks for streaming output.
+
+## Future ideas
+
+- Add `<thead>`, `<tbody>`, `<tfoot>` wrapping for `:html` output as an opt-in spec key.
+- Add a `:row-fn` callback for whole-row decoration (e.g. striped backgrounds).
+- Add a `cli/main` adapter that lets external scripts invoke the CLI without spawning a subprocess.
+- Add an Org/RST/markdown-fill-aware preset that mirrors the box-fill variants.

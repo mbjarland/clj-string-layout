@@ -1,0 +1,6 @@
+{:linters
+ ;; clj-string-layout.layout interns its public vars at namespace load time
+ ;; from clj-string-layout.predicates and clj-string-layout.presets, so
+ ;; clj-kondo cannot statically see them. Suppress unresolved-var warnings
+ ;; for the compatibility shim only.
+ {:unresolved-var {:exclude [clj-string-layout.layout]}}}

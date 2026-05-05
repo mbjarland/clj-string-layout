@@ -8,8 +8,8 @@
 
   Each alias is generated programmatically from the corresponding source var so
   the file stays small as new presets are added."
-  (:require [clj-string-layout.predicates :as pred]
-            [clj-string-layout.presets :as presets]))
+  (:require clj-string-layout.predicates
+            clj-string-layout.presets))
 
 (defn- copy-var!
   "Interns a copy of source-var into the current namespace under sym.
