@@ -6,6 +6,7 @@
   clj-string-layout.core/layout when you need full DSL control."
   (:require [clj-string-layout.core :as core]
             [clj-string-layout.escape :as escape]
+            [clj-string-layout.impl.box :as box]
             [clj-string-layout.predicates :as pred]
             [clj-string-layout.presets :as presets]
             [clojure.string :as str]))
@@ -175,8 +176,11 @@
 (defn- alignments [columns default-align]
   (mapv #(or (:align %) default-align) columns))
 
-(defn- generated-cols [aligns separator]
-  (str/join separator (map #(str "[" (align-token %) "]") aligns)))
+(defn- align-tokens-for [aligns]
+  (mapv align-token aligns))
+
+(defn- plain-cols [tokens]
+  (str/join "  " (map #(str "[" % "]") tokens)))
 
 (defn- markdown-rule-cell [align]
   (case (align-token align)
@@ -184,42 +188,50 @@
     "R" " [-]:"
     ":[-] "))
 
-(defn- generated-rule [left sep right fill columns]
-  (let [marker (str "[" fill "]")]
-    (str left fill (str/join (str fill sep fill) (repeat (count columns) marker)) fill right)))
+(defn- markdown-cols [tokens]
+  (str "| " (str/join " | " (map #(str "[" % "]") tokens)) " |"))
+
+(defn- markdown-rule [aligns]
+  (str "|" (str/join "|" (map markdown-rule-cell aligns)) "|"))
+
+(defn- bordered-format-layout [chars tokens n single-rule?]
+  (let [cols (box/aligned-cols (:cols chars) tokens)
+        rule (fn [edge] (box/aligned-rule (get chars edge) n))]
+    {:layout {:cols [cols]
+              :rows (if single-rule?
+                      [[(rule :top) :apply-for pred/all-rows?]]
+                      [[(rule :top) :apply-for pred/first-row?]
+                       [(rule :middle) :apply-for pred/interior-row?]
+                       [(rule :bottom) :apply-for pred/last-row?]])}}))
+
+(def ^:private box-format-chars
+  {:box box/box-chars
+   :unicode-box box/box-chars
+   :ascii-box box/box-chars
+   :double-box box/double-box-chars
+   :unicode-double-box box/double-box-chars
+   :ascii-double-box box/double-box-chars
+   :ascii-grid box/ascii-grid-chars})
 
 (defn- generated-layout [format columns default-align header?]
-  (let [aligns (alignments columns default-align)]
+  (let [aligns (alignments columns default-align)
+        tokens (align-tokens-for aligns)
+        n (count columns)]
     (case format
-      :plain {:layout {:cols [(generated-cols aligns "  ")]}}
+      :plain {:layout {:cols [(plain-cols tokens)]}}
       (:markdown :markdown-left :markdown-center :markdown-right)
-      (cond-> {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]}}
+      (cond-> {:layout {:cols [(markdown-cols tokens)]}}
         header?
         (assoc-in [:layout :rows]
-                  [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
-                    :apply-for pred/second-row?]]))
+                  [[(markdown-rule aligns) :apply-for pred/second-row?]]))
 
-      (:box :unicode-box :ascii-box)
-      {:layout {:cols [(str "│ " (generated-cols aligns " │ ") " │")]
-                :rows [[(generated-rule "┌" "┬" "┐" "─" columns)
-                        :apply-for pred/first-row?]
-                       [(generated-rule "├" "┼" "┤" "─" columns)
-                        :apply-for pred/interior-row?]
-                       [(generated-rule "└" "┴" "┘" "─" columns)
-                        :apply-for pred/last-row?]]}}
+      (:box :unicode-box :ascii-box
+       :double-box :unicode-double-box :ascii-double-box)
+      (bordered-format-layout (get box-format-chars format) tokens n false)
 
-      (:double-box :unicode-double-box :ascii-double-box)
-      {:layout {:cols [(str "║ " (generated-cols aligns " ║ ") " ║")]
-                :rows [[(generated-rule "╔" "╦" "╗" "═" columns)
-                        :apply-for pred/first-row?]
-                       [(generated-rule "╠" "╬" "╣" "═" columns)
-                        :apply-for pred/interior-row?]
-                       [(generated-rule "╚" "╩" "╝" "═" columns)
-                        :apply-for pred/last-row?]]}}
+      :ascii-grid
+      (bordered-format-layout (get box-format-chars format) tokens n true)
 
-      :ascii-grid {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
-                            :rows [[(generated-rule "+" "+" "+" "-" columns)
-                                    :apply-for pred/all-rows?]]}}
       nil)))
 
 (defn- html-row [tag row]

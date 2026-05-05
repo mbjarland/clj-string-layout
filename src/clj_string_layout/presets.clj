@@ -5,7 +5,8 @@
   or layout-seq. They can also be assoc'ed with options such as :width,
   :display-width, :col-widths, or :raw?. Markup and separated-value presets emit
   cell contents verbatim; use clj-string-layout.escape for untrusted data."
-  (:require [clj-string-layout.predicates :as pred]))
+  (:require [clj-string-layout.impl.box :as box]
+            [clj-string-layout.predicates :as pred]))
 
 (defn- align-token [align fill?]
   (str "[" align (when fill? "f") "]"))
@@ -72,23 +73,9 @@
   {:layout {:cols [(org-cols align) :repeat-for [pred/first-col? pred/not-first-col?]]
             :rows [[(org-row) :apply-for pred/second-row?]]}})
 
-(def ^:private ascii-box-chars
-  {:cols {:left "│" :sep "│" :right "│"}
-   :top {:left "┌" :fill "─" :sep "┬" :right "┐"}
-   :middle {:left "├" :fill "─" :sep "┼" :right "┤"}
-   :bottom {:left "└" :fill "─" :sep "┴" :right "┘"}})
-
-(def ^:private norton-commander-chars
-  {:cols {:left "║" :sep "│" :right "║"}
-   :top {:left "╔" :fill "═" :sep "╤" :right "╗"}
-   :middle {:left "╟" :fill "─" :sep "┼" :right "╢"}
-   :bottom {:left "╚" :fill "═" :sep "╧" :right "╝"}})
-
-(def ^:private ascii-grid-chars
-  {:cols {:left "|" :sep "|" :right "|"}
-   :top {:left "+" :fill "-" :sep "+" :right "+"}
-   :middle {:left "+" :fill "-" :sep "+" :right "+"}
-   :bottom {:left "+" :fill "-" :sep "+" :right "+"}})
+(def ^:private ascii-box-chars box/box-chars)
+(def ^:private norton-commander-chars box/norton-commander-chars)
+(def ^:private ascii-grid-chars box/ascii-grid-chars)
 
 (def layout-plain-left
   "Plain whitespace-separated columns with left-aligned cells.
