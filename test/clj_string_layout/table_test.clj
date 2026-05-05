@@ -142,6 +142,25 @@
                            :headers ["A" "B"]
                            :rows [["x" "y"]]}))))))
 
+(deftest cell-fn-decorates-cells
+  (let [bold (fn [{:keys [section value]}]
+               (if (= :header section) (str "**" value "**") value))]
+    (is (= ["| **Name** | **Qty** |"
+            "|:-------- |:------- |"
+            "| apple    | 12      |"]
+           (table/table {:format :markdown
+                         :headers ["Name" "Qty"]
+                         :rows [["apple" "12"]]
+                         :cell-fn bold}))))
+  (let [tag (fn [{:keys [col value]}]
+              (str "[" col ":" value "]"))]
+    (is (= ["[0:Item]   [1:Qty]"
+            "[0:apple]  [1:12] "]
+           (table/table {:format :plain
+                         :headers ["Item" "Qty"]
+                         :rows [["apple" "12"]]
+                         :cell-fn tag})))))
+
 (deftest footers-render-below-data
   (is (= ["┌───────┬─────┐"
           "│ Item  │ Qty │"

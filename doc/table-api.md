@@ -161,6 +161,37 @@ Set `:escape? false` if you already escaped values yourself.
 ;;     "</table>"]
 ```
 
+## Cell Decoration
+
+Pass `:cell-fn` to wrap each cell value before the layout engine pads it.
+The callback receives a context map and must return a string:
+
+| Context key | Meaning |
+| --- | --- |
+| `:section` | One of `:header`, `:data`, `:footer`. |
+| `:row` | Zero-based row index within the section. |
+| `:col` | Column index. |
+| `:column` | The column spec map. |
+| `:value` | The post-format/escape value, ready to wrap. |
+
+```clojure
+(table/table {:format :markdown
+              :headers ["Name" "Qty"]
+              :rows [["apple" "12"]]
+              :cell-fn (fn [{:keys [section value]}]
+                         (if (= :header section)
+                           (str "**" value "**")
+                           value))})
+;; => ["| **Name** | **Qty** |"
+;;     "|:-------- |:------- |"
+;;     "| apple    | 12      |"]
+```
+
+When the callback adds non-printing characters such as ANSI color codes,
+also pass `:display-width clj-string-layout.width/ansi-width` so the layout
+engine pads using the original visible width rather than the byte length of
+the wrapped value.
+
 ## Footers
 
 Pass `:footers` (a vector of rows in the same shape as `:rows`) to render

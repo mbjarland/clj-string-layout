@@ -146,32 +146,51 @@
             (mapv #(get % line-idx "") cell-lines))
           (range line-count))))
 
-(defn- prepare-row [row columns escape-fn escape?]
+(defn- decorate [cell-fn section row-idx column value]
+  (if cell-fn
+    (cell-fn {:section section
+              :row row-idx
+              :col (:idx column)
+              :column column
+              :value value})
+    value))
+
+(defn- prepare-row [row row-idx section columns escape-fn escape? cell-fn]
   (let [cells (mapv (fn [column]
                        (let [value (-> (row-value row column)
                                        (apply-format column)
                                        str
                                        (overflow-cell column))]
                          (if (vector? value)
-                           (mapv #(if escape? (escape-fn %) %) value)
-                           (let [value (scalar-cell value)]
-                             (if escape? (escape-fn value) value)))))
+                           (mapv #(decorate cell-fn section row-idx column
+                                            (if escape? (escape-fn %) %))
+                                 value)
+                           (let [value (scalar-cell value)
+                                 value (if escape? (escape-fn value) value)]
+                             (decorate cell-fn section row-idx column value)))))
                      columns)]
     (expand-wrapped-row cells)))
 
-(defn- table-rows [{:keys [headers rows footers escape?] :as spec} columns escape-fn]
+(defn- table-rows [{:keys [headers rows footers escape? cell-fn] :as spec} columns escape-fn]
   (let [escape? (not (false? escape?))
         header-row (when (or headers (seq (:columns spec)))
                      (mapv #(column-title headers %) columns))
         header-rows (when header-row
                       (expand-wrapped-row
                         (mapv (fn [value column]
-                                (let [value (overflow-cell value column)]
-                                  (if escape? (escape-fn value) value)))
+                                (let [value (overflow-cell value column)
+                                      value (if escape? (escape-fn value) value)]
+                                  (decorate cell-fn :header 0 column value)))
                               header-row
                               columns)))
-        data-rows (mapcat #(prepare-row % columns escape-fn escape?) rows)
-        footer-rows (mapcat #(prepare-row % columns escape-fn escape?) footers)]
+        data-rows (mapcat (fn [row-idx row]
+                            (prepare-row row row-idx :data columns escape-fn escape? cell-fn))
+                          (range)
+                          rows)
+        footer-rows (mapcat (fn [row-idx row]
+                              (prepare-row row row-idx :footer columns escape-fn escape? cell-fn))
+                            (range)
+                            footers)]
     {:rows (vec (concat header-rows data-rows footer-rows))
      :header-count (count header-rows)
      :footer-count (count footer-rows)}))
@@ -293,11 +312,17 @@
   "Renders a high-level table spec to a vector of output lines.
 
   Required input is usually :rows, with optional :headers, :footers,
-  :columns, :title, and :format. Supported formats are returned by formats.
-  Column specs may contain :key, :title, :align, :format, :width, and
-  :overflow. Overflow policies are :none, :clip, :ellipsis, :wrap, and
-  :error. :footers accepts the same row shapes as :rows (vector rows or map
-  rows) and renders below the data with the same column treatment.
+  :columns, :title, :cell-fn, and :format. Supported formats are returned
+  by formats. Column specs may contain :key, :title, :align, :format,
+  :width, and :overflow. Overflow policies are :none, :clip, :ellipsis,
+  :wrap, and :error. :footers accepts the same row shapes as :rows.
+
+  :cell-fn is an optional decoration callback that receives a context map
+  with :section (one of :header, :data, :footer), :row (zero-based row
+  index within the section), :col (column index), :column (the column
+  spec), and :value (the post-format/escape cell value). It must return a
+  string. Use it together with :display-width when adding ANSI styling so
+  the layout engine pads with the original visible width.
 
   When :title is supplied it renders as a centered banner above the table for
   text formats and as a <caption> element for :html. The title is escaped with
