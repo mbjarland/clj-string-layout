@@ -87,7 +87,7 @@
       [[] fill-strings]
       layout)))
 
-(defn merge-adjacent-text [layout]
+(defn- merge-adjacent-text [layout]
   (reduce
     (fn [out entry]
       (if (and (text-entry? (peek out)) (text-entry? entry))
