@@ -60,6 +60,9 @@ Available formats are discoverable at runtime:
 | `:rst` | reStructuredText simple table. |
 | `:html` | HTML table with optional header row. |
 
+The Markdown formats only emit the `|:---|` rule row when a header is present
+(via `:headers` or `:columns`). Headerless data renders as plain pipe rows.
+
 ## Map Rows And Column Specs
 
 Column specs let you render maps directly and control titles, alignment,

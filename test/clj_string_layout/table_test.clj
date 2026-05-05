@@ -61,6 +61,16 @@
                                   :format #(format "$%.2f" (double %))}]
                        :rows [{:name "apple" :price 1.5}]}))))
 
+(deftest markdown-without-headers-omits-rule
+  (is (= ["| a | 1 |"
+          "| b | 2 |"]
+         (table/table {:format :markdown
+                       :rows [["a" "1"] ["b" "2"]]})))
+  (is (= ["| a | 1 |"
+          "| b | 2 |"]
+         (table/table {:format :markdown-center
+                       :rows [["a" "1"] ["b" "2"]]}))))
+
 (deftest unknown-alignment-throws
   (is (= :invalid-table-column
          (:type (ex-data (try

@@ -188,14 +188,16 @@
   (let [marker (str "[" fill "]")]
     (str left fill (str/join (str fill sep fill) (repeat (count columns) marker)) fill right)))
 
-(defn- generated-layout [format columns default-align]
+(defn- generated-layout [format columns default-align header?]
   (let [aligns (alignments columns default-align)]
     (case format
       :plain {:layout {:cols [(generated-cols aligns "  ")]}}
       (:markdown :markdown-left :markdown-center :markdown-right)
-      {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
-                :rows [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
-                        :apply-for pred/second-row?]]}}
+      (cond-> {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]}}
+        header?
+        (assoc-in [:layout :rows]
+                  [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
+                    :apply-for pred/second-row?]]))
 
       (:box :unicode-box :ascii-box)
       {:layout {:cols [(str "│ " (generated-cols aligns " │ ") " │")]
@@ -238,7 +240,7 @@
         rows (table-rows (assoc spec :rows rows) columns escape)
         header? (boolean (or (:headers spec) (seq (:columns spec))))
         layout-config (if (= :generated layout)
-                        (generated-layout format columns default-align)
+                        (generated-layout format columns default-align header?)
                         layout)]
     {:format format
      :rows rows
