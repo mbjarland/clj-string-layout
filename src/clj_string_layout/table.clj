@@ -237,13 +237,33 @@
 (defn- html-row [tag row]
   (str "  <tr>" (apply str (map #(str "<" tag ">" % "</" tag ">") row)) "</tr>"))
 
-(defn- render-html [rows header? raw?]
+(defn- html-caption [title escape? escape-fn]
+  (str "  <caption>" (if escape? (escape-fn title) title) "</caption>"))
+
+(defn- render-html [rows header? raw? title escape? escape-fn]
   (let [[header rows] (if header? [(first rows) (rest rows)] [nil rows])
         lines (vec (concat ["<table>"]
+                           (when title [(html-caption title escape? escape-fn)])
                            (when header [(html-row "th" header)])
                            (map #(html-row "td" %) rows)
                            ["</table>"]))]
     (if raw? (mapv vector lines) lines)))
+
+(defn- center-line [text width]
+  (let [pad (max 0 (- width (count text)))
+        left (quot pad 2)
+        right (- pad left)]
+    (str (apply str (repeat left \space)) text (apply str (repeat right \space)))))
+
+(defn- prepend-title [lines title raw?]
+  (if-not title
+    lines
+    (let [width (apply max 0 (map (if raw?
+                                    #(reduce + (map count %))
+                                    count)
+                                  lines))
+          banner (center-line title width)]
+      (vec (cons (if raw? [banner] banner) lines)))))
 
 (defn- table-plan [{:keys [rows] :as spec}]
   (let [format (default-format spec)
@@ -258,25 +278,35 @@
     {:format format
      :rows rows
      :header? header?
-     :layout-config layout-config}))
+     :layout-config layout-config
+     :escape escape}))
 
 (defn table
   "Renders a high-level table spec to a vector of output lines.
 
-  Required input is usually :rows, with optional :headers, :columns, and
-  :format. Supported formats are returned by formats. Column specs may contain
-  :key, :title, :align, :format, :width, and :overflow. Overflow policies are
-  :none, :clip, :ellipsis, :wrap, and :error.
+  Required input is usually :rows, with optional :headers, :columns, :title,
+  and :format. Supported formats are returned by formats. Column specs may
+  contain :key, :title, :align, :format, :width, and :overflow. Overflow
+  policies are :none, :clip, :ellipsis, :wrap, and :error.
+
+  When :title is supplied it renders as a centered banner above the table for
+  text formats and as a <caption> element for :html. The title is escaped with
+  the same per-format escaper unless :escape? false is set on the spec.
 
   The :width and :display-width spec keys are forwarded to the layout engine
   for every format that emits visually padded text. They are intentionally
   ignored for :html output, where the result is structural markup rather than
   padded text. :raw? is honored for every format, including :html."
   [spec]
-  (let [{:keys [format rows header? layout-config]} (table-plan spec)]
+  (let [{:keys [format rows header? layout-config escape]} (table-plan spec)
+        raw? (boolean (:raw? spec))
+        escape? (not (false? (:escape? spec)))
+        title (:title spec)]
     (if (= :html format)
-      (render-html rows header? (boolean (:raw? spec)))
-      (core/layout rows (merge layout-config (select-keys spec [:width :display-width :raw?]))))))
+      (render-html rows header? raw? title escape? escape)
+      (-> (core/layout rows (merge layout-config
+                                   (select-keys spec [:width :display-width :raw?])))
+          (prepend-title title raw?)))))
 
 (defn table-str
   "Renders a high-level table spec and joins the resulting lines with newlines."

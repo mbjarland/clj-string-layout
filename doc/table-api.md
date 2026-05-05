@@ -161,6 +161,29 @@ Set `:escape? false` if you already escaped values yourself.
 ;;     "</table>"]
 ```
 
+## Title / Caption
+
+Pass `:title` to render a caption above the table. For text formats the title
+is centered to the rendered width and emitted as a single line; for `:html`
+it becomes a `<caption>` element inside the `<table>`.
+
+```clojure
+(table/table {:format :box
+              :title "Inventory"
+              :headers ["Name" "Qty"]
+              :rows [["apple" "12"]]})
+;; =>
+;;    Inventory
+;; ┌───────┬─────┐
+;; │ Name  │ Qty │
+;; ├───────┼─────┤
+;; │ apple │ 12  │
+;; └───────┴─────┘
+```
+
+The title is escaped with the same per-format escaper unless `:escape? false`
+is set on the spec.
+
 ## Width, Display Width, And Raw Output
 
 `:width` and `:display-width` are forwarded to the layout engine for every

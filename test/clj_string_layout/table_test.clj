@@ -142,6 +142,27 @@
                            :headers ["A" "B"]
                            :rows [["x" "y"]]}))))))
 
+(deftest title-banner
+  (is (= ["   Inventory   "
+          "┌───────┬─────┐"
+          "│ Name  │ Qty │"
+          "├───────┼─────┤"
+          "│ apple │ 12  │"
+          "└───────┴─────┘"]
+         (table/table {:format :box
+                       :title "Inventory"
+                       :headers ["Name" "Qty"]
+                       :rows [["apple" "12"]]})))
+  (is (= ["<table>"
+          "  <caption>Inventory</caption>"
+          "  <tr><th>Name</th></tr>"
+          "  <tr><td>x</td></tr>"
+          "</table>"]
+         (table/table {:format :html
+                       :title "Inventory"
+                       :headers ["Name"]
+                       :rows [["x"]]}))))
+
 (deftest html-honors-raw
   (is (= [["<table>"]
           ["  <tr><th>A</th></tr>"]
