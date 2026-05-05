@@ -36,15 +36,21 @@ Available formats are discoverable at runtime:
 
 ```clojure
 (table/formats)
-;; => #{:plain :markdown :ascii-box :ascii-double-box :ascii-grid :csv :tsv :pipe :psql :org :rst :html}
+;; => #{:plain :markdown :markdown-left :markdown-center :markdown-right
+;;      :box :double-box :unicode-box :unicode-double-box
+;;      :ascii-box :ascii-double-box :ascii-grid
+;;      :csv :tsv :pipe :psql :org :rst :html}
 ```
 
 | Format | Output |
 | --- | --- |
 | `:plain` | Whitespace-separated aligned columns. |
 | `:markdown` | Markdown pipe table. |
-| `:ascii-box` | Unicode box-drawing table with `┌─┬─┐` borders. |
-| `:ascii-double-box` | Unicode box-drawing table with `╔═╦═╗` borders. |
+| `:markdown-left` | Markdown pipe table with left-aligned columns. |
+| `:markdown-center` | Markdown pipe table with center-aligned columns. |
+| `:markdown-right` | Markdown pipe table with right-aligned columns. |
+| `:box` | Unicode box-drawing table with `┌─┬─┐` borders. Aliases: `:unicode-box`, `:ascii-box`. |
+| `:double-box` | Unicode box-drawing table with `╔═╦═╗` borders. Aliases: `:unicode-double-box`, `:ascii-double-box`. |
 | `:ascii-grid` | ASCII `+---+` table. |
 | `:csv` | Comma-separated values, CSV-escaped by default. |
 | `:tsv` | Tab-separated values. |

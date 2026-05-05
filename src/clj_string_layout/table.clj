@@ -13,6 +13,13 @@
 (def ^:private format-defaults
   {:plain {:escape identity :layout :generated :default-align :left}
    :markdown {:escape escape/markdown-cell :layout :generated :default-align :left}
+   :markdown-left {:escape escape/markdown-cell :layout :generated :default-align :left}
+   :markdown-center {:escape escape/markdown-cell :layout :generated :default-align :center}
+   :markdown-right {:escape escape/markdown-cell :layout :generated :default-align :right}
+   :box {:escape identity :layout :generated :default-align :left}
+   :double-box {:escape identity :layout :generated :default-align :left}
+   :unicode-box {:escape identity :layout :generated :default-align :left}
+   :unicode-double-box {:escape identity :layout :generated :default-align :left}
    :ascii-box {:escape identity :layout :generated :default-align :left}
    :ascii-double-box {:escape identity :layout :generated :default-align :left}
    :ascii-grid {:escape identity :layout :generated :default-align :left}
@@ -180,23 +187,29 @@
   (let [aligns (alignments columns default-align)]
     (case format
       :plain {:layout {:cols [(generated-cols aligns "  ")]}}
-      :markdown {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
-                          :rows [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
-                                  :apply-for pred/second-row?]]}}
-      :ascii-box {:layout {:cols [(str "│ " (generated-cols aligns " │ ") " │")]
-                            :rows [[(generated-rule "┌" "┬" "┐" "─" columns)
-                                    :apply-for pred/first-row?]
-                                   [(generated-rule "├" "┼" "┤" "─" columns)
-                                    :apply-for pred/interior-row?]
-                                   [(generated-rule "└" "┴" "┘" "─" columns)
-                                    :apply-for pred/last-row?]]}}
-      :ascii-double-box {:layout {:cols [(str "║ " (generated-cols aligns " ║ ") " ║")]
-                                    :rows [[(generated-rule "╔" "╦" "╗" "═" columns)
-                                            :apply-for pred/first-row?]
-                                           [(generated-rule "╠" "╬" "╣" "═" columns)
-                                            :apply-for pred/interior-row?]
-                                           [(generated-rule "╚" "╩" "╝" "═" columns)
-                                            :apply-for pred/last-row?]]}}
+      (:markdown :markdown-left :markdown-center :markdown-right)
+      {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
+                :rows [[(str "|" (str/join "|" (map markdown-rule-cell aligns)) "|")
+                        :apply-for pred/second-row?]]}}
+
+      (:box :unicode-box :ascii-box)
+      {:layout {:cols [(str "│ " (generated-cols aligns " │ ") " │")]
+                :rows [[(generated-rule "┌" "┬" "┐" "─" columns)
+                        :apply-for pred/first-row?]
+                       [(generated-rule "├" "┼" "┤" "─" columns)
+                        :apply-for pred/interior-row?]
+                       [(generated-rule "└" "┴" "┘" "─" columns)
+                        :apply-for pred/last-row?]]}}
+
+      (:double-box :unicode-double-box :ascii-double-box)
+      {:layout {:cols [(str "║ " (generated-cols aligns " ║ ") " ║")]
+                :rows [[(generated-rule "╔" "╦" "╗" "═" columns)
+                        :apply-for pred/first-row?]
+                       [(generated-rule "╠" "╬" "╣" "═" columns)
+                        :apply-for pred/interior-row?]
+                       [(generated-rule "╚" "╩" "╝" "═" columns)
+                        :apply-for pred/last-row?]]}}
+
       :ascii-grid {:layout {:cols [(str "| " (generated-cols aligns " | ") " |")]
                             :rows [[(generated-rule "+" "+" "+" "-" columns)
                                     :apply-for pred/all-rows?]]}}

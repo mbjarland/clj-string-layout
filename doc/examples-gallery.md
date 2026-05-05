@@ -19,9 +19,10 @@ layouts, see the [recipe book](recipes.md) and
 ```
 
 The backing layout snippets below show the equivalent lower-level
-`clj-string-layout.core/layout` config for the sample's three left-aligned
-columns. The high-level table API still handles headers, map rows, escaping, and
-column specs before rendering.
+`clj-string-layout.core/layout` config for the sample data. Most examples use
+three left-aligned columns unless the section says otherwise. The high-level
+table API still handles headers, map rows, escaping, and column specs before
+rendering.
 
 ## Plain
 
@@ -61,6 +62,44 @@ Backing layout:
           :rows [["|:[-] |:[-] |:[-] |" :apply-for pred/second-row?]]}}
 ```
 
+## Markdown Alignment Formats
+
+Use `:markdown-left`, `:markdown-center`, or `:markdown-right` when every column
+should use the same Markdown alignment. `:markdown` is the same as
+`:markdown-left`.
+
+```clojure
+(table/table (assoc sample :format :markdown-center))
+```
+
+```markdown
+|  Name | Qty | Price |
+|:-----:|:---:|:-----:|
+| apple |  12 | $1.50 |
+|  pear |  4  | $2.00 |
+```
+
+```clojure
+(table/table (assoc sample :format :markdown-right))
+```
+
+```markdown
+|  Name | Qty | Price |
+| -----:| ---:| -----:|
+| apple |  12 | $1.50 |
+|  pear |   4 | $2.00 |
+```
+
+Backing layouts:
+
+```clojure
+{:layout {:cols ["| [C] | [C] | [C] |"]
+          :rows [["|:[-]:|:[-]:|:[-]:|" :apply-for pred/second-row?]]}}
+
+{:layout {:cols ["| [R] | [R] | [R] |"]
+          :rows [["| [-]:| [-]:| [-]:|" :apply-for pred/second-row?]]}}
+```
+
 ## ASCII Grid
 
 ```clojure
@@ -84,10 +123,10 @@ Backing layout:
           :rows [["+-[-]-+-[-]-+-[-]-+" :apply-for pred/all-rows?]]}}
 ```
 
-## ASCII Box
+## Box
 
 ```clojure
-(table/table (assoc sample :format :ascii-box))
+(table/table (assoc sample :format :box))
 ```
 
 ```text
@@ -109,10 +148,12 @@ Backing layout:
                  ["└─[─]─┴─[─]─┴─[─]─┘" :apply-for pred/last-row?]]}}
 ```
 
-## ASCII Double Box
+Aliases: `:unicode-box` and `:ascii-box`.
+
+## Double Box
 
 ```clojure
-(table/table (assoc sample :format :ascii-double-box))
+(table/table (assoc sample :format :double-box))
 ```
 
 ```text
@@ -134,6 +175,8 @@ Backing layout:
                  ["╚═[═]═╩═[═]═╩═[═]═╝" :apply-for pred/last-row?]]}}
 ```
 
+Aliases: `:unicode-double-box` and `:ascii-double-box`.
+
 ## CSV
 
 ```clojure
@@ -149,8 +192,7 @@ pear,4,$2.00
 Backing layout:
 
 ```clojure
-{:layout {:cols ["{[V]}{,[V]}"
-                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
+{:layout {:cols ["{[V]}{,[V]}" :repeat-for [pred/first-col? pred/not-first-col?]]}}
 ```
 
 ## TSV
@@ -168,8 +210,7 @@ pear	4	$2.00
 Backing layout:
 
 ```clojure
-{:layout {:cols ["{[V]}{\t[V]}"
-                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
+{:layout {:cols ["{[V]}{\t[V]}" :repeat-for [pred/first-col? pred/not-first-col?]]}}
 ```
 
 ## Pipe
@@ -187,8 +228,7 @@ pear|4|$2.00
 Backing layout:
 
 ```clojure
-{:layout {:cols ["{[V]}{|[V]}"
-                 :repeat-for [pred/first-col? pred/not-first-col?]]}}
+{:layout {:cols ["{[V]}{|[V]}" :repeat-for [pred/first-col? pred/not-first-col?]]}}
 ```
 
 ## psql
@@ -227,8 +267,7 @@ Backing layout:
 Backing layout:
 
 ```clojure
-{:layout {:cols ["{| [L] }{| [L] }|"
-                 :repeat-for [pred/first-col? pred/not-first-col?]]
+{:layout {:cols ["{| [L] }{| [L] }|" :repeat-for [pred/first-col? pred/not-first-col?]]
           :rows [["{|[-]}{+[-]}|" :apply-for pred/second-row?]]}}
 ```
 
@@ -250,8 +289,7 @@ pear   4    $2.00
 Backing layout:
 
 ```clojure
-{:layout {:cols ["{[L]}{  [L]}"
-                 :repeat-for [pred/first-col? pred/not-first-col?]]
+{:layout {:cols ["{[L]}{  [L]}" :repeat-for [pred/first-col? pred/not-first-col?]]
           :rows [["{[=]}{  [=]}" :apply-for pred/first-row?]
                  ["{[=]}{  [=]}" :apply-for pred/second-row?]
                  ["{[=]}{  [=]}" :apply-for pred/last-row?]]}}

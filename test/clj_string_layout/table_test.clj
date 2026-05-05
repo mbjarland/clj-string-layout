@@ -5,6 +5,13 @@
 
 (deftest named-formats
   (is (contains? (table/formats) :markdown))
+  (is (contains? (table/formats) :markdown-left))
+  (is (contains? (table/formats) :markdown-center))
+  (is (contains? (table/formats) :markdown-right))
+  (is (contains? (table/formats) :box))
+  (is (contains? (table/formats) :double-box))
+  (is (contains? (table/formats) :unicode-box))
+  (is (contains? (table/formats) :unicode-double-box))
   (is (contains? (table/formats) :ascii-box))
   (is (contains? (table/formats) :ascii-double-box))
   (is (= :left (:default-align (table/format-info :plain))))
@@ -23,6 +30,26 @@
                                  {:key :qty :title "Qty" :align :right}]
                        :rows [{:name "apple" :qty 12}
                               {:name "pear" :qty 4}]}))))
+
+(deftest markdown-alignment-formats
+  (is (= ["| Name | Qty |"
+          "|:---- |:--- |"
+          "| a    | 12  |"]
+         (table/table {:format :markdown-left
+                       :headers ["Name" "Qty"]
+                       :rows [["a" "12"]]})))
+  (is (= ["| Name | Qty |"
+          "|:----:|:---:|"
+          "|   a  |  12 |"]
+         (table/table {:format :markdown-center
+                       :headers ["Name" "Qty"]
+                       :rows [["a" "12"]]})))
+  (is (= ["| Name | Qty |"
+          "| ----:| ---:|"
+          "|    a |  12 |"]
+         (table/table {:format :markdown-right
+                       :headers ["Name" "Qty"]
+                       :rows [["a" "12"]]}))))
 
 (deftest column-formatting
   (is (= ["Name   Price"
@@ -76,22 +103,26 @@
                        :rows [["a&b"]]}))))
 
 (deftest box-drawing-table-format
-  (is (= ["┌───┬───┐"
-          "│ A │ B │"
-          "├───┼───┤"
-          "│ x │ y │"
-          "└───┴───┘"]
-         (table/table {:format :ascii-box
-                       :headers ["A" "B"]
-                       :rows [["x" "y"]]})))
-  (is (= ["╔═══╦═══╗"
-          "║ A ║ B ║"
-          "╠═══╬═══╣"
-          "║ x ║ y ║"
-          "╚═══╩═══╝"]
-         (table/table {:format :ascii-double-box
-                       :headers ["A" "B"]
-                       :rows [["x" "y"]]}))))
+  (let [single ["┌───┬───┐"
+                "│ A │ B │"
+                "├───┼───┤"
+                "│ x │ y │"
+                "└───┴───┘"]
+        double ["╔═══╦═══╗"
+                "║ A ║ B ║"
+                "╠═══╬═══╣"
+                "║ x ║ y ║"
+                "╚═══╩═══╝"]]
+    (doseq [format [:box :unicode-box :ascii-box]]
+      (is (= single
+             (table/table {:format format
+                           :headers ["A" "B"]
+                           :rows [["x" "y"]]}))))
+    (doseq [format [:double-box :unicode-double-box :ascii-double-box]]
+      (is (= double
+             (table/table {:format format
+                           :headers ["A" "B"]
+                           :rows [["x" "y"]]}))))))
 
 (deftest string-and-seq-entry-points
   (let [spec {:format :ascii-grid

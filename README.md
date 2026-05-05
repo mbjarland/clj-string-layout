@@ -19,7 +19,7 @@ high-level `table` format comparisons, see the
 Add the library to `deps.edn`:
 
 ```clojure
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.0.4"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.1.0"}}}
 ```
 
 Versions before `1.0.4` used the older `com.github.mbjarland` Maven group.
@@ -55,9 +55,9 @@ layout strings directly:
 ;;     "| pear  |   4 |"]
 ```
 
-Named formats include `:plain`, `:markdown`, `:ascii-box`,
-`:ascii-double-box`, `:ascii-grid`, `:csv`, `:tsv`, `:pipe`, `:psql`, `:org`,
-`:rst`, and `:html`. See the
+Named formats include `:plain`, `:markdown`, `:markdown-left`,
+`:markdown-center`, `:markdown-right`, `:box`, `:double-box`, `:ascii-grid`,
+`:csv`, `:tsv`, `:pipe`, `:psql`, `:org`, `:rst`, and `:html`. See the
 [table API guide](doc/table-api.md) for column specs, formatters, escaping, and
 overflow policies.
 
@@ -495,8 +495,8 @@ clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
 
 Supported input formats are `csv`, `tsv`, and `whitespace`. Supported output
 formats are the high-level table formats such as `plain`, `markdown`,
-`ascii-box`, `ascii-double-box`, `ascii-grid`, `csv`, `tsv`, `org`, `rst`, and
-`html`. Run
+`markdown-center`, `markdown-right`, `box`, `double-box`, `ascii-grid`, `csv`,
+`tsv`, `org`, `rst`, and `html`. Run
 `clojure -M:cli -- --help` for the complete option list.
 
 Babashka users can run the same formatter through `bb.edn`:
@@ -551,8 +551,8 @@ clojure -T:deploy deploy
 
 Releases are published by GitHub Actions when a version tag is pushed. The tag
 must be prefixed with `v` and must match `version.edn`. For example,
-`version.edn` containing `{:version "1.0.4"}` must be released with tag
-`v1.0.4`.
+`version.edn` containing `{:version "1.1.0"}` must be released with tag
+`v1.1.0`.
 
 Required repository secrets:
 
@@ -564,8 +564,8 @@ Required repository secrets:
 Release steps:
 
 ```sh
-git tag -a v1.0.4 -m "Release v1.0.4"
-git push origin v1.0.4
+git tag -a v1.1.0 -m "Release v1.1.0"
+git push origin v1.1.0
 ```
 
 The release workflow then runs linting, tests, and jar builds on Java 11, 17,

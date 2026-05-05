@@ -4,10 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-05
+
 ### Added
 
 - Added high-level `clj-string-layout.table` APIs with named formats, column specs, map-row support, and overflow policies.
 - Added high-level `:ascii-box` and `:ascii-double-box` table formats with Unicode box-drawing borders.
+- Added high-level Markdown alignment formats and clearer Unicode box aliases.
 - Added `clj-string-layout.width/ansi-width` and `strip-ansi` helpers for ANSI-styled terminal output.
 - Added Unicode-aware `codepoint-width`, `unicode-width`, and `terminal-width` display-width helpers.
 - Added TSV, Org mode, reStructuredText, and log-safe escaping helpers.
@@ -60,6 +63,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.1.0
 [1.0.4]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.0.4
 [1.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/1.0.2
