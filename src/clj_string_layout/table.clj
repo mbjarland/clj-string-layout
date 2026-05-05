@@ -55,13 +55,18 @@
 (defn- default-format [{:keys [format]}]
   (or format :plain))
 
+(def ^:private align-tokens
+  {:left "L" :l "L" "left" "L" "l" "L"
+   :center "C" :centre "C" :c "C" "center" "C" "centre" "C" "c" "C"
+   :right "R" :r "R" "right" "R" "r" "R"
+   :verbatim "V" :v "V" "verbatim" "V" "v" "V"})
+
 (defn- align-token [align]
-  (case align
-    (:left :l "left" "l") "L"
-    (:center :centre :c "center" "centre" "c") "C"
-    (:right :r "right" "r") "R"
-    (:verbatim :v "verbatim" "v") "V"
-    "L"))
+  (or (get align-tokens align)
+      (throw (ex-info "Unknown table column alignment"
+                      {:type :invalid-table-column
+                       :align align
+                       :allowed (sort-by str (keys align-tokens))}))))
 
 (defn- normalize-column [idx column]
   (cond
@@ -174,9 +179,9 @@
   (str/join separator (map #(str "[" (align-token %) "]") aligns)))
 
 (defn- markdown-rule-cell [align]
-  (case align
-    (:center :centre :c "center" "centre" "c") ":[-]:"
-    (:right :r "right" "r") " [-]:"
+  (case (align-token align)
+    "C" ":[-]:"
+    "R" " [-]:"
     ":[-] "))
 
 (defn- generated-rule [left sep right fill columns]

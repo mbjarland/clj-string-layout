@@ -61,6 +61,14 @@
                                   :format #(format "$%.2f" (double %))}]
                        :rows [{:name "apple" :price 1.5}]}))))
 
+(deftest unknown-alignment-throws
+  (is (= :invalid-table-column
+         (:type (ex-data (try
+                           (table/table {:format :plain
+                                         :columns [{:key 0 :title "x" :align :nope}]
+                                         :rows [["x"]]})
+                           (catch clojure.lang.ExceptionInfo e e)))))))
+
 (deftest overflow-policies
   (is (= ["Text"
           "a..."]
