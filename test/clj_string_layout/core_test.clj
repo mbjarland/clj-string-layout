@@ -354,7 +354,7 @@
           "+---+---+"]
          (layout [["a" "b"]] presets/layout-ascii-grid-center)))
   (is (= [" name   | qty"
-          "------+----"
+          "--------+----"
           " apple  | 12 "]
          (layout [["name" "qty"] ["apple" "12"]]
                  presets/layout-psql-left)))
@@ -366,7 +366,7 @@
          (layout [["name" "qty"] ["apple" "12"]]
                  presets/layout-rst-simple)))
   (is (= ["| name  | qty |"
-          "|-----+---|"
+          "|-------+-----|"
           "| apple | 12  |"]
          (layout [["name" "qty"] ["apple" "12"]]
                  presets/layout-org-left)))

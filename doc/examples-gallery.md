@@ -239,7 +239,7 @@ Backing layout:
 
 ```text
  Name   | Qty | Price
-------+-----+------
+--------+-----+--------
  apple  | 12  | $1.50
  pear   | 4   | $2.00
 ```
@@ -248,7 +248,7 @@ Backing layout:
 
 ```clojure
 {:layout {:cols [" [L] { | [L]}" :repeat-for [pred/not-first-col?]]
-          :rows [["[-]{-+-[-]}" :apply-for pred/second-row?]]}}
+          :rows [["-[-]-{-+-[-]}" :apply-for pred/second-row?]]}}
 ```
 
 ## Org Mode
@@ -259,7 +259,7 @@ Backing layout:
 
 ```text
 | Name  | Qty | Price |
-|-----+---+-----|
+|-------+-----+-------|
 | apple | 12  | $1.50 |
 | pear  | 4   | $2.00 |
 ```
@@ -268,7 +268,7 @@ Backing layout:
 
 ```clojure
 {:layout {:cols ["{| [L] }{| [L] }|" :repeat-for [pred/first-col? pred/not-first-col?]]
-          :rows [["{|[-]}{+[-]}|" :apply-for pred/second-row?]]}}
+          :rows [["{|-[-]-}{+-[-]-}|" :apply-for pred/second-row?]]}}
 ```
 
 ## reStructuredText

@@ -147,7 +147,7 @@ Use `layout-psql-*` for terminal output similar to PostgreSQL's `psql`:
          ["apple" "12"]]
         layouts/layout-psql-left)
 ;; => [" name   | qty"
-;;     "------+----"
+;;     "--------+----"
 ;;     " apple  | 12 "]
 ```
 
@@ -158,7 +158,7 @@ Use `layout-org-*` for Org mode tables:
          ["apple" "12"]]
         layouts/layout-org-left)
 ;; => ["| name  | qty |"
-;;     "|-----+---|"
+;;     "|-------+-----|"
 ;;     "| apple | 12  |"]
 ```
 

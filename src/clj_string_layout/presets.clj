@@ -43,7 +43,7 @@
   (str " " (align-token align false) " { | " (align-token align false) "}"))
 
 (defn- psql-row []
-  "[-]{-+-[-]}")
+  "-[-]-{-+-[-]}")
 
 (defn- psql-layout [align]
   {:layout {:cols [(psql-cols align) :repeat-for [pred/not-first-col?]]
@@ -66,7 +66,7 @@
     (str "{| " token " }{| " token " }|")))
 
 (defn- org-row []
-  "{|[-]}{+[-]}|")
+  "{|-[-]-}{+-[-]-}|")
 
 (defn- org-layout [align]
   {:layout {:cols [(org-cols align) :repeat-for [pred/first-col? pred/not-first-col?]]
