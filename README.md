@@ -496,8 +496,9 @@ clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
 Supported input formats are `csv`, `tsv`, and `whitespace`. Supported output
 formats are the high-level table formats such as `plain`, `markdown`,
 `markdown-center`, `markdown-right`, `box`, `double-box`, `ascii-grid`, `csv`,
-`tsv`, `org`, `rst`, and `html`. Run
-`clojure -M:cli -- --help` for the complete option list.
+`tsv`, `org`, `rst`, and `html`. `--from` and `--to` are aliases for `--input`
+and `--format`, and `--width N` sets the target width for fill-aware formats.
+Run `clojure -M:cli -- --help` for the complete option list.
 
 Babashka users can run the same formatter through `bb.edn`:
 

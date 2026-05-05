@@ -13,9 +13,17 @@
                           "--format" "markdown"
                           "--headers"
                           "data.tsv"])))
+  (is (= 40
+         (:width (cli/parse-args ["--from" "csv" "--to" "ascii-grid" "--width" "40"]))))
+  (is (= :tsv
+         (:input (cli/parse-args ["--from" "tsv"]))))
   (is (= :cli-argument-error
          (:type (ex-data (try
                            (cli/parse-args ["--wat"])
+                           (catch clojure.lang.ExceptionInfo e e))))))
+  (is (= :cli-argument-error
+         (:type (ex-data (try
+                           (cli/parse-args ["--width" "wide"])
                            (catch clojure.lang.ExceptionInfo e e)))))))
 
 (deftest csv-rendering
