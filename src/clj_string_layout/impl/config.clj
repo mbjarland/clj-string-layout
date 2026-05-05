@@ -1,5 +1,5 @@
 (ns ^:no-doc clj-string-layout.impl.config
-  (:require [clj-string-layout.impl.error :refer [layout-error]]
+  (:require [clj-string-layout.impl.error :refer [layout-error parse-options!]]
             [clj-string-layout.impl.parser :as parser]
             [clojure.string :as str])
   (:import [java.util.regex Pattern]))
@@ -31,12 +31,7 @@
                    :value cols})))
 
 (defn- option-map [path options]
-  (when (odd? (count options))
-    (layout-error "Layout specification options must be key/value pairs"
-                  {:type :invalid-layout-config
-                   :path path
-                   :options options}))
-  (apply hash-map options))
+  (parse-options! options {:type :invalid-layout-config :path path}))
 
 (defn- validate-row-spec! [idx row-spec]
   (when-not (spec-vector? row-spec)

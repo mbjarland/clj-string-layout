@@ -1,5 +1,5 @@
 (ns ^:no-doc clj-string-layout.impl.parser
-  (:require [clj-string-layout.impl.error :refer [layout-error]]
+  (:require [clj-string-layout.impl.error :refer [layout-error parse-options!]]
             [instaparse.core :as insta]
             [instaparse.failure :as fail]))
 
@@ -101,10 +101,8 @@
 (defn parse-layout-spec
   "Parses a vector layout spec into {:layout <ir> ...options}."
   [row-layout? [layout-string & options]]
-  (when (odd? (count options))
-    (layout-error "Layout specification options must be key/value pairs"
-                  {:type :invalid-layout-spec
-                   :layout-string layout-string
-                   :options options}))
-  (merge {:layout (parse-layout-string row-layout? layout-string)}
-         (apply hash-map options)))
+  (let [option-map (parse-options! options
+                                   {:type :invalid-layout-spec
+                                    :layout-string layout-string})]
+    (merge {:layout (parse-layout-string row-layout? layout-string)}
+           option-map)))
