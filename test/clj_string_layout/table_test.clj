@@ -142,6 +142,30 @@
                            :headers ["A" "B"]
                            :rows [["x" "y"]]}))))))
 
+(deftest footers-render-below-data
+  (is (= ["┌───────┬─────┐"
+          "│ Item  │ Qty │"
+          "├───────┼─────┤"
+          "│ apple │ 12  │"
+          "├───────┼─────┤"
+          "│ pear  │ 4   │"
+          "├───────┼─────┤"
+          "│ Total │ 16  │"
+          "└───────┴─────┘"]
+         (table/table {:format :box
+                       :headers ["Item" "Qty"]
+                       :rows [["apple" "12"] ["pear" "4"]]
+                       :footers [["Total" "16"]]})))
+  (is (= ["<table>"
+          "  <tr><th>Item</th><th>Qty</th></tr>"
+          "  <tr><td>apple</td><td>12</td></tr>"
+          "  <tr><td>Total</td><td>16</td></tr>"
+          "</table>"]
+         (table/table {:format :html
+                       :headers ["Item" "Qty"]
+                       :rows [["apple" "12"]]
+                       :footers [["Total" "16"]]}))))
+
 (deftest title-banner
   (is (= ["   Inventory   "
           "┌───────┬─────┐"

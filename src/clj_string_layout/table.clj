@@ -159,7 +159,7 @@
                      columns)]
     (expand-wrapped-row cells)))
 
-(defn- table-rows [{:keys [headers rows escape?] :as spec} columns escape-fn]
+(defn- table-rows [{:keys [headers rows footers escape?] :as spec} columns escape-fn]
   (let [escape? (not (false? escape?))
         header-row (when (or headers (seq (:columns spec)))
                      (mapv #(column-title headers %) columns))
@@ -170,8 +170,11 @@
                                   (if escape? (escape-fn value) value)))
                               header-row
                               columns)))
-        data-rows (mapcat #(prepare-row % columns escape-fn escape?) rows)]
-    (vec (concat header-rows data-rows))))
+        data-rows (mapcat #(prepare-row % columns escape-fn escape?) rows)
+        footer-rows (mapcat #(prepare-row % columns escape-fn escape?) footers)]
+    {:rows (vec (concat header-rows data-rows footer-rows))
+     :header-count (count header-rows)
+     :footer-count (count footer-rows)}))
 
 (defn- alignments [columns default-align]
   (mapv #(or (:align %) default-align) columns))
@@ -240,12 +243,15 @@
 (defn- html-caption [title escape? escape-fn]
   (str "  <caption>" (if escape? (escape-fn title) title) "</caption>"))
 
-(defn- render-html [rows header? raw? title escape? escape-fn]
-  (let [[header rows] (if header? [(first rows) (rest rows)] [nil rows])
+(defn- render-html [rows header-count footer-count raw? title escape? escape-fn]
+  (let [[headers rest-rows] (split-at header-count rows)
+        body-count (- (count rest-rows) footer-count)
+        [body footers] (split-at body-count rest-rows)
         lines (vec (concat ["<table>"]
                            (when title [(html-caption title escape? escape-fn)])
-                           (when header [(html-row "th" header)])
-                           (map #(html-row "td" %) rows)
+                           (map #(html-row "th" %) headers)
+                           (map #(html-row "td" %) body)
+                           (map #(html-row "td" %) footers)
                            ["</table>"]))]
     (if raw? (mapv vector lines) lines)))
 
@@ -270,7 +276,7 @@
         {:keys [escape layout default-align]} (ensure-format format)
         columns (infer-columns spec)
         rows (or rows [])
-        rows (table-rows (assoc spec :rows rows) columns escape)
+        {:keys [rows header-count footer-count]} (table-rows (assoc spec :rows rows) columns escape)
         header? (boolean (or (:headers spec) (seq (:columns spec))))
         layout-config (if (= :generated layout)
                         (generated-layout format columns default-align header?)
@@ -278,16 +284,20 @@
     {:format format
      :rows rows
      :header? header?
+     :header-count header-count
+     :footer-count footer-count
      :layout-config layout-config
      :escape escape}))
 
 (defn table
   "Renders a high-level table spec to a vector of output lines.
 
-  Required input is usually :rows, with optional :headers, :columns, :title,
-  and :format. Supported formats are returned by formats. Column specs may
-  contain :key, :title, :align, :format, :width, and :overflow. Overflow
-  policies are :none, :clip, :ellipsis, :wrap, and :error.
+  Required input is usually :rows, with optional :headers, :footers,
+  :columns, :title, and :format. Supported formats are returned by formats.
+  Column specs may contain :key, :title, :align, :format, :width, and
+  :overflow. Overflow policies are :none, :clip, :ellipsis, :wrap, and
+  :error. :footers accepts the same row shapes as :rows (vector rows or map
+  rows) and renders below the data with the same column treatment.
 
   When :title is supplied it renders as a centered banner above the table for
   text formats and as a <caption> element for :html. The title is escaped with
@@ -298,12 +308,12 @@
   ignored for :html output, where the result is structural markup rather than
   padded text. :raw? is honored for every format, including :html."
   [spec]
-  (let [{:keys [format rows header? layout-config escape]} (table-plan spec)
+  (let [{:keys [format rows header-count footer-count layout-config escape]} (table-plan spec)
         raw? (boolean (:raw? spec))
         escape? (not (false? (:escape? spec)))
         title (:title spec)]
     (if (= :html format)
-      (render-html rows header? raw? title escape? escape)
+      (render-html rows header-count footer-count raw? title escape? escape)
       (-> (core/layout rows (merge layout-config
                                    (select-keys spec [:width :display-width :raw?])))
           (prepend-title title raw?)))))

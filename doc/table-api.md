@@ -161,6 +161,33 @@ Set `:escape? false` if you already escaped values yourself.
 ;;     "</table>"]
 ```
 
+## Footers
+
+Pass `:footers` (a vector of rows in the same shape as `:rows`) to render
+trailing rows below the data. Footers are useful for totals, summaries, or
+any row that should be styled the same as data but always appear last.
+
+```clojure
+(table/table {:format :box
+              :headers ["Item" "Qty"]
+              :rows [["apple" 12] ["pear" 4]]
+              :footers [["Total" 16]]})
+;; ┌───────┬─────┐
+;; │ Item  │ Qty │
+;; ├───────┼─────┤
+;; │ apple │ 12  │
+;; ├───────┼─────┤
+;; │ pear  │ 4   │
+;; ├───────┼─────┤
+;; │ Total │ 16  │
+;; └───────┴─────┘
+```
+
+Box-drawing formats automatically separate footers from the data with the
+same interior rule used between data rows. For `:html`, footers are emitted
+as `<tr><td>` rows after the data; wrap them in `<tfoot>` post-render if you
+need the structural element.
+
 ## Title / Caption
 
 Pass `:title` to render a caption above the table. For text formats the title
