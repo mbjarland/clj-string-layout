@@ -12,6 +12,8 @@
             [clj-string-layout.impl.render :as render]
             [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (def default-layout-config
   "Default configuration merged into every layout config.
 

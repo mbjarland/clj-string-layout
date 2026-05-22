@@ -11,6 +11,8 @@
             [clj-string-layout.presets :as presets]
             [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (def ^:private format-defaults
   {:plain {:escape identity :layout :generated :default-align :left}
    :markdown {:escape escape/markdown-cell :layout :generated :default-align :left}

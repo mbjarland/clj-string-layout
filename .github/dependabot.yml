@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  # Keep the GitHub Actions versions in CI and Release workflows current.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Stockholm
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+
+  # Dependabot does not yet have a first-class deps.edn ecosystem, but it
+  # does watch Maven coordinates declared in deps.edn via the maven
+  # ecosystem when the file is parsable. If/when first-class deps.edn
+  # support lands we get those updates automatically; until then, the
+  # CI's reflection / lint / test steps and the manual `clojure -M:lint`
+  # workflow remain the safety net.
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: monthly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Stockholm
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies

@@ -11,6 +11,8 @@
   (:require clj-string-layout.predicates
             clj-string-layout.presets))
 
+(set! *warn-on-reflection* true)
+
 (defn- copy-var!
   "Interns a copy of source-var into the current namespace under sym.
 

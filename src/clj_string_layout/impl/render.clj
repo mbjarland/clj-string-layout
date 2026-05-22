@@ -2,6 +2,8 @@
   (:require [clj-string-layout.impl.error :refer [layout-error]]
             [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (defn- text-entry? [entry]
   (= :text (:type entry)))
 

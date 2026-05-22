@@ -1,5 +1,7 @@
 (ns ^:no-doc clj-string-layout.impl.error)
 
+(set! *warn-on-reflection* true)
+
 (defn layout-error
   ([message]
    (layout-error message {}))

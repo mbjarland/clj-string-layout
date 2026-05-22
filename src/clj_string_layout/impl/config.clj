@@ -4,6 +4,8 @@
             [clojure.string :as str])
   (:import [java.util.regex Pattern]))
 
+(set! *warn-on-reflection* true)
+
 (def default-layout-config
   {:align-char \space
    :fill-char \space

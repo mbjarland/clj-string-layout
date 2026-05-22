@@ -1,4 +1,4 @@
-{:paths ["src" "test"]
+{:paths ["src" "test" "bench"]
 
  :tasks
  {format
@@ -14,6 +14,11 @@
   {:doc "Run the bb-compatible test suite under Babashka"
    :requires ([clj-string-layout.bb-test-runner])
    :task (clj-string-layout.bb-test-runner/-main)}
+
+  bb-bench
+  {:doc "Run benchmarks natively under Babashka (no JVM startup)"
+   :requires ([clj-string-layout.bench])
+   :task (clj-string-layout.bench/-main)}
 
   test
   {:doc "Run the Clojure test suite"

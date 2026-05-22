@@ -6,6 +6,8 @@
   here so adding or tweaking a box style is a one-place change."
   (:require [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (def box-chars
   "Single-line Unicode box-drawing character set."
   {:cols {:left "│" :sep "│" :right "│"}

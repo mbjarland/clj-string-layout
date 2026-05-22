@@ -6,6 +6,8 @@
   escape untrusted or arbitrary data before passing it to layout or layout-seq."
   (:require [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (defn- cell-string [value]
   (if (nil? value) "" (str value)))
 

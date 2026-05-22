@@ -6,6 +6,8 @@
   used with :repeat-for on [:layout :cols]. Row predicates are used with
   :apply-for on entries in [:layout :rows].")
 
+(set! *warn-on-reflection* true)
+
 (defn- first-index? [[idx _]]
   (zero? idx))
 

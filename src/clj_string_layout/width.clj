@@ -2,6 +2,8 @@
   "Display-width helpers for use with the :display-width layout option."
   (:require [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (def ^:private ansi-escape-pattern
   ;; Covers common color/style CSI sequences, OSC links, and single-byte ESC codes.
   (re-pattern (str "\u001B(?:"

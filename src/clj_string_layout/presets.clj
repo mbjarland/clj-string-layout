@@ -8,6 +8,8 @@
   (:require [clj-string-layout.impl.box :as box]
             [clj-string-layout.predicates :as pred]))
 
+(set! *warn-on-reflection* true)
+
 (defn- align-token [align fill?]
   (str "[" align (when fill? "f") "]"))
 

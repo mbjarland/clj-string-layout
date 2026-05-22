@@ -42,9 +42,22 @@ Require the namespaces you need:
 
 The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum
 runtime. It is also Babashka-compatible — the parser is hand-rolled and the
-library has no third-party Clojure dependencies, so it can be required
-directly from a `bb` script with no JVM startup cost. See the
-[CLI guide](doc/cli.md) for the `bb-format` task.
+library has no third-party Clojure dependencies, so a `bb` script can require
+it directly without any JVM startup cost:
+
+```clojure
+#!/usr/bin/env bb
+(require '[babashka.deps :as deps])
+(deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
+                        {:mvn/version "1.2.0"}}})
+
+(require '[clj-string-layout.table :as table])
+(println (table/table-str {:format :box
+                           :headers ["Name" "Qty"]
+                           :rows [["apple" 12] ["pear" 4]]}))
+```
+
+See the [CLI guide](doc/cli.md) for the `bb-format` and `bb-bench` tasks.
 
 ## High-Level Table API
 

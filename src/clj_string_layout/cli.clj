@@ -3,6 +3,8 @@
   (:require [clj-string-layout.table :as table]
             [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 (def ^:private input-formats #{:csv :tsv :whitespace})
 
 (def ^:private default-options

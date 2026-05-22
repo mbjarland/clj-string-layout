@@ -23,6 +23,8 @@
   (:require [clj-string-layout.impl.error :refer [layout-error parse-options!]]
             [clojure.string :as str]))
 
+(set! *warn-on-reflection* true)
+
 ;; --- IR ---------------------------------------------------------------
 
 (def ^:private fill-entry {:type :fill})
