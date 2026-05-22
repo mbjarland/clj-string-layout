@@ -6,18 +6,52 @@
 [![cljdoc](https://cljdoc.org/badge/io.github.mbjarland/clj-string-layout)](https://cljdoc.org/d/io.github.mbjarland/clj-string-layout/CURRENT)
 [![License](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](LICENSE)
 
-`clj-string-layout` is a small Clojure library for turning rows of strings into aligned text layouts: simple columns, box-drawing tables, Markdown tables, HTML table snippets, and custom formats defined with a compact layout language.
+`clj-string-layout` turns rows of strings into aligned text — Markdown
+tables, box-drawing terminal output, CSV, HTML, psql, Org mode, and
+anything you can build out of the underlying layout DSL.
 
-The core idea is that column layouts describe how each data cell is aligned, while row layouts describe virtual rows inserted around or between the data rows. Repeating layout groups make the same layout work for any number of columns.
+## Three layers
 
-- High-level [table API guide](doc/table-api.md) and
-  [examples gallery](doc/examples-gallery.md) for named formats.
-- [Layout language reference](doc/layout-language.md) for the DSL grammar.
-- [Recipe book](doc/recipes.md) for paste-able lower-level examples.
-- [Preset catalog](doc/presets.md) for every built-in layout var.
-- [CLI guide](doc/cli.md) for command-line formatting.
-- [Errors reference](doc/errors.md) for `ex-data` shapes.
-- [Project TODO](doc/TODO.md) for planned improvements.
+The library is organised as a stack. Pick where you start; drop a
+level whenever the one above doesn't reach.
+
+```text
+┌─ HIGH ────────────────────────────────────────────────────────────────┐
+│ clj-string-layout.table                                               │
+│ (table/table {:format :box :columns [...] :rows [...]})               │
+│ → named formats with column specs, formatters, footers, captions      │
+├───────────────────────────────────────────────────────────────────────┤
+│ clj-string-layout.presets                                             │
+│ (layout rows presets/layout-markdown-left)                            │
+│ → ready-made layout configs you compose with the engine               │
+├───────────────────────────────────────────────────────────────────────┤
+│ clj-string-layout.core                                                │
+│ (layout rows {:layout {:cols ["[L] [R]"]}})                           │
+│ → the layout DSL: column markers, fills, repeats, virtual rows        │
+└─ LOW ─────────────────────────────────────────────────────────────────┘
+```
+
+- **`clj-string-layout.table`** is the high-level table API: named
+  formats (`:markdown`, `:box`, `:csv`, `:html`, …) with column specs,
+  per-cell formatters, footers, and captions. Most callers start (and
+  stop) here.
+- **`clj-string-layout.presets`** is a catalog of ready-made layout
+  configs for the same formats. Reach for it when you want one of
+  those formats but assoc'd with engine options the table API doesn't
+  surface (raw output, virtual rows, custom widths).
+- **`clj-string-layout.core/layout`** is the layout DSL itself —
+  column markers, fill regions, repeat groups, virtual row layouts.
+  This is the foundation the two upper layers are built on.
+
+Documentation for each layer:
+
+- High-level: [table API guide](doc/table-api.md) and
+  [examples gallery](doc/examples-gallery.md).
+- Presets: [preset catalog](doc/presets.md).
+- DSL: [layout language reference](doc/layout-language.md) and
+  [recipe book](doc/recipes.md).
+- Cross-cutting: [CLI guide](doc/cli.md) and
+  [errors reference](doc/errors.md).
 
 ## Installation
 
