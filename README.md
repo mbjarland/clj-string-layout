@@ -24,7 +24,7 @@ The core idea is that column layouts describe how each data cell is aligned, whi
 Add the library to `deps.edn`:
 
 ```clojure
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.0"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.1"}}}
 ```
 
 Versions before `1.0.4` used the older `com.github.mbjarland` Maven group.
@@ -50,7 +50,7 @@ it directly without any JVM startup cost:
 #!/usr/bin/env bb
 (require '[babashka.deps :as deps])
 (deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
-                        {:mvn/version "2.0.0"}}})
+                        {:mvn/version "2.0.1"}}})
 
 (require '[clj-string-layout.table :as table])
 (println (table/table-str {:format :box
@@ -594,8 +594,8 @@ clojure -T:deploy deploy
 
 Releases are published by GitHub Actions when a version tag is pushed. The tag
 must be prefixed with `v` and must match `version.edn`. For example,
-`version.edn` containing `{:version "2.0.0"}` must be released with tag
-`v2.0.0`.
+`version.edn` containing `{:version "2.0.1"}` must be released with tag
+`v2.0.1`.
 
 Required repository secrets:
 
@@ -607,8 +607,8 @@ Required repository secrets:
 Release steps:
 
 ```sh
-git tag -a v2.0.0 -m "Release v2.0.0"
-git push origin v2.0.0
+git tag -a v2.0.1 -m "Release v2.0.1"
+git push origin v2.0.1
 ```
 
 The release workflow runs linting, tests (JVM + Babashka), the reflection

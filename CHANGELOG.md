@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-05-22
+
+### Changed
+
+- Reworked the README opener: the same data is now rendered through
+  `:box`, `:markdown`, `:html`, and `:csv` so the breadth of the named
+  formats is visible at a glance. The dense reference paragraph that
+  followed it is replaced with four labelled subsections (Rows, Columns,
+  Format, Extras).
+- Release workflow now POSTs to `cljdoc.org/api/request-build2` after a
+  Clojars deploy succeeds, so new releases trigger documentation
+  indexing immediately.
+- README gains a cljdoc badge.
+- `CONTRIBUTING.md` documents the docs pipeline from release to cljdoc.
+
+No library behavior changes; documentation and release-automation only.
+
 ## [2.0.0] - 2026-05-22
 
 Breaking redesign of the high-level table column-spec API. Reading and
@@ -153,7 +170,8 @@ form is essentially `:key` → `:from`, `:title` → `:as`. If you used
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.1
 [2.0.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.0
 [1.2.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.2.0
 [1.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.1.0
