@@ -198,7 +198,12 @@
 (defn- format-list [values]
   (str/join ", " (map name (sort-by name values))))
 
-(defn usage []
+(defn usage
+  "Returns the human-readable usage string for the CLI.
+
+  Reflects whatever input and output format names are currently registered
+  by clj-string-layout.cli/input-formats and clj-string-layout.table/formats."
+  []
   (str "Usage: clojure -M:cli -- [options] [file|-]\n\n"
        "Reads stdin by default and writes formatted table lines to stdout.\n\n"
        "Options:\n"

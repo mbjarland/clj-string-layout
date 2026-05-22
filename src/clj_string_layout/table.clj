@@ -294,7 +294,13 @@
           banner (center-line title width)]
       (vec (cons (if raw? [banner] banner) lines)))))
 
+(defn- ensure-shape! [{:keys [rows headers columns]}]
+  (when (and (empty? rows) (empty? headers) (empty? columns))
+    (throw (ex-info "Table spec requires at least one of :rows, :headers, or :columns"
+                    {:type :empty-table-spec}))))
+
 (defn- table-plan [{:keys [rows] :as spec}]
+  (ensure-shape! spec)
   (let [format (default-format spec)
         {:keys [escape layout default-align]} (ensure-format format)
         columns (infer-columns spec)

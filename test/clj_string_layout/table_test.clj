@@ -71,6 +71,26 @@
          (table/table {:format :markdown-center
                        :rows [["a" "1"] ["b" "2"]]}))))
 
+(deftest empty-spec-throws
+  (is (= :empty-table-spec
+         (:type (ex-data (try
+                           (table/table {:format :plain})
+                           (catch clojure.lang.ExceptionInfo e e))))))
+  (is (= :empty-table-spec
+         (:type (ex-data (try
+                           (table/table {:format :plain :rows []})
+                           (catch clojure.lang.ExceptionInfo e e)))))))
+
+(deftest empty-rows-with-headers-is-ok
+  (is (= ["┌───┐"
+          "│ A │"
+          "└───┘"]
+         (table/table {:format :box :headers ["A"] :rows []})))
+  (is (= ["<table>"
+          "  <tr><th>A</th></tr>"
+          "</table>"]
+         (table/table {:format :html :headers ["A"] :rows []}))))
+
 (deftest unknown-alignment-throws
   (is (= :invalid-table-column
          (:type (ex-data (try
