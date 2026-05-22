@@ -59,35 +59,72 @@ it directly without any JVM startup cost:
 
 See the [CLI guide](doc/cli.md) for the `bb-format` and `bb-bench` tasks.
 
-## High-Level Table API
-
-Use `clj-string-layout.table` when you want common table formats without writing
-layout strings directly:
+## A taste
 
 ```clojure
-(table/table {:format :markdown
-              :columns [{:from :name :as "Name"}
-                        {:from :qty  :as "Qty" :align :right}]
-              :rows [{:name "apple" :qty 12}
-                     {:name "pear" :qty 4}]})
-;; => ["| Name  | Qty |"
-;;     "|:----- | ---:|"
-;;     "| apple |  12 |"
-;;     "| pear  |   4 |"]
+(def spec
+  {:format  :box
+   :title   "Inventory"
+   :columns [:item
+             {:from :qty   :as "Qty"   :align :right}
+             {:from :price :as "Price" :align :right
+              :formatter   #(format "$%.2f" %)}]
+   :rows    [{:item "apple" :qty 12 :price 1.50}
+             {:item "pear"  :qty  4 :price 2.00}
+             {:item "kiwi"  :qty  8 :price 0.75}]
+   :footers [["Total" 24 6.25]]})
+
+(println (table/table-str spec))
 ```
 
-Each `:columns` entry reads as a sentence: `{:from :qty :as "Qty" :align
-:right}` means "from `:qty`, as `\"Qty\"`, right-aligned". Map keys are
-`:from`, `:as`, `:align`, `:formatter`, `:width`, and `:overflow`. For
-columns that just need defaults, a bare keyword stands in for the whole
-map: `[:name :qty]` is the same as `[{:from :name :as "name"}
-{:from :qty :as "qty"}]`.
+```text
+       Inventory
+┌───────┬─────┬───────┐
+│ item  │ Qty │ Price │
+├───────┼─────┼───────┤
+│ apple │  12 │ $1.50 │
+├───────┼─────┼───────┤
+│ pear  │   4 │ $2.00 │
+├───────┼─────┼───────┤
+│ kiwi  │   8 │ $0.75 │
+├───────┼─────┼───────┤
+│ Total │  24 │ $6.25 │
+└───────┴─────┴───────┘
+```
 
-Named formats include `:plain`, `:markdown`, `:markdown-left`,
-`:markdown-center`, `:markdown-right`, `:box`, `:double-box`, `:ascii-grid`,
-`:csv`, `:tsv`, `:pipe`, `:psql`, `:org`, `:rst`, and `:html`. See the
-[table API guide](doc/table-api.md) for column specs, formatters, escaping, and
-overflow policies.
+Swap `:format :box` for `:markdown`, `:csv`, `:html`, `:ascii-grid`,
+`:double-box`, `:psql`, `:org`, or `:rst` and the same `spec` renders
+into that style — see the [examples gallery](doc/examples-gallery.md)
+for every named format side by side.
+
+That's the high-level surface. Underneath it is a small layout DSL with
+fill markers, repeat groups, virtual row layouts, ANSI-aware widths,
+streaming output to a `java.io.Writer`, and a Babashka-native runtime
+with zero third-party Clojure deps. The rest of this README walks
+through the DSL — keep reading if the named formats don't reach far
+enough.
+
+## High-Level Table API
+
+`clj-string-layout.table` is the route for named output formats with map
+or vector rows. Column specs come in two shapes:
+
+```clojure
+;; bare keyword: from this key, default label, defaults otherwise
+:qty
+
+;; full map: explicit everything
+{:from :qty :as "Qty" :align :right
+ :formatter #(format "%s units" %)
+ :width 10 :overflow :ellipsis}
+```
+
+Map keys: `:from`, `:as`, `:align`, `:formatter`, `:width`, `:overflow`.
+For vector rows, omit `:from` and the column's source is its position in
+`:columns`. The spec also accepts `:title` (centered caption / `<caption>`
+for HTML), `:footers` (trailing rows), `:cell-fn` (per-cell decoration),
+`:raw?`, `:width`, and `:fill?`. See the
+[table API guide](doc/table-api.md) for the full surface.
 
 ## Quick Start
 
