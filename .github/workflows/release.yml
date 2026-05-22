@@ -109,6 +109,23 @@ jobs:
           CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
         run: clojure -T:deploy deploy
 
+      - name: Trigger cljdoc build
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          # Strip the leading 'v' from vX.Y.Z so cljdoc receives the same
+          # version string Clojars indexes under.
+          version="${VERSION#v}"
+          curl --fail --silent --show-error \
+            --retry 3 --retry-delay 10 --retry-all-errors \
+            -X POST \
+            -d "project=io.github.mbjarland/clj-string-layout" \
+            -d "version=${version}" \
+            https://cljdoc.org/api/request-build2 \
+            -o /dev/null
+          echo "Requested cljdoc build for io.github.mbjarland/clj-string-layout ${version}"
+          echo "Watch progress at https://cljdoc.org/d/io.github.mbjarland/clj-string-layout/${version}"
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}

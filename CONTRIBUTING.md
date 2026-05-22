@@ -55,8 +55,15 @@ git push origin vX.Y.Z
 ```
 
 The workflow re-runs the full Java 11/17/21 matrix plus the Babashka
-checks, verifies the tag matches `version.edn`, builds the jar, deploys to
-Clojars, and creates a GitHub Release.
+checks, verifies the tag matches `version.edn`, builds the jar, deploys
+to [Clojars](https://clojars.org/io.github.mbjarland/clj-string-layout),
+POSTs to `cljdoc.org/api/request-build2` so the documentation is
+indexed immediately, and creates a GitHub Release with the jar attached.
+
+Documentation lives at
+[cljdoc.org](https://cljdoc.org/d/io.github.mbjarland/clj-string-layout/CURRENT).
+The nav tree is `doc/cljdoc.edn`; the jar bundles README, CHANGELOG,
+LICENSE, and every file in `doc/` so cljdoc can render them.
 
 ## Reporting bugs
 

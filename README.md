@@ -3,6 +3,7 @@
 [![CI Status](https://github.com/mbjarland/clj-string-layout/actions/workflows/ci.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions)
 [![Release](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml/badge.svg)](https://github.com/mbjarland/clj-string-layout/actions/workflows/release.yml)
 [![Clojars](https://img.shields.io/clojars/v/io.github.mbjarland/clj-string-layout.svg)](https://clojars.org/io.github.mbjarland/clj-string-layout)
+[![cljdoc](https://cljdoc.org/badge/io.github.mbjarland/clj-string-layout)](https://cljdoc.org/d/io.github.mbjarland/clj-string-layout/CURRENT)
 [![License](https://img.shields.io/badge/license-EPL--1.0-blue.svg)](LICENSE)
 
 `clj-string-layout` is a small Clojure library for turning rows of strings into aligned text layouts: simple columns, box-drawing tables, Markdown tables, HTML table snippets, and custom formats defined with a compact layout language.
@@ -59,26 +60,32 @@ it directly without any JVM startup cost:
 
 See the [CLI guide](doc/cli.md) for the `bb-format` and `bb-bench` tasks.
 
-## A taste
+## One spec, many shapes
+
+Describe the data once:
 
 ```clojure
-(def spec
-  {:format  :box
-   :title   "Inventory"
-   :columns [:item
-             {:from :qty   :as "Qty"   :align :right}
-             {:from :price :as "Price" :align :right
-              :formatter   #(format "$%.2f" %)}]
-   :rows    [{:item "apple" :qty 12 :price 1.50}
-             {:item "pear"  :qty  4 :price 2.00}
-             {:item "kiwi"  :qty  8 :price 0.75}]
-   :footers [["Total" 24 6.25]]})
+(def items
+  [{:item "apple" :qty 12 :price 1.50}
+   {:item "pear"  :qty  4 :price 2.00}
+   {:item "kiwi"  :qty  8 :price 0.75}])
 
-(println (table/table-str spec))
+(def cols
+  [:item
+   {:from :qty   :as "Qty"   :align :right}
+   {:from :price :as "Price" :align :right
+    :formatter   #(format "$%.2f" %)}])
+```
+
+Render it any way you need.
+
+#### Box drawing — terminals, docs, REPL output
+
+```clojure
+(table/table-str {:format :box :columns cols :rows items})
 ```
 
 ```text
-       Inventory
 ┌───────┬─────┬───────┐
 │ item  │ Qty │ Price │
 ├───────┼─────┼───────┤
@@ -87,44 +94,116 @@ See the [CLI guide](doc/cli.md) for the `bb-format` and `bb-bench` tasks.
 │ pear  │   4 │ $2.00 │
 ├───────┼─────┼───────┤
 │ kiwi  │   8 │ $0.75 │
-├───────┼─────┼───────┤
-│ Total │  24 │ $6.25 │
 └───────┴─────┴───────┘
 ```
 
-Swap `:format :box` for `:markdown`, `:csv`, `:html`, `:ascii-grid`,
-`:double-box`, `:psql`, `:org`, or `:rst` and the same `spec` renders
-into that style — see the [examples gallery](doc/examples-gallery.md)
-for every named format side by side.
+#### Markdown — READMEs, issue templates, generated docs
 
-That's the high-level surface. Underneath it is a small layout DSL with
-fill markers, repeat groups, virtual row layouts, ANSI-aware widths,
-streaming output to a `java.io.Writer`, and a Babashka-native runtime
-with zero third-party Clojure deps. The rest of this README walks
-through the DSL — keep reading if the named formats don't reach far
-enough.
+```clojure
+(table/table-str {:format :markdown :columns cols :rows items})
+```
+
+```markdown
+| item  | Qty | Price |
+|:----- | ---:| -----:|
+| apple |  12 | $1.50 |
+| pear  |   4 | $2.00 |
+| kiwi  |   8 | $0.75 |
+```
+
+#### HTML — emails, reports, server output
+
+```clojure
+(table/table-str {:format :html :columns cols :rows items})
+```
+
+```html
+<table>
+  <tr><th>item</th><th>Qty</th><th>Price</th></tr>
+  <tr><td>apple</td><td>12</td><td>$1.50</td></tr>
+  <tr><td>pear</td><td>4</td><td>$2.00</td></tr>
+  <tr><td>kiwi</td><td>8</td><td>$0.75</td></tr>
+</table>
+```
+
+#### CSV — handoff to spreadsheets, downstream tools
+
+```clojure
+(table/table-str {:format :csv :columns cols :rows items})
+```
+
+```text
+item,Qty,Price
+apple,12,$1.50
+pear,4,$2.00
+kiwi,8,$0.75
+```
+
+The same `cols` and `items` also render as `:double-box`, `:ascii-grid`,
+`:psql`, `:org`, `:rst`, `:tsv`, `:pipe`, `:plain`, and the three
+alignment-specific `:markdown-*` variants. The
+[examples gallery](doc/examples-gallery.md) shows every named format
+side by side with the same data.
 
 ## High-Level Table API
 
-`clj-string-layout.table` is the route for named output formats with map
-or vector rows. Column specs come in two shapes:
+The table API has four moving parts.
+
+#### Rows
+
+A vector of maps:
 
 ```clojure
-;; bare keyword: from this key, default label, defaults otherwise
-:qty
+:rows [{:item "apple" :qty 12} {:item "pear" :qty 4}]
+```
 
-;; full map: explicit everything
-{:from :qty :as "Qty" :align :right
+…or a vector of positional vectors:
+
+```clojure
+:rows [["apple" 12] ["pear" 4]]
+```
+
+#### Columns
+
+Two shapes:
+
+```clojure
+:qty                                                  ;; defaults
+{:from :qty :as "Qty" :align :right                   ;; explicit
  :formatter #(format "%s units" %)
  :width 10 :overflow :ellipsis}
 ```
 
-Map keys: `:from`, `:as`, `:align`, `:formatter`, `:width`, `:overflow`.
-For vector rows, omit `:from` and the column's source is its position in
-`:columns`. The spec also accepts `:title` (centered caption / `<caption>`
-for HTML), `:footers` (trailing rows), `:cell-fn` (per-cell decoration),
-`:raw?`, `:width`, and `:fill?`. See the
-[table API guide](doc/table-api.md) for the full surface.
+Map keys:
+
+| Key | Means |
+| --- | --- |
+| `:from` | Row map key. Omit for vector rows — the column's source is its position. |
+| `:as` | Header label. Defaults to the keyword name of `:from`. |
+| `:align` | `:left`, `:center`, `:right`, or `:verbatim`. |
+| `:formatter` | One-arg function applied to the cell value before rendering. |
+| `:width` | Maximum cell width. |
+| `:overflow` | `:none`, `:clip`, `:ellipsis`, `:wrap`, `:error`. |
+
+#### Format
+
+A keyword. One of:
+
+`:plain` · `:markdown` · `:markdown-left` · `:markdown-center` ·
+`:markdown-right` · `:box` · `:double-box` · `:ascii-grid` · `:csv` ·
+`:tsv` · `:pipe` · `:psql` · `:org` · `:rst` · `:html`.
+
+#### Extras
+
+| Key | Adds |
+| --- | --- |
+| `:title` | Centered caption above text formats; `<caption>` for HTML. |
+| `:footers` | Trailing rows that share column treatment. |
+| `:cell-fn` | Per-cell decoration callback — pair with `:display-width` for ANSI styling. |
+| `:width` + `:fill?` | Expand the rendered table toward a target width. |
+| `:raw?` | Return vectors of pieces instead of joined strings. |
+
+See the [table API guide](doc/table-api.md) for the full surface.
 
 ## Quick Start
 
@@ -532,9 +611,14 @@ git tag -a v2.0.0 -m "Release v2.0.0"
 git push origin v2.0.0
 ```
 
-The release workflow then runs linting, tests, and jar builds on Java 11, 17,
-and 21. After verification passes, it rebuilds the jar on Java 11, deploys to
-Clojars, and creates a GitHub Release with the jar attached.
+The release workflow runs linting, tests (JVM + Babashka), the reflection
+check, and jar builds on Java 11, 17, and 21. After verification passes
+it rebuilds the jar on Java 11, deploys to Clojars, pings cljdoc to
+build the API documentation, and creates a GitHub Release with the jar
+attached. The published artifact is
+[`io.github.mbjarland/clj-string-layout`](https://clojars.org/io.github.mbjarland/clj-string-layout);
+docs live at
+[cljdoc.org](https://cljdoc.org/d/io.github.mbjarland/clj-string-layout/CURRENT).
 
 ## Design Notes
 
