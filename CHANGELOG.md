@@ -4,6 +4,43 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-22
+
+### Added
+
+- Added `:title` caption support to the high-level table API, rendered as a centered banner for text formats and as a `<caption>` element for `:html`.
+- Added `:footers` to the table API, mirroring `:headers` for totals and trailing rows.
+- Added a `:cell-fn` decoration callback so per-cell styling (such as ANSI color wrapping) is possible without `:raw? true` post-processing.
+- Added `:fill?` to the table API so generated formats honor `:width` via fill markers in cell padding.
+- Added `layout-into!` and `table-into!` writer sinks that stream rendered output to a `java.io.Writer`.
+- Added `parse-row-layout` and `explain-row-layout` so callers no longer have to pass a positional boolean.
+- Added a dedicated preset catalog (`doc/presets.md`) and CLI reference (`doc/cli.md`).
+- Added a Babashka-native `bb bb-format` task that runs the CLI in tens of milliseconds with no JVM startup.
+- Added a Babashka test runner (`bb bb-test`) that exercises every namespace bb supports.
+- Added a `--width` CLI flag wired through to fill-aware output formats.
+
+### Changed
+
+- Replaced the Instaparse-based grammar with a hand-rolled recursive descent parser. The library now has zero third-party Clojure dependencies and can be `(require ...)`d directly from a `bb` script.
+- Consolidated box-drawing character sets into `clj-string-layout.impl.box` so `presets` and the high-level table API share one source of truth for each box style.
+- Programmatically generate the `clj-string-layout.layout` compatibility shim from `predicates` and `presets`, shrinking the file from 226 lines to 57 while keeping all public aliases.
+- Slimmed the README; preset catalog moved to `doc/presets.md`, CLI reference to `doc/cli.md`.
+- Bumped runtime and tooling dependencies: Clojure 1.12.5, test.check 1.1.3, deps-deploy 0.2.4.
+- Pinned newer GitHub Actions (checkout v6, setup-java v5, cache v5, setup-clojure 13.6.1).
+
+### Fixed
+
+- Fixed the `psql` and `org` preset rule rows so the separator length matches the data row width.
+- Markdown table output now only emits the header rule when a header is present, so headerless `:markdown` no longer treats the first data row as a header.
+- `table/table` now throws `:invalid-table-column` for unknown `:align` values instead of silently defaulting to left.
+- `table/table` now throws `:empty-table-spec` up front when neither `:rows`, `:headers`, nor `:columns` is supplied.
+- `:html` output now honors `:raw?`. `:width` and `:display-width` are documented as intentionally not applying to structural HTML.
+- Cleared all reflection and primitive-boxing warnings; CI now fails on regression.
+
+### Removed
+
+- Removed the Instaparse runtime dependency.
+
 ## [1.1.0] - 2026-05-05
 
 ### Added
@@ -63,7 +100,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.2.0
 [1.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.1.0
 [1.0.4]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.0.4
 [1.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/1.0.2

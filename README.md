@@ -23,7 +23,7 @@ The core idea is that column layouts describe how each data cell is aligned, whi
 Add the library to `deps.edn`:
 
 ```clojure
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.1.0"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.2.0"}}}
 ```
 
 Versions before `1.0.4` used the older `com.github.mbjarland` Maven group.
@@ -458,8 +458,8 @@ clojure -T:deploy deploy
 
 Releases are published by GitHub Actions when a version tag is pushed. The tag
 must be prefixed with `v` and must match `version.edn`. For example,
-`version.edn` containing `{:version "1.1.0"}` must be released with tag
-`v1.1.0`.
+`version.edn` containing `{:version "1.2.0"}` must be released with tag
+`v1.2.0`.
 
 Required repository secrets:
 
@@ -471,8 +471,8 @@ Required repository secrets:
 Release steps:
 
 ```sh
-git tag -a v1.1.0 -m "Release v1.1.0"
-git push origin v1.1.0
+git tag -a v1.2.0 -m "Release v1.2.0"
+git push origin v1.2.0
 ```
 
 The release workflow then runs linting, tests, and jar builds on Java 11, 17,
