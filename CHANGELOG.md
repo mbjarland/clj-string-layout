@@ -4,6 +4,40 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-05-22
+
+### Added
+
+- `--fill` flag on the CLI. Pair it with `--width N` to expand the
+  rendered table toward that target width on any fill-aware format
+  (`plain`, the markdown variants, the box variants, `ascii-grid`).
+  Previously `--width` was silently ineffective for those formats
+  because `:fill?` wasn't reachable from the command line.
+- `clj-string-layout.cli/render` now accepts `:fill?` alongside the
+  existing `:width` and `:display-width` keys for programmatic
+  callers.
+
+### Changed
+
+- The CLI guide (`doc/cli.md`) grew from a 95-line options reference
+  to a 303-line guide with a man-page-style synopsis, per-input-format
+  examples, an output-format gallery, width/fill semantics, piping
+  recipes, exit codes, a Babashka-vs-JVM startup comparison, expanded
+  programmatic-use notes, and a troubleshooting table.
+- README restructured: the multi-format showcase now leads the body,
+  the "Two layers" section comes after it (framed as "now that you've
+  seen it work, here's how it's organised") and is slimmed
+  dramatically. The description of `clj-string-layout.core/layout` is
+  broadened — it's the workhorse anywhere text needs alignment, not a
+  niche fallback.
+- The CSV input example in the CLI guide now leads with two clean
+  RFC 4180 cases (quoted comma, doubled-quote escape) so the lead
+  rendering looks correct. The embedded-newline limitation is now its
+  own bold-flagged paragraph that names which formats handle newlines
+  in cells via their per-format escaper.
+
+No breaking changes; `--fill` is purely additive.
+
 ## [2.0.2] - 2026-05-22
 
 ### Changed
@@ -186,7 +220,8 @@ form is essentially `:key` → `:from`, `:title` → `:as`. If you used
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.1.0
 [2.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.2
 [2.0.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.1
 [2.0.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.0
