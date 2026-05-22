@@ -10,42 +10,41 @@
 tables, box-drawing terminal output, CSV, HTML, psql, Org mode, and
 anything you can build out of the underlying layout DSL.
 
-## Three layers
+## Two layers
 
-The library is a stack. Pick where you start; drop a level whenever
-the one above doesn't reach.
+The library is a stack. Pick where you start; drop a level when the
+one above doesn't reach.
 
 ```text
 ┌─ HIGH ────────────────────────────────────────────────────────────────┐
 │ clj-string-layout.table                                               │
 │ (table/table {:format :box :columns [...] :rows [...]})               │
-│ → named formats with column specs, formatters, footers, captions      │
+│ → map rows, column specs, formatters, headers, footers, captions      │
 ├───────────────────────────────────────────────────────────────────────┤
-│ clj-string-layout.presets                                             │
-│ (layout rows presets/layout-markdown-left)                            │
-│ → ready-made layout configs you compose with the engine               │
-├───────────────────────────────────────────────────────────────────────┤
-│ clj-string-layout.core                                                │
+│ clj-string-layout.core/layout                                         │
 │ (layout rows {:layout {:cols ["[L] [R]"]}})                           │
-│ → the layout DSL: column markers, fills, repeats, virtual rows        │
+│ → the layout DSL itself.                                              │
+│   Pre-canned configs live in clj-string-layout.presets.               │
 └─ LOW ─────────────────────────────────────────────────────────────────┘
 ```
 
 - **`clj-string-layout.table`** — the high-level table API. Named
   formats (`:markdown`, `:box`, `:csv`, `:html`, …) with column specs,
-  per-cell formatters, footers, and captions. Most callers start (and
-  stop) here. See the [table API guide](doc/table-api.md) and
+  per-cell formatters, headers, footers, captions, overflow policies,
+  and per-format escaping. Most callers start (and stop) here. See
+  the [table API guide](doc/table-api.md) and
   [examples gallery](doc/examples-gallery.md).
-- **`clj-string-layout.presets`** — ready-made layout configs for the
-  same formats. Reach for it when you want one of those formats but
-  assoc'd with engine options the table API doesn't surface (raw
-  output, virtual rows, custom widths). See the
-  [preset catalog](doc/presets.md).
 - **`clj-string-layout.core/layout`** — the layout DSL itself. Column
-  markers, fill regions, repeat groups, virtual row layouts. This is
-  the foundation the two upper layers are built on. See the
+  markers (`[L]` `[C]` `[R]` `[V]`), fill regions (`f`), repeat
+  groups (`{…}`), virtual row layouts. Drop down here when you need
+  shapes the table API doesn't cover. See the
   [layout language reference](doc/layout-language.md) and
   [recipe book](doc/recipes.md).
+- **`clj-string-layout.presets`** is a catalog of ready-made layout
+  configs (Markdown, box-drawing, CSV, HTML, ASCII grid, psql, Org,
+  RST, …) you can hand straight to `layout` without writing your own
+  config map. They're shortcuts into the DSL layer, not a separate
+  abstraction. See the [preset catalog](doc/presets.md).
 
 Cross-cutting docs: [CLI guide](doc/cli.md),
 [errors reference](doc/errors.md).
@@ -226,9 +225,9 @@ See the [table API guide](doc/table-api.md) for the full surface.
 
 ## Layout DSL
 
-When the named formats don't reach, drop down to the layout DSL. Write
-a layout string with column markers (`[L]` `[C]` `[R]` `[V]`), fill
-regions (`f`), and optional repeat groups (`{…}`):
+When the named formats don't reach, drop down to the layout DSL. The
+column layout is a string made of column markers (`[L]` `[C]` `[R]`
+`[V]`), fill regions (`f`), and optional repeat groups (`{…}`):
 
 ```clojure
 (require '[clj-string-layout.core :refer [layout]])
@@ -240,12 +239,14 @@ regions (`f`), and optional repeat groups (`{…}`):
 ;; => ["left.....................right"]
 ```
 
-That's a single column layout string. The DSL also handles virtual row
-layouts (top/middle/bottom rules), repeat groups for variable column
-counts, raw-piece output for cell decoration, and streaming via
-`layout-seq`. See the
-[layout language reference](doc/layout-language.md) for the grammar and
-the [recipe book](doc/recipes.md) for paste-able examples.
+The string above has two column markers (`[L]` and `[R]`) and one fill
+region (`f`) between them — extra width is absorbed by the fill so the
+right-hand value sits flush against the target width. The DSL also
+handles virtual row layouts (top/middle/bottom rules), repeat groups
+for variable column counts, raw-piece output for cell decoration, and
+streaming via `layout-seq`. See the
+[layout language reference](doc/layout-language.md) for the grammar
+and the [recipe book](doc/recipes.md) for paste-able examples.
 
 ## Command line
 
