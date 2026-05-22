@@ -34,11 +34,16 @@ columns, hand it rows. Headers, footers, captions, per-cell
 formatters, alignment, overflow, escaping: all handled. The next
 section shows it in action.
 
-**`clj-string-layout.core/layout`** is the engine underneath. A
-small layout-string DSL: column markers, fill regions, repeat
-groups, virtual rule rows. Reach for it when you want a custom
-border, a non-rectangular layout, or column-aligned output that
-isn't really a table.
+**`clj-string-layout.core/layout`** is the engine the table API and
+presets are built on, and it's worth knowing in its own right. Reach
+for it any time you want text to line up in columns: full tables,
+ad-hoc key/value pairs, ANSI-coloured terminal dashboards, custom
+borders, log lines with aligned timestamps, status output with
+`"left                            right"` on the same line, or any
+shape the named formats don't quite reach. The DSL gives you layout
+strings with column markers, fill regions, repeat groups, and
+virtual rule rows; pair it with `layout-seq` to stream large
+datasets row by row.
 
 A third namespace, **`clj-string-layout.presets`**, is a catalog of
 ready-made layout configs for the same named formats. They're
