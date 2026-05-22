@@ -4,6 +4,59 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-05-22
+
+Breaking redesign of the high-level table column-spec API. Reading and
+writing column definitions is now an exercise in saying what you mean.
+
+### Changed (breaking)
+
+- Renamed column-spec keys in `clj-string-layout.table/table`:
+  - `:key`     → **`:from`** ("from the row's `:foo` key")
+  - `:title`   → **`:as`** ("as the header label \"Foo\"")
+  - `:format`  → **`:formatter`** (a 1-arg fn applied to the value)
+- `:format` at the spec level is unchanged — it still names the output
+  style (`:markdown`, `:box`, ...). The two roles no longer share a name.
+- Dropped the integer-`:from` shortcut for vector rows. Vector rows now
+  use **position-implicit** columns: omit `:from` and the column's source
+  is its position in `:columns`.
+- A column entry must now be either a bare keyword (defaults) or a map.
+  Vector shorthand forms (`[:qty "Qty"]`, `[:qty "Qty" :right]`, etc.)
+  are gone.
+
+### Added
+
+- New `:invalid-column-spec` error type with `:column` and `:reason`
+  fields for malformed column entries.
+
+### Migration
+
+```clojure
+;; before
+{:columns [{:key :name :title "Name"}
+           {:key :qty  :title "Qty" :align :right}
+           {:key :price :title "Price" :align :right
+            :format #(format "$%.2f" %)}]}
+
+;; after
+{:columns [{:from :name  :as "Name"}
+           {:from :qty   :as "Qty"   :align :right}
+           {:from :price :as "Price" :align :right
+            :formatter   #(format "$%.2f" %)}]}
+
+;; or, for columns that only need defaults
+{:columns [:name :qty :price]}
+
+;; vector rows with per-column options now omit :from
+{:columns [{:as "Name"}
+           {:as "Qty" :align :right}]
+ :rows    [["apple" 12] ["pear" 4]]}
+```
+
+A `sed`-style migration on a project that didn't use the `:format` fn
+form is essentially `:key` → `:from`, `:title` → `:as`. If you used
+`:format` inside a column spec, also rename it to `:formatter`.
+
 ## [1.2.0] - 2026-05-22
 
 ### Added
@@ -100,7 +153,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.0
 [1.2.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.2.0
 [1.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.1.0
 [1.0.4]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.0.4

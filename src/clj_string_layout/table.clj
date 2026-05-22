@@ -71,41 +71,68 @@
                        :align align
                        :allowed (sort-by str (keys align-tokens))}))))
 
-(defn- normalize-column [idx column]
+(defn- invalid-column! [column reason]
+  (throw (ex-info (str "Invalid column spec: " reason)
+                  {:type :invalid-column-spec
+                   :column column
+                   :reason reason})))
+
+(defn- normalize-column
+  "Normalises a single :columns entry to a map.
+
+  Accepted shapes:
+
+    :keyword                    -- defaults: from :keyword, as \"keyword\".
+    {:from :keyword :as ...}    -- full map; :from is required for map rows.
+    {:as ... :align ...}        -- :from omitted; valid only with vector rows,
+                                   the column's source is its position.
+
+  Anything else throws :invalid-column-spec."
+  [idx column]
   (cond
-    (map? column) (assoc column :idx idx)
-    (keyword? column) {:idx idx :key column :title (name column)}
-    :else {:idx idx :key idx :title (str column)}))
+    (keyword? column)
+    {:idx idx :from column :as (name column)}
+
+    (map? column)
+    (let [{:keys [from as]} column]
+      (when (and (some? from) (not (keyword? from)))
+        (invalid-column! column ":from must be a keyword"))
+      (assoc column
+             :idx idx
+             :as (or as (when (keyword? from) (name from)) "")))
+
+    :else
+    (invalid-column! column "expected a keyword or a map")))
 
 (defn- infer-columns [{:keys [columns headers rows]}]
   (cond
     (seq columns) (mapv normalize-column (range) columns)
     (seq headers) (mapv (fn [idx header]
-                          {:idx idx :key idx :title (str header)})
+                          {:idx idx :as (str header)})
                         (range)
                         headers)
     (map? (first rows)) (mapv (fn [idx k]
-                                {:idx idx :key k :title (name k)})
+                                {:idx idx :from k :as (name k)})
                               (range)
                               (keys (first rows)))
     :else (mapv (fn [idx]
-                  {:idx idx :key idx :title (str idx)})
+                  {:idx idx :as (str idx)})
                 (range (count (first rows))))))
 
-(defn- column-title [headers column]
+(defn- column-label [headers column]
   (if headers
-    (str (nth headers (:idx column) (:title column)))
-    (str (:title column))))
+    (str (nth headers (:idx column) (:as column)))
+    (str (:as column))))
 
-(defn- row-value [row {:keys [idx key]}]
+(defn- row-value [row {:keys [idx from]}]
   (let [value (if (map? row)
-                (get row key)
-                (nth row (if (integer? key) key idx) nil))]
+                (get row from)
+                (nth row idx nil))]
     (if (nil? value) "" value)))
 
-(defn- apply-format [value {:keys [format]}]
-  (if format
-    (format value)
+(defn- apply-formatter [value {:keys [formatter]}]
+  (if formatter
+    (formatter value)
     value))
 
 (defn- clip [value width]
@@ -160,7 +187,7 @@
 (defn- prepare-row [row row-idx section columns escape-fn escape? cell-fn]
   (let [cells (mapv (fn [column]
                        (let [value (-> (row-value row column)
-                                       (apply-format column)
+                                       (apply-formatter column)
                                        str
                                        (overflow-cell column))]
                          (if (vector? value)
@@ -176,7 +203,7 @@
 (defn- table-rows [{:keys [headers rows footers escape? cell-fn] :as spec} columns escape-fn]
   (let [escape? (not (false? escape?))
         header-row (when (or headers (seq (:columns spec)))
-                     (mapv #(column-title headers %) columns))
+                     (mapv #(column-label headers %) columns))
         header-rows (when header-row
                       (expand-wrapped-row
                         (mapv (fn [value column]
@@ -324,29 +351,45 @@
 (defn table
   "Renders a high-level table spec to a vector of output lines.
 
-  Required input is usually :rows, with optional :headers, :footers,
-  :columns, :title, :cell-fn, and :format. Supported formats are returned
-  by formats. Column specs may contain :key, :title, :align, :format,
-  :width, and :overflow. Overflow policies are :none, :clip, :ellipsis,
-  :wrap, and :error. :footers accepts the same row shapes as :rows.
+  The spec map accepts:
 
-  :cell-fn is an optional decoration callback that receives a context map
-  with :section (one of :header, :data, :footer), :row (zero-based row
-  index within the section), :col (column index), :column (the column
-  spec), and :value (the post-format/escape cell value). It must return a
-  string. Use it together with :display-width when adding ANSI styling so
-  the layout engine pads with the original visible width.
+    :rows      - data rows. Vectors of values, or maps when :columns name keys.
+    :headers   - shorthand: a vector of header labels for vector rows.
+    :columns   - column definitions (see below). Required for map rows that
+                 need labels, alignment, formatting, width, or overflow.
+    :footers   - rows that render below the data, sharing column treatment.
+    :title     - centered caption above text formats; <caption> for :html.
+    :format    - named output format (:plain, :markdown, :box, ...).
+    :width     - target total width for fill-aware formats.
+    :fill?     - true to expand the generated format toward :width.
+    :raw?      - return vectors of pieces instead of joined strings.
+    :escape?   - false to skip the per-format cell escaper.
+    :cell-fn   - per-cell decoration callback (see below).
 
-  When :title is supplied it renders as a centered banner above the table for
-  text formats and as a <caption> element for :html. The title is escaped with
-  the same per-format escaper unless :escape? false is set on the spec.
+  Column definitions (entries in :columns) come in two shapes:
 
-  The :width and :display-width spec keys are forwarded to the layout engine
-  for every format that emits visually padded text. They are intentionally
-  ignored for :html output, where the result is structural markup rather than
-  padded text. Pass :fill? true together with :width to make the generated
-  formats expand toward that width. :raw? is honored for every format,
-  including :html."
+    :qty                        ; bare keyword: from :qty, as \"qty\"
+    {:from :qty                 ; map: required for anything beyond defaults
+     :as \"Qty\"
+     :align :right
+     :formatter f
+     :width 8
+     :overflow :ellipsis}
+
+  Map column keys: :from (source key for map rows; omit for vector rows
+  to use the column's position), :as (header label; defaults to the
+  source keyword name), :align (:left, :center, :right, :verbatim),
+  :formatter (1-arg fn applied to the value), :width (max display
+  width), :overflow (:none, :clip, :ellipsis, :wrap, :error).
+
+  :cell-fn receives {:section (:header, :data, or :footer), :row (index
+  within the section), :col (column index), :column (the normalised
+  column spec), :value (the post-formatter, post-escape value)} and must
+  return a string. Pair it with :display-width width/ansi-width when
+  adding ANSI styling so the engine still pads using the visible width.
+
+  :width and :display-width are ignored for :html output (HTML is
+  structural markup, not padded text); :raw? is honored everywhere."
   [spec]
   (let [{:keys [format rows header-count footer-count layout-config escape]} (table-plan spec)
         raw? (boolean (:raw? spec))

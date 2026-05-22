@@ -23,7 +23,7 @@ The core idea is that column layouts describe how each data cell is aligned, whi
 Add the library to `deps.edn`:
 
 ```clojure
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "1.2.0"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.0"}}}
 ```
 
 Versions before `1.0.4` used the older `com.github.mbjarland` Maven group.
@@ -49,7 +49,7 @@ it directly without any JVM startup cost:
 #!/usr/bin/env bb
 (require '[babashka.deps :as deps])
 (deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
-                        {:mvn/version "1.2.0"}}})
+                        {:mvn/version "2.0.0"}}})
 
 (require '[clj-string-layout.table :as table])
 (println (table/table-str {:format :box
@@ -66,8 +66,8 @@ layout strings directly:
 
 ```clojure
 (table/table {:format :markdown
-              :columns [{:key :name :title "Name"}
-                        {:key :qty :title "Qty" :align :right}]
+              :columns [{:from :name :as "Name"}
+                        {:from :qty  :as "Qty" :align :right}]
               :rows [{:name "apple" :qty 12}
                      {:name "pear" :qty 4}]})
 ;; => ["| Name  | Qty |"
@@ -75,6 +75,13 @@ layout strings directly:
 ;;     "| apple |  12 |"
 ;;     "| pear  |   4 |"]
 ```
+
+Each `:columns` entry reads as a sentence: `{:from :qty :as "Qty" :align
+:right}` means "from `:qty`, as `\"Qty\"`, right-aligned". Map keys are
+`:from`, `:as`, `:align`, `:formatter`, `:width`, and `:overflow`. For
+columns that just need defaults, a bare keyword stands in for the whole
+map: `[:name :qty]` is the same as `[{:from :name :as "name"}
+{:from :qty :as "qty"}]`.
 
 Named formats include `:plain`, `:markdown`, `:markdown-left`,
 `:markdown-center`, `:markdown-right`, `:box`, `:double-box`, `:ascii-grid`,
@@ -471,8 +478,8 @@ clojure -T:deploy deploy
 
 Releases are published by GitHub Actions when a version tag is pushed. The tag
 must be prefixed with `v` and must match `version.edn`. For example,
-`version.edn` containing `{:version "1.2.0"}` must be released with tag
-`v1.2.0`.
+`version.edn` containing `{:version "2.0.0"}` must be released with tag
+`v2.0.0`.
 
 Required repository secrets:
 
@@ -484,8 +491,8 @@ Required repository secrets:
 Release steps:
 
 ```sh
-git tag -a v1.2.0 -m "Release v1.2.0"
-git push origin v1.2.0
+git tag -a v2.0.0 -m "Release v2.0.0"
+git push origin v2.0.0
 ```
 
 The release workflow then runs linting, tests, and jar builds on Java 11, 17,

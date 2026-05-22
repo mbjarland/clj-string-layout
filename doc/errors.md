@@ -54,6 +54,9 @@ Use `parse-layout` when invalid layout syntax should throw:
 | `:invalid-layout-ir` | Parser normalization | `:entry`, `:parts` | Parsed layout data had an impossible internal shape. This usually indicates a library bug. |
 | `:invalid-layout-state` | Rendering | `:entry`, `:needed`, `:remaining` | Rendering reached an impossible internal state. This usually indicates a library bug or inconsistent config. |
 | `:unknown-table-format` | `clj-string-layout.table/table` | `:format`, `:available-formats` | The high-level table API received an unsupported `:format`. |
+| `:invalid-column-spec` | `clj-string-layout.table/table` | `:column`, `:reason` | A `:columns` entry was not a keyword, shorthand vector, or a map with `:from`. |
+| `:invalid-table-column` | `clj-string-layout.table/table` | `:align`, `:allowed` | An `:align` value was not one of the supported keywords. |
+| `:empty-table-spec` | `clj-string-layout.table/table` | — | The table spec had no `:rows`, `:headers`, or `:columns`. |
 | `:table-cell-overflow` | `clj-string-layout.table/table` | `:value`, `:width`, `:overflow` | A table column used `:overflow :error` and a value exceeded the configured width. |
 | `:cli-argument-error` | `clj-string-layout.cli/parse-args` | `:option`, `:value`, `:allowed`, `:file` | CLI arguments were missing, unsupported, or ambiguous. |
 | `:cli-input-error` | `clj-string-layout.cli/render` | `:input` | CLI input parsing produced no rows. |
@@ -102,7 +105,7 @@ Overflow-as-error:
 (ex-data
   (try
     (table/table {:format :plain
-                  :columns [{:key 0 :title "Text"
+                  :columns [{:as "Text"
                              :width 3
                              :overflow :error}]
                   :rows [["abcdef"]]})

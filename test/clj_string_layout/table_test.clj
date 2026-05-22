@@ -21,15 +21,50 @@
                            (catch clojure.lang.ExceptionInfo e e)))))))
 
 (deftest table-with-column-specs-and-map-rows
-  (is (= ["| Name  | Qty |"
-          "|:----- | ---:|"
-          "| apple |  12 |"
-          "| pear  |   4 |"]
-         (table/table {:format :markdown
-                       :columns [{:key :name :title "Name"}
-                                 {:key :qty :title "Qty" :align :right}]
-                       :rows [{:name "apple" :qty 12}
-                              {:name "pear" :qty 4}]}))))
+  (testing "full map form"
+    (is (= ["| Name  | Qty |"
+            "|:----- | ---:|"
+            "| apple |  12 |"
+            "| pear  |   4 |"]
+           (table/table {:format :markdown
+                         :columns [{:from :name :as "Name"}
+                                   {:from :qty :as "Qty" :align :right}]
+                         :rows [{:name "apple" :qty 12}
+                                {:name "pear" :qty 4}]}))))
+  (testing "bare keyword shortcut (label defaults to keyword name)"
+    (is (= ["| name  | qty |"
+            "|:----- |:--- |"
+            "| apple | 12  |"]
+           (table/table {:format :markdown
+                         :columns [:name :qty]
+                         :rows [{:name "apple" :qty 12}]}))))
+  (testing "map form with formatter"
+    (is (= ["Name   Price"
+            "apple  $1.50"]
+           (table/table {:format :plain
+                         :columns [{:from :name :as "Name"}
+                                   {:from :price :as "Price" :align :right
+                                    :formatter #(format "$%.2f" (double %))}]
+                         :rows [{:name "apple" :price 1.5}]}))))
+  (testing "mix bare keyword and full map"
+    (is (= ["| name  | Price |"
+            "|:----- | -----:|"
+            "| apple | $1.50 |"]
+           (table/table {:format :markdown
+                         :columns [:name
+                                   {:from :price :as "Price" :align :right
+                                    :formatter #(format "$%.2f" (double %))}]
+                         :rows [{:name "apple" :price 1.5}]})))))
+
+(deftest position-implicit-columns-for-vector-rows
+  (testing "omitting :from makes the column source its position in :columns"
+    (is (= ["Name   Qty  Price"
+            "apple   12  $1.50"]
+           (table/table {:format :plain
+                         :columns [{:as "Name"}
+                                   {:as "Qty" :align :right}
+                                   {:as "Price" :align :right}]
+                         :rows [["apple" 12 "$1.50"]]})))))
 
 (deftest markdown-alignment-formats
   (is (= ["| Name | Qty |"
@@ -51,14 +86,14 @@
                        :headers ["Name" "Qty"]
                        :rows [["a" "12"]]}))))
 
-(deftest column-formatting
+(deftest column-formatter
   (is (= ["Name   Price"
           "apple  $1.50"]
          (table/table {:format :plain
-                       :columns [{:key :name :title "Name"}
-                                 {:key :price :title "Price"
+                       :columns [{:from :name :as "Name"}
+                                 {:from :price :as "Price"
                                   :align :right
-                                  :format #(format "$%.2f" (double %))}]
+                                  :formatter #(format "$%.2f" (double %))}]
                        :rows [{:name "apple" :price 1.5}]}))))
 
 (deftest markdown-without-headers-omits-rule
@@ -95,29 +130,45 @@
   (is (= :invalid-table-column
          (:type (ex-data (try
                            (table/table {:format :plain
-                                         :columns [{:key 0 :title "x" :align :nope}]
-                                         :rows [["x"]]})
+                                         :columns [{:from :x :as "x" :align :nope}]
+                                         :rows [{:x "x"}]})
                            (catch clojure.lang.ExceptionInfo e e)))))))
+
+(deftest invalid-column-spec-throws
+  (testing "a non-keyword, non-map column entry"
+    (is (= :invalid-column-spec
+           (:type (ex-data (try
+                             (table/table {:format :plain
+                                           :columns ["just a string"]
+                                           :rows [["x"]]})
+                             (catch clojure.lang.ExceptionInfo e e)))))))
+  (testing ":from must be a keyword if supplied"
+    (is (= :invalid-column-spec
+           (:type (ex-data (try
+                             (table/table {:format :plain
+                                           :columns [{:from 0 :as "Text"}]
+                                           :rows [["x"]]})
+                             (catch clojure.lang.ExceptionInfo e e))))))))
 
 (deftest overflow-policies
   (is (= ["Text"
           "a..."]
          (table/table {:format :plain
-                       :columns [{:key 0 :title "Text" :width 4
+                       :columns [{:as "Text" :width 4
                                   :overflow :ellipsis}]
                        :rows [["abcdef"]]})))
   (is (= ["Txt"
           "abc"
           "def"]
          (table/table {:format :plain
-                       :columns [{:key 0 :title "Txt" :width 3
+                       :columns [{:as "Txt" :width 3
                                   :overflow :wrap}]
                        :rows [["abcdef"]]})))
   (testing "overflow errors"
     (is (= :table-cell-overflow
            (:type (ex-data (try
                              (table/table {:format :plain
-                                           :columns [{:key 0 :title "Text"
+                                           :columns [{:as "Text"
                                                       :width 3
                                                       :overflow :error}]
                                            :rows [["abcdef"]]})

@@ -326,9 +326,9 @@ Column specs can align values independently of the selected format.
 
 ```clojure
 (table/table {:format :markdown
-              :columns [{:key :name :title "Name"}
-                        {:key :qty :title "Qty" :align :right}
-                        {:key :price :title "Price" :align :right}]
+              :columns [{:from :name  :as "Name"}
+                        {:from :qty   :as "Qty"   :align :right}
+                        {:from :price :as "Price" :align :right}]
               :rows [{:name "apple" :qty 12 :price "$1.50"}
                      {:name "pear" :qty 4 :price "$2.00"}]})
 ```

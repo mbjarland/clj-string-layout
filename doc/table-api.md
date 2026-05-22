@@ -63,43 +63,64 @@ Available formats are discoverable at runtime:
 The Markdown formats only emit the `|:---|` rule row when a header is present
 (via `:headers` or `:columns`). Headerless data renders as plain pipe rows.
 
-## Map Rows And Column Specs
+## Columns
 
-Column specs let you render maps directly and control titles, alignment,
-formatting, widths, and overflow.
+`:columns` is how you tell the table what to extract from each row, what to
+label it, and how to align or format it. There are two shapes:
+
+| Shape | Reads as |
+| --- | --- |
+| `:qty` | from `:qty`, as `"qty"`, defaults otherwise |
+| `{:from :qty :as "Qty" :align :right :formatter f ...}` | full map: explicit everything |
+
+The keyword shortcut is sugar for `{:from :qty :as "qty"}`. Use it
+whenever the only thing you want is "include this column with sensible
+defaults". For anything else, reach for the map form. Both shapes can
+appear in the same `:columns` vector.
+
+Map keys:
+
+| Key | Meaning |
+| --- | --- |
+| `:from` | Row map key. Required for map rows; omit it for vector rows to use the column's position. |
+| `:as` | Header label. Defaults to the keyword name of `:from` (or empty when `:from` is omitted). |
+| `:align` | `:left`, `:center`, `:right`, or `:verbatim`. |
+| `:formatter` | One-arg function applied to the cell value before rendering. |
+| `:width` | Maximum cell width, paired with `:overflow`. |
+| `:overflow` | `:none`, `:clip`, `:ellipsis`, `:wrap`, or `:error`. |
+
+A mixed example:
 
 ```clojure
 (table/table {:format :markdown
-              :columns [{:key :name :title "Name"}
-                        {:key :qty :title "Qty" :align :right}]
-              :rows [{:name "apple" :qty 12}
-                     {:name "pear" :qty 4}]})
-;; => ["| Name  | Qty |"
-;;     "|:----- | ---:|"
-;;     "| apple |  12 |"
-;;     "| pear  |   4 |"]
+              :columns [:name
+                        {:from :qty   :as "Qty"   :align :right}
+                        {:from :price :as "Price" :align :right
+                         :formatter #(format "$%.2f" %)}]
+              :rows [{:name "apple" :qty 12 :price 1.5}
+                     {:name "pear"  :qty 4  :price 2.0}]})
+;; => ["| name  | Qty | Price |"
+;;     "|:----- | ---:| -----:|"
+;;     "| apple |  12 | $1.50 |"
+;;     "| pear  |   4 | $2.00 |"]
 ```
 
-Column keys for vector rows can be numeric indexes:
+For vector rows that just need labels, use `:headers`:
 
 ```clojure
-{:columns [{:key 0 :title "Name"}
-           {:key 1 :title "Qty" :align :right}]}
+(table/table {:format :markdown
+              :headers ["Name" "Qty"]
+              :rows [["apple" 12] ["pear" 4]]})
 ```
 
-## Cell Formatting
-
-Use `:format` on a column to transform values before rendering:
+For vector rows that need per-column options, omit `:from` from the map
+form — the column's source is its position in `:columns`:
 
 ```clojure
-(table/table {:format :plain
-              :columns [{:key :name :title "Name"}
-                        {:key :price :title "Price"
-                         :align :right
-                         :format #(format "$%.2f" (double %))}]
-              :rows [{:name "apple" :price 1.5}]})
-;; => ["Name   Price"
-;;     "apple  $1.50"]
+{:columns [{:as "Name"}
+           {:as "Qty"   :align :right}
+           {:as "Price" :align :right :formatter #(format "$%.2f" %)}]
+ :rows [["apple" 12 1.5]]}
 ```
 
 ## Overflow Policies
@@ -116,8 +137,7 @@ Use `:width` with `:overflow` to constrain cell text before layout.
 
 ```clojure
 (table/table {:format :plain
-              :columns [{:key 0 :title "Text" :width 4
-                         :overflow :ellipsis}]
+              :columns [{:as "Text" :width 4 :overflow :ellipsis}]
               :rows [["abcdef"]]})
 ;; => ["Text"
 ;;     "a..."]
@@ -127,8 +147,7 @@ Wrapping creates additional rows:
 
 ```clojure
 (table/table {:format :plain
-              :columns [{:key 0 :title "Txt" :width 3
-                         :overflow :wrap}]
+              :columns [{:as "Txt" :width 3 :overflow :wrap}]
               :rows [["abcdef"]]})
 ;; => ["Txt"
 ;;     "abc"
