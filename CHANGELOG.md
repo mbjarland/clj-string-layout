@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-05-22
+
+### Changed
+
+- Added a "Large data" section to `doc/cli.md`, `doc/table-api.md`, and
+  `doc/recipes.md`. Each section is angled at that guide's audience but
+  shares the same underlying facts: `table/table`, `table/table-str`,
+  `table/table-seq`, `table/table-into!`, and the CLI are all eager and
+  top out somewhere around a million rows; for genuinely huge inputs use
+  `core/layout-seq` with explicit `:col-widths` and `core/layout-into!`
+  to a `java.io.Writer`. Recipes carries a measured-numbers table
+  showing the eager paths OOM at `-Xmx 512m` on a 1 M-row CSV fixture
+  while the streaming path runs in 280 MB / 2 s on the same input.
+
+No library behavior changes; documentation only.
+
 ## [2.1.0] - 2026-05-22
 
 ### Added
@@ -220,7 +236,8 @@ form is essentially `:key` → `:from`, `:title` → `:as`. If you used
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.1.1
 [2.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.1.0
 [2.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.2
 [2.0.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.1
