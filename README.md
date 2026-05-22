@@ -12,42 +12,46 @@ anything you can build out of the underlying layout DSL.
 
 ## Two layers
 
-The library is a stack. Pick where you start; drop a level when the
-one above doesn't reach.
+The library is built in two layers and most callers only ever touch
+the top one.
 
 ```text
 ┌─ HIGH ────────────────────────────────────────────────────────────────┐
 │ clj-string-layout.table                                               │
 │ (table/table {:format :box :columns [...] :rows [...]})               │
-│ → map rows, column specs, formatters, headers, footers, captions      │
+│ → Most callers start (and stop) here.                                 │
 ├───────────────────────────────────────────────────────────────────────┤
 │ clj-string-layout.core/layout                                         │
 │ (layout rows {:layout {:cols ["[L] [R]"]}})                           │
-│ → the layout DSL itself.                                              │
-│   Pre-canned configs live in clj-string-layout.presets.               │
+│ → When you need a shape the table API doesn't reach.                  │
+│   Pre-canned configs in clj-string-layout.presets.                    │
 └─ LOW ─────────────────────────────────────────────────────────────────┘
 ```
 
-- **`clj-string-layout.table`** — the high-level table API. Named
-  formats (`:markdown`, `:box`, `:csv`, `:html`, …) with column specs,
-  per-cell formatters, headers, footers, captions, overflow policies,
-  and per-format escaping. Most callers start (and stop) here. See
-  the [table API guide](doc/table-api.md) and
-  [examples gallery](doc/examples-gallery.md).
-- **`clj-string-layout.core/layout`** — the layout DSL itself. Column
-  markers (`[L]` `[C]` `[R]` `[V]`), fill regions (`f`), repeat
-  groups (`{…}`), virtual row layouts. Drop down here when you need
-  shapes the table API doesn't cover. See the
-  [layout language reference](doc/layout-language.md) and
-  [recipe book](doc/recipes.md).
-- **`clj-string-layout.presets`** is a catalog of ready-made layout
-  configs (Markdown, box-drawing, CSV, HTML, ASCII grid, psql, Org,
-  RST, …) you can hand straight to `layout` without writing your own
-  config map. They're shortcuts into the DSL layer, not a separate
-  abstraction. See the [preset catalog](doc/presets.md).
+**`clj-string-layout.table`** is where you start. Name a format —
+`:markdown`, `:box`, `:csv`, `:html`, and a dozen more — describe your
+columns, hand it rows. Headers, footers, captions, per-cell
+formatters, alignment, overflow, escaping: all handled. The next
+section shows it in action.
 
-Cross-cutting docs: [CLI guide](doc/cli.md),
-[errors reference](doc/errors.md).
+**`clj-string-layout.core/layout`** is the engine underneath. A
+small layout-string DSL: column markers, fill regions, repeat
+groups, virtual rule rows. Reach for it when you want a custom
+border, a non-rectangular layout, or column-aligned output that
+isn't really a table.
+
+A third namespace, **`clj-string-layout.presets`**, is a catalog of
+ready-made layout configs for the same named formats. They're
+shortcuts into the DSL layer for callers who want a recognisable
+format but with the engine's full flexibility (raw output, virtual
+rows, custom widths).
+
+Deeper docs: [table API guide](doc/table-api.md) ·
+[examples gallery](doc/examples-gallery.md) ·
+[layout language](doc/layout-language.md) ·
+[recipes](doc/recipes.md) ·
+[preset catalog](doc/presets.md) ·
+[CLI](doc/cli.md) · [errors](doc/errors.md).
 
 ## Install
 
