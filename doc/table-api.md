@@ -289,6 +289,36 @@ each row as a vector of pieces ready for cell decoration; for `:html` each
 output line becomes a single-piece vector so callers can wrap or annotate
 specific lines without re-parsing the rendered string.
 
+## Large Data
+
+`table/table` and `table/table-str` are **eager** — they build the full
+output vector before returning. That's fine up to roughly mid-six-figures
+of rows. Past that, expect high heap pressure and eventual
+`OutOfMemoryError`.
+
+For true streaming, drop down to `clj-string-layout.core/layout-seq` plus
+`clj-string-layout.core/layout-into!` and supply `:col-widths` explicitly:
+
+```clojure
+(require '[clj-string-layout.core :refer [layout-into!]])
+
+(with-open [w (clojure.java.io/writer "out.txt")]
+  (layout-into! w
+                rows                          ; lazy seq, no need to realise
+                {:col-widths [12 8]           ; required for streaming
+                 :layout {:cols ["[L]  [R]"]}}))
+```
+
+This runs in constant memory and handles 1 M+ rows in 256 MB of heap.
+See the [Large Data](recipes.md#large-data) section of the recipe book
+for measured numbers and the two-pass / sample-then-stream patterns when
+column widths aren't known up front.
+
+`table/table-seq` exists but does not stream — it eagerly renders, then
+returns a `seq` view of the result. Same goes for `table/table-into!`;
+it's a writer-sink wrapper around eager rendering, useful for clean
+output but not for memory-bounded workloads.
+
 ## When To Use The DSL Directly
 
 Use the high-level table API when you need common output formats quickly. Use

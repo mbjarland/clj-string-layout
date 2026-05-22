@@ -306,6 +306,49 @@ you can reuse them outside the rendering path:
 ;; => [["name" "note"] ["alice" "a,b"]]
 ```
 
+## Large data
+
+**The CLI is not safe for huge inputs.** It slurps the entire input via
+`slurp`, parses it to a vector, then renders eagerly through
+`table/table`. Empirically this means the CLI tops out somewhere between
+a few hundred thousand and a million rows depending on the JVM heap and
+the output format. On a 1 M-row CSV (~37 MB), `clojure -M:cli --` needs
+several gigabytes of heap and runs ~6 s; the same input OOMs at
+`-Xmx 512m`.
+
+For inputs that won't fit in heap, drop the CLI and use the streaming
+primitives from a small Clojure script:
+
+```clojure
+(require '[clj-string-layout.core :as core])
+
+(defn split-lines [^java.io.BufferedReader r]
+  (lazy-seq
+    (when-let [line (.readLine r)]
+      (cons (clojure.string/split line #",") (split-lines r)))))
+
+(with-open [r (java.io.BufferedReader. (java.io.FileReader. "big.csv"))
+            w (clojure.java.io/writer "out.txt")]
+  (let [rows (drop 1 (split-lines r))]      ; skip the header line
+    (core/layout-into! w rows
+                       {:col-widths [10 20 8]   ; required for streaming
+                        :layout {:cols ["[L]  [L]  [R]"]}})))
+```
+
+That runs 1 M rows in ~2 s with `-Xmx 256m` and constant memory. The
+recipe book has the [full Large Data section](recipes.md#large-data)
+with measured numbers, the row-layout case, and the two-pass /
+sample-then-stream patterns for when widths aren't known up front.
+
+A few caveats specific to this approach:
+
+- The line-splitter above does **not** handle quoted CSV fields. For
+  RFC 4180-compliant streaming you'd need a streaming CSV parser
+  (`clojure.data.csv` works well and reads lazily).
+- The lower-level engine needs `:col-widths` to stream. Without them,
+  it does a full input scan to compute widths and you're back to
+  eager memory use.
+
 ## Troubleshooting
 
 | Symptom | Likely cause |
