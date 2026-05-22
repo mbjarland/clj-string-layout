@@ -73,6 +73,7 @@
           "--format" (recur more (assoc options :format (parse-keyword-option arg value (table/formats))))
           "--to" (recur more (assoc options :format (parse-keyword-option arg value (table/formats))))
           "--width" (recur more (assoc options :width (parse-int-option arg value)))
+          "--fill" (recur (next args) (assoc options :fill? true))
           (cond
             (= "-" arg)
             (if (:file options)
@@ -181,7 +182,7 @@
   (a function from string to display width, useful when the caller invokes
   render programmatically with ANSI or wide-glyph data). Returns a vector of
   output lines and does not print or exit."
-  [{:keys [input format headers? escape? width display-width]
+  [{:keys [input format headers? escape? width display-width fill?]
     :or {input :csv format :plain escape? true}}
    text]
   (let [rows (parse-input input text)]
@@ -195,6 +196,7 @@
                             :escape? escape?}
                      headers (assoc :headers headers)
                      width (assoc :width width)
+                     fill? (assoc :fill? true)
                      display-width (assoc :display-width display-width))))))
 
 (defn- format-list [values]
@@ -211,7 +213,8 @@
        "Options:\n"
        "  --input, --from FORMAT   Input format: " (format-list input-formats) " (default: csv)\n"
        "  --format, --to FORMAT    Output format: " (format-list (table/formats)) " (default: plain)\n"
-       "  --width N                Target width for fill-aware output formats\n"
+       "  --width N                Target total width (paired with --fill)\n"
+       "  --fill                   Expand fill-aware formats toward --width\n"
        "  --headers                Treat the first input row as headers\n"
        "  --no-headers             Treat every input row as data\n"
        "  --no-escape              Disable output-format escaping\n"

@@ -17,6 +17,8 @@
          (:width (cli/parse-args ["--from" "csv" "--to" "ascii-grid" "--width" "40"]))))
   (is (= :tsv
          (:input (cli/parse-args ["--from" "tsv"]))))
+  (is (true?
+        (:fill? (cli/parse-args ["--from" "csv" "--to" "box" "--width" "30" "--fill"]))))
   (is (= :cli-argument-error
          (:type (ex-data (try
                            (cli/parse-args ["--wat"])
@@ -44,6 +46,17 @@
                       :headers? false
                       :escape? true}
                      "a\tb\ncc\td\n"))))
+
+(deftest fill-expands-toward-width
+  (let [lines (cli/render {:input :csv
+                           :format :box
+                           :headers? true
+                           :escape? true
+                           :width 30
+                           :fill? true}
+                          "name,qty\napple,12\n")]
+    (is (= 30 (count (first lines))))
+    (is (every? #(= 30 (count %)) lines))))
 
 (deftest whitespace-rendering
   (is (= ["+----+---+"
