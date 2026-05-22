@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(clojure -M:test)",
-      "Bash(git add *)",
-      "Bash(git commit -m ' *)"
-    ]
-  }
-}

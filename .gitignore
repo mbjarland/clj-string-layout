@@ -13,3 +13,7 @@ pom.xml
 pom.xml.asc
 *.jar
 *.class
+
+# Tool caches that should never be tracked
+/.clj-kondo/.cache/
+/.claude/
