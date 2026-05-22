@@ -10,81 +10,6 @@
 tables, box-drawing terminal output, CSV, HTML, psql, Org mode, and
 anything you can build out of the underlying layout DSL.
 
-## Two layers
-
-The library is built in two layers and most callers only ever touch
-the top one.
-
-```text
-┌─ HIGH ────────────────────────────────────────────────────────────────┐
-│ clj-string-layout.table                                               │
-│ (table/table {:format :box :columns [...] :rows [...]})               │
-│ → Most callers start (and stop) here.                                 │
-├───────────────────────────────────────────────────────────────────────┤
-│ clj-string-layout.core/layout                                         │
-│ (layout rows {:layout {:cols ["[L] [R]"]}})                           │
-│ → When you need a shape the table API doesn't reach.                  │
-│   Pre-canned configs in clj-string-layout.presets.                    │
-└─ LOW ─────────────────────────────────────────────────────────────────┘
-```
-
-**`clj-string-layout.table`** is where you start. Name a format —
-`:markdown`, `:box`, `:csv`, `:html`, and a dozen more — describe your
-columns, hand it rows. Headers, footers, captions, per-cell
-formatters, alignment, overflow, escaping: all handled. The next
-section shows it in action.
-
-**`clj-string-layout.core/layout`** is the engine the table API and
-presets are built on, and it's worth knowing in its own right. Reach
-for it any time you want text to line up in columns: full tables,
-ad-hoc key/value pairs, ANSI-coloured terminal dashboards, custom
-borders, log lines with aligned timestamps, status output with
-`"left                            right"` on the same line, or any
-shape the named formats don't quite reach. The DSL gives you layout
-strings with column markers, fill regions, repeat groups, and
-virtual rule rows; pair it with `layout-seq` to stream large
-datasets row by row.
-
-A third namespace, **`clj-string-layout.presets`**, is a catalog of
-ready-made layout configs for the same named formats. They're
-shortcuts into the DSL layer for callers who want a recognisable
-format but with the engine's full flexibility (raw output, virtual
-rows, custom widths).
-
-Deeper docs: [table API guide](doc/table-api.md) ·
-[examples gallery](doc/examples-gallery.md) ·
-[layout language](doc/layout-language.md) ·
-[recipes](doc/recipes.md) ·
-[preset catalog](doc/presets.md) ·
-[CLI](doc/cli.md) · [errors](doc/errors.md).
-
-## Install
-
-```clojure
-;; deps.edn
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.2"}}}
-```
-
-The library has no third-party Clojure runtime dependencies. A
-Babashka script can require it directly without a pod and without JVM
-startup cost:
-
-```clojure
-#!/usr/bin/env bb
-(require '[babashka.deps :as deps])
-(deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
-                        {:mvn/version "2.0.2"}}})
-
-(require '[clj-string-layout.table :as table])
-(println (table/table-str {:format :box
-                           :headers ["Name" "Qty"]
-                           :rows [["apple" 12] ["pear" 4]]}))
-```
-
-Tested on Java 11, 17, and 21. Versions before `1.0.4` used the older
-`com.github.mbjarland` Maven group; use `io.github.mbjarland` for new
-installs.
-
 ## One spec, many shapes
 
 Describe the data once:
@@ -171,6 +96,58 @@ The same `cols` and `items` also render as `:double-box`, `:ascii-grid`,
 alignment-specific `:markdown-*` variants. The
 [examples gallery](doc/examples-gallery.md) shows every named format
 side by side with the same data.
+
+## Install
+
+```clojure
+;; deps.edn
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.2"}}}
+```
+
+No third-party Clojure runtime dependencies — a Babashka script can
+require it directly:
+
+```clojure
+#!/usr/bin/env bb
+(require '[babashka.deps :as deps])
+(deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
+                        {:mvn/version "2.0.2"}}})
+
+(require '[clj-string-layout.table :as table])
+(println (table/table-str {:format :box
+                           :headers ["Name" "Qty"]
+                           :rows [["apple" 12] ["pear" 4]]}))
+```
+
+Tested on Java 11, 17, and 21.
+
+## Two layers
+
+The example above is the high-level table API. Underneath it sits a
+small layout DSL — the engine every named format is built on, and
+the thing you reach for when you want text to line up in ways the
+table API doesn't quite cover (custom borders, ANSI dashboards,
+log lines with aligned timestamps, key/value pairs, anything).
+
+```text
+┌─ HIGH ────────────────────────────────────────────────────────────────┐
+│ clj-string-layout.table                                               │
+│ (table/table {:format :box :columns [...] :rows [...]})               │
+│ → Most callers start (and stop) here.                                 │
+├───────────────────────────────────────────────────────────────────────┤
+│ clj-string-layout.core/layout                                         │
+│ (layout rows {:layout {:cols ["[L] [R]"]}})                           │
+│ → For anything the table API doesn't reach.                           │
+│   Pre-canned configs in clj-string-layout.presets.                    │
+└─ LOW ─────────────────────────────────────────────────────────────────┘
+```
+
+Deeper docs: [table API](doc/table-api.md) ·
+[examples gallery](doc/examples-gallery.md) ·
+[layout language](doc/layout-language.md) ·
+[recipes](doc/recipes.md) ·
+[preset catalog](doc/presets.md) ·
+[CLI](doc/cli.md) · [errors](doc/errors.md).
 
 ## Table API reference
 
