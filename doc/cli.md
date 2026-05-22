@@ -67,28 +67,45 @@ The same rules apply to `bb format` and `bb bb-format`.
 
 ### CSV (`--from csv`)
 
-RFC 4180-style parser. Handles quoted fields, doubled quotes inside quoted
-fields, `CR`/`LF`/`CRLF` row separators, and embedded line breaks inside
-quoted fields. The parser is intentionally lenient about text after a
+RFC 4180-style parser. Handles quoted fields (including separators and
+doubled quotes inside quoted fields) and `CR` / `LF` / `CRLF` row
+separators. The parser is intentionally lenient about text after a
 closing quote, so imperfect CSV exports usually still load.
 
 ```sh
-$ printf 'name,note\nalice,"a, b"\nbob,"line1\nline2"\n' \
+$ printf 'name,note\nalice,"a, b"\nbob,plain text\n' \
     | bb bb-format --from csv --to box --headers
-┌───────┬─────────────┐
-│ name  │ note        │
-├───────┼─────────────┤
-│ alice │ a, b        │
-├───────┼─────────────┤
-│ bob   │ line1
-line2 │
-└───────┴─────────────┘
+┌───────┬────────────┐
+│ name  │ note       │
+├───────┼────────────┤
+│ alice │ a, b       │
+├───────┼────────────┤
+│ bob   │ plain text │
+└───────┴────────────┘
 ```
 
-Note: embedded newlines inside cells stay literal. The formatter will not
-split them into additional table rows; the output line breaks inside the
-cell. For multi-line cell content that you want laid out as multiple rows,
-preprocess the input.
+Doubled quotes inside a quoted field unescape to a single `"`:
+
+```sh
+$ printf 'name,quote\nalice,"she said ""hi"""\nbob,plain\n' \
+    | bb bb-format --from csv --to box --headers
+┌───────┬───────────────┐
+│ name  │ quote         │
+├───────┼───────────────┤
+│ alice │ she said "hi" │
+├───────┼───────────────┤
+│ bob   │ plain         │
+└───────┴───────────────┘
+```
+
+**Embedded newlines inside quoted fields are preserved literally.** That
+matches the RFC 4180 spec for the parsing side, but visual formats like
+`:box` and `:ascii-grid` have no way to lay out a multi-line cell — the
+output will break mid-row when it hits the embedded `\n`. If your data
+has newlines in cells, either preprocess them out (`tr '\n' ' '`) or
+target a format whose escaper handles them: `:markdown` converts them
+to `<br>`, `:tsv` and `:org` to visible escape sequences, `:html` keeps
+them inside `<td>`.
 
 ### TSV (`--from tsv`)
 
