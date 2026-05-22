@@ -77,8 +77,10 @@
   writer."
   [^java.io.Writer writer rows layout-config]
   (doseq [line (layout-seq rows layout-config)]
-    (.write writer ^String (if (string? line) line (apply str line)))
-    (.write writer "\n"))
+    (let [s (if (string? line) ^String line (apply str line))]
+      (.write writer ^String s)
+      (.write writer "\n"))
+    nil)
   writer)
 
 (defn parse-layout

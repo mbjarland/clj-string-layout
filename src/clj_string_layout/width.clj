@@ -31,11 +31,11 @@
 (defn- between? [low high value]
   (<= low value high))
 
-(defn- zero-width-codepoint? [codepoint]
+(defn- zero-width-codepoint? [^long codepoint]
   (or (zero? codepoint)
       (< codepoint 32)
       (between? 0x7f 0x9f codepoint)
-      (let [type (Character/getType codepoint)]
+      (let [type (int (Character/getType codepoint))]
         (or (= Character/NON_SPACING_MARK type)
             (= Character/ENCLOSING_MARK type)
             (= Character/COMBINING_SPACING_MARK type)
@@ -76,14 +76,14 @@
   handles combining marks and East Asian wide/fullwidth characters, but does not
   attempt full grapheme-cluster shaping for emoji ZWJ sequences."
   [value]
-  (let [text (str value)
+  (let [^String text (str value)
         len (.length text)]
     (loop [idx 0
            total 0]
       (if (< idx len)
         (let [codepoint (.codePointAt text idx)]
-          (recur (+ idx (Character/charCount codepoint))
-                 (+ total (codepoint-width codepoint))))
+          (recur (unchecked-add idx (Character/charCount codepoint))
+                 (unchecked-add total (long (codepoint-width codepoint)))))
         total))))
 
 (defn terminal-width

@@ -372,6 +372,8 @@
   for streaming behavior on the lower-level layout API."
   [^java.io.Writer writer spec]
   (doseq [line (table spec)]
-    (.write writer ^String (if (string? line) line (apply str line)))
-    (.write writer "\n"))
+    (let [s (if (string? line) ^String line (apply str line))]
+      (.write writer ^String s)
+      (.write writer "\n"))
+    nil)
   writer)

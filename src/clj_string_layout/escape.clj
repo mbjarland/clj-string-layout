@@ -89,7 +89,7 @@
       (str/replace "\\" "\\\\")
       (str/replace "\n" " ")))
 
-(defn- log-safe-char [ch]
+(defn- log-safe-char [^Character ch]
   (case ch
     \\ "\\\\"
     \tab "\\t"
