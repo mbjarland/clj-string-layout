@@ -1,7 +1,6 @@
 {:paths ["src"]
 
- :deps {org.clojure/clojure {:mvn/version "1.12.5"}
-        instaparse/instaparse {:mvn/version "1.5.0"}}
+ :deps {org.clojure/clojure {:mvn/version "1.12.5"}}
 
  :aliases
  {:test

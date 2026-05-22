@@ -40,7 +40,11 @@ Require the namespaces you need:
          '[clj-string-layout.width :as width])
 ```
 
-The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum runtime.
+The library is tested on Java 11, 17, and 21. Java 11 is the intended minimum
+runtime. It is also Babashka-compatible — the parser is hand-rolled and the
+library has no third-party Clojure dependencies, so it can be required
+directly from a `bb` script with no JVM startup cost. See the
+[CLI guide](doc/cli.md) for the `bb-format` task.
 
 ## High-Level Table API
 

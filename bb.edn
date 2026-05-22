@@ -1,7 +1,19 @@
-{:tasks
+{:paths ["src" "test"]
+
+ :tasks
  {format
   {:doc "Format CSV, TSV, or whitespace input with clj-string-layout.cli"
    :task (apply shell "clojure" "-M:cli" *command-line-args*)}
+
+  bb-format
+  {:doc "Format input using Babashka directly (no JVM startup)"
+   :requires ([clj-string-layout.cli :as cli])
+   :task (apply cli/-main *command-line-args*)}
+
+  bb-test
+  {:doc "Run the bb-compatible test suite under Babashka"
+   :requires ([clj-string-layout.bb-test-runner])
+   :task (clj-string-layout.bb-test-runner/-main)}
 
   test
   {:doc "Run the Clojure test suite"

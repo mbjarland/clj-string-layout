@@ -13,14 +13,35 @@ clojure -M:cli -- --input tsv --format ascii-grid < data.tsv
 clojure -M:cli -- --from csv --to box --headers data.csv
 ```
 
-The Babashka shortcut routes the same arguments through `bb.edn`:
+Babashka users have two options. `bb format` shells out to the JVM CLI and
+mirrors the `clojure -M:cli` flags:
 
 ```sh
 bb format -- --input csv --format markdown --headers data.csv
 bb format -- --input tsv --format ascii-grid < data.tsv
 ```
 
-`bb test`, `bb lint`, `bb bench`, and `bb jar` are also available.
+`bb bb-format` runs the same logic natively under Babashka with no JVM
+startup, so it returns in tens of milliseconds instead of half a second:
+
+```sh
+bb bb-format --from csv --to box --headers < data.csv
+```
+
+The library has no third-party Clojure dependencies, so requiring it from a
+Babashka script also works directly:
+
+```clojure
+#!/usr/bin/env bb
+(require '[clj-string-layout.table :as table])
+(println (table/table-str {:format :box
+                           :headers ["Name" "Qty"]
+                           :rows [["apple" 12]]}))
+```
+
+`bb test` runs the full JVM test suite, `bb bb-test` runs the Babashka-only
+subset (skipping the test.check property tests). `bb lint`, `bb bench`, and
+`bb jar` are also available.
 
 ## Options
 
