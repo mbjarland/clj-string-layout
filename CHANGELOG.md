@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-05-22
+
+### Changed
+
+- README restructured around a single two-layer mental model (table
+  API on top, layout DSL underneath, with `clj-string-layout.presets`
+  as a shortcut catalog into the DSL instead of being framed as a
+  third "layer"). The DSL layer now gets one focused teaser instead
+  of ~250 lines of reference content that already lived in
+  `doc/layout-language.md`. Net README size: 667 → 271 lines.
+- Reworded the Layout DSL example so `[L]f[R]` is described
+  accurately (one layout string with two column markers and a fill
+  region between them, not a "single column layout").
+
+No library behavior changes; documentation only.
+
 ## [2.0.1] - 2026-05-22
 
 ### Changed
@@ -170,7 +186,8 @@ form is essentially `:key` → `:from`, `:title` → `:as`. If you used
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.2
 [2.0.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.1
 [2.0.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.0
 [1.2.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v1.2.0

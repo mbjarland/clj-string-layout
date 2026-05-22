@@ -53,7 +53,7 @@ Cross-cutting docs: [CLI guide](doc/cli.md),
 
 ```clojure
 ;; deps.edn
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.1"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.0.2"}}}
 ```
 
 The library has no third-party Clojure runtime dependencies. A
@@ -64,7 +64,7 @@ startup cost:
 #!/usr/bin/env bb
 (require '[babashka.deps :as deps])
 (deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
-                        {:mvn/version "2.0.1"}}})
+                        {:mvn/version "2.0.2"}}})
 
 (require '[clj-string-layout.table :as table])
 (println (table/table-str {:format :box
