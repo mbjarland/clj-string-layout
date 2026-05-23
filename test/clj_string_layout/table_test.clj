@@ -303,6 +303,52 @@
                            :rows [["x" "y"]]})
     (is (= "A  B\nx  y\n" (str sw)))))
 
+(deftest print-table-helper
+  (let [sw (java.io.StringWriter.)]
+    (binding [*out* sw]
+      (table/print-table {:format :plain
+                          :headers ["A" "B"]
+                          :rows [["x" "y"]]}))
+    (is (= "A  B\nx  y\n" (str sw)))))
+
+(deftest columns-from-helper
+  (testing "defaults: numerics → :right, strings → :left, labels from keys"
+    (is (= [{:from :item :as "item"}
+            {:from :qty :as "qty" :align :right}
+            {:from :price :as "price" :align :right}]
+           (table/columns-from {:item "apple" :qty 12 :price 1.50}))))
+  (testing "accepts a sequence of rows, samples the first"
+    (is (= [{:from :a :as "a"}
+            {:from :b :as "b" :align :right}]
+           (table/columns-from [{:a "x" :b 1} {:a "y" :b 2}]))))
+  (testing "per-key overrides"
+    (let [cols (table/columns-from
+                 {:item "" :price 0.0}
+                 {:item  {:as "Item"}
+                  :price {:as "Price"
+                          :formatter #(format "$%.2f" %)}})]
+      (is (= "Item" (:as (first cols))))
+      (is (= "Price" (:as (second cols))))
+      (is (= :right (:align (second cols))))
+      (is (= "$1.50" ((:formatter (second cols)) 1.50)))))
+  (testing "override :align beats the numeric default"
+    (is (= :left
+           (-> (table/columns-from {:n 1} {:n {:align :left}})
+               first :align))))
+  (testing "non-map sample throws :invalid-sample"
+    (is (= :invalid-sample
+           (:type (ex-data (try
+                             (table/columns-from "not a map")
+                             (catch clojure.lang.ExceptionInfo e e))))))))
+
+(deftest columns-from-feeds-into-table
+  (is (= ["| item  | qty |"
+          "|:----- | ---:|"
+          "| apple |  12 |"]
+         (table/table {:format :markdown
+                       :columns (table/columns-from {:item "" :qty 0})
+                       :rows [{:item "apple" :qty 12}]}))))
+
 (deftest string-and-seq-entry-points
   (let [spec {:format :ascii-grid
               :headers ["A" "B"]

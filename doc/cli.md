@@ -308,46 +308,46 @@ you can reuse them outside the rendering path:
 
 ## Large data
 
-**The CLI is not safe for huge inputs.** It slurps the entire input via
-`slurp`, parses it to a vector, then renders eagerly through
-`table/table`. Empirically this means the CLI tops out somewhere between
-a few hundred thousand and a million rows depending on the JVM heap and
-the output format. On a 1 M-row CSV (~37 MB), `clojure -M:cli --` needs
-several gigabytes of heap and runs ~6 s; the same input OOMs at
-`-Xmx 512m`.
+For `--to csv`, `--to tsv`, and `--to pipe`, the CLI **auto-streams**:
+input rows are parsed lazily from a `Reader` and emitted directly to
+stdout, without buffering the input or computing column widths. On a
+1 M-row CSV (~37 MB), `clojure -M:cli -- --from csv --to csv` runs in
+~3 s with `-Xmx 256m` and constant memory.
 
-For inputs that won't fit in heap, drop the CLI and use the streaming
+For width-aware outputs (`box`, `markdown`, `psql`, …) the CLI still
+needs to scan every row to compute column widths before it can render
+the first line, so it falls back to the eager path. Those formats top
+out around mid-six-figures of rows depending on the JVM heap. On the
+same 1 M-row fixture, `--to box` OOMs at `-Xmx 512m` and needs a few
+gigabytes to succeed.
+
+For million-row width-aware output, drop the CLI and use the streaming
 primitives from a small Clojure script:
 
 ```clojure
 (require '[clj-string-layout.core :as core])
-
-(defn split-lines [^java.io.BufferedReader r]
-  (lazy-seq
-    (when-let [line (.readLine r)]
-      (cons (clojure.string/split line #",") (split-lines r)))))
+(require '[clj-string-layout.cli  :as cli])
 
 (with-open [r (java.io.BufferedReader. (java.io.FileReader. "big.csv"))
             w (clojure.java.io/writer "out.txt")]
-  (let [rows (drop 1 (split-lines r))]      ; skip the header line
+  (let [rows (drop 1 (cli/csv-row-seq r))]   ; skip the header
     (core/layout-into! w rows
                        {:col-widths [10 20 8]   ; required for streaming
                         :layout {:cols ["[L]  [L]  [R]"]}})))
 ```
 
-That runs 1 M rows in ~2 s with `-Xmx 256m` and constant memory. The
-recipe book has the [full Large Data section](recipes.md#large-data)
+`cli/csv-row-seq`, `cli/tsv-row-seq`, and `cli/whitespace-row-seq` are
+the same lazy parsers the auto-streamed CLI uses. They handle quoted
+CSV fields (including embedded newlines and doubled quotes) and are
+safe to feed to `core/layout-into!` directly.
+
+The recipe book has the [full Large Data section](recipes.md#large-data)
 with measured numbers, the row-layout case, and the two-pass /
 sample-then-stream patterns for when widths aren't known up front.
 
-A few caveats specific to this approach:
-
-- The line-splitter above does **not** handle quoted CSV fields. For
-  RFC 4180-compliant streaming you'd need a streaming CSV parser
-  (`clojure.data.csv` works well and reads lazily).
-- The lower-level engine needs `:col-widths` to stream. Without them,
-  it does a full input scan to compute widths and you're back to
-  eager memory use.
+The lower-level engine needs `:col-widths` to stream. Without them, it
+does a full input scan to compute widths and you're back to eager
+memory use.
 
 ## Troubleshooting
 

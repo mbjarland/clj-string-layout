@@ -1,7 +1,9 @@
 (ns clj-string-layout.cli
   "Command-line entry point for formatting CSV, TSV, or whitespace input."
-  (:require [clj-string-layout.table :as table]
-            [clojure.string :as str]))
+  (:require [clj-string-layout.escape :as escape]
+            [clj-string-layout.table :as table]
+            [clojure.string :as str])
+  (:import [java.io BufferedReader InputStreamReader FileInputStream]))
 
 (set! *warn-on-reflection* true)
 
@@ -174,6 +176,82 @@
     :tsv (parse-separated-lines #"\t" text)
     :whitespace (parse-whitespace text)))
 
+;; --- Streaming parsers ----------------------------------------------------
+;; Each *-row-seq function reads from a java.io.Reader and yields rows as a
+;; lazy seq, suitable for piping through core/layout-into! without buffering
+;; the full input. The CLI auto-uses these when the target format does not
+;; need column-width computation.
+
+(defn- unbalanced-quotes?
+  "True when line has an odd number of double-quote characters, meaning a
+  quoted field is still open and the next physical line is part of the same
+  logical CSV row."
+  [^String line]
+  (odd? (count (filter #(= % \") line))))
+
+(defn csv-row-seq
+  "Returns a lazy sequence of row vectors read from a java.io.Reader.
+
+  Handles multi-line quoted fields by assembling physical lines until the
+  running quote count is balanced, then parsing the assembled logical line
+  with parse-csv. The reader is not closed; wrap in with-open at the call
+  site."
+  [^java.io.Reader r]
+  (let [br (if (instance? java.io.BufferedReader r)
+             ^java.io.BufferedReader r
+             (java.io.BufferedReader. r))]
+    (letfn [(step []
+              (lazy-seq
+                (when-let [first-line (.readLine br)]
+                  (let [logical (loop [acc first-line]
+                                  (if (unbalanced-quotes? acc)
+                                    (if-let [more (.readLine br)]
+                                      (recur (str acc "\n" more))
+                                      acc)
+                                    acc))
+                        [row & _] (parse-csv logical)]
+                    (cons (or row []) (step))))))]
+      (step))))
+
+(defn tsv-row-seq
+  "Lazy sequence of tab-separated row vectors read from a java.io.Reader."
+  [^java.io.Reader r]
+  (let [br (if (instance? java.io.BufferedReader r)
+             ^java.io.BufferedReader r
+             (java.io.BufferedReader. r))]
+    (letfn [(step []
+              (lazy-seq
+                (when-let [line (.readLine br)]
+                  (cons (str/split line #"\t" -1) (step)))))]
+      (step))))
+
+(defn whitespace-row-seq
+  "Lazy sequence of whitespace-split row vectors read from a java.io.Reader.
+
+  Skips blank lines and trims leading/trailing whitespace, matching the
+  eager parse-whitespace behaviour."
+  [^java.io.Reader r]
+  (let [br (if (instance? java.io.BufferedReader r)
+             ^java.io.BufferedReader r
+             (java.io.BufferedReader. r))]
+    (letfn [(step []
+              (lazy-seq
+                (when-let [line (.readLine br)]
+                  (let [trimmed (str/trim line)]
+                    (if (str/blank? trimmed)
+                      (step)
+                      (cons (str/split trimmed #"\s+") (step)))))))]
+      (step))))
+
+(defn row-seq
+  "Dispatches to the streaming parser for input-format and returns a lazy
+  sequence of row vectors read from r."
+  [input-format ^java.io.Reader r]
+  (case input-format
+    :csv (csv-row-seq r)
+    :tsv (tsv-row-seq r)
+    :whitespace (whitespace-row-seq r)))
+
 (defn render
   "Renders parsed input text according to CLI-style options.
 
@@ -225,11 +303,57 @@
     (slurp file)
     (slurp *in*)))
 
+(defn- open-reader ^java.io.BufferedReader [{:keys [file]}]
+  (if (and file (not= "-" file))
+    (BufferedReader. (InputStreamReader. (FileInputStream. ^String file) "UTF-8"))
+    (BufferedReader. *in*)))
+
+;; Width-free output formats can stream row-by-row without buffering the
+;; input or computing column widths. The CLI auto-uses this path on these
+;; formats, removing the 1M-row OOM cliff documented in doc/cli.md. Going
+;; through the layout engine would still force a full row scan to compute
+;; (unused) widths, so for these three formats we emit directly.
+(def ^:private streamable-formats
+  {:csv  {:separator ","   :escape escape/csv-cell}
+   :tsv  {:separator "\t"  :escape escape/tsv-cell}
+   :pipe {:separator "|"   :escape identity}})
+
+(defn- write-separated-row [^java.io.Writer w ^String sep escape-fn row]
+  (loop [first? true items row]
+    (when (seq items)
+      (when-not first? (.write w sep))
+      (.write w ^String (escape-fn (first items)))
+      (recur false (next items))))
+  (.write w "\n"))
+
+(defn- stream-render
+  "Streams input through the formatter row-by-row, writing to *out*.
+
+  Returns nil. Only invoked for keys of streamable-formats; other formats
+  fall back to the eager render+println loop. Bypasses the layout engine
+  for these three formats because their cells are emitted verbatim with a
+  fixed separator — no width computation is needed and going through the
+  engine would force a full row scan."
+  [{:keys [input format escape?] :as options}]
+  (let [{:keys [separator escape]} (streamable-formats format)
+        escape-fn (if (false? escape?) identity escape)
+        ^java.io.Writer out *out*]
+    (with-open [r (open-reader options)]
+      (doseq [row (row-seq input r)]
+        (write-separated-row out separator escape-fn row))
+      (.flush out))))
+
 (defn -main [& args]
   (try
     (let [options (parse-args args)]
-      (if (:help? options)
+      (cond
+        (:help? options)
         (println (usage))
+
+        (contains? streamable-formats (:format options))
+        (stream-render options)
+
+        :else
         (doseq [line (render options (input-text options))]
           (println line))))
     (catch clojure.lang.ExceptionInfo e

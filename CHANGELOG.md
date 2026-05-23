@@ -4,6 +4,49 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-05-23
+
+### Added
+
+- **Auto-streaming CLI.** When the output format is `:csv`, `:tsv`, or
+  `:pipe`, the CLI now parses input row-by-row from a `Reader` and
+  emits directly to stdout, bypassing the layout engine entirely. On a
+  1 M-row CSV (~37 MB) the CLI now runs in ~3 s with `-Xmx 256m` and
+  constant memory; previously the same input OOMed at `-Xmx 512m` and
+  needed a few gigabytes of heap to succeed. Width-aware formats
+  (`box`, `markdown`, `psql`, …) still go through the eager path
+  because they need a full row scan to compute column widths.
+
+- **Streaming row-seq parsers** in `clj-string-layout.cli`:
+  `csv-row-seq`, `tsv-row-seq`, `whitespace-row-seq`, and `row-seq`
+  (dispatching on input format). Each returns a lazy sequence of row
+  vectors read from a `java.io.Reader`. `csv-row-seq` handles
+  multi-line quoted fields, doubled-quote escapes, and the
+  `CR`/`LF`/`CRLF` row separators by assembling physical lines into
+  logical rows on a balanced-quote check.
+
+- **`clj-string-layout.table/print-table`** — `(print-table spec)`
+  renders the spec via `table` and prints each line to `*out*`,
+  saving the `(println (table-str …))` wrap that dominates REPL use.
+
+- **`clj-string-layout.table/columns-from`** — derives a `:columns`
+  vector from a sample row map (or the first row of a sequence).
+  Numeric values default to `:align :right`, labels default to the
+  source keyword's name. Accepts a per-key overrides map for `:as`,
+  `:align`, `:formatter`, `:width`, and `:overflow`. Cuts the common
+  five-line "describe the obvious column shape" boilerplate down to
+  one call.
+
+### Changed
+
+- `doc/cli.md` "Large data" section updated to reflect the new
+  auto-streaming behaviour and to point at the public `cli/csv-row-seq`
+  family for callers who want streaming without going through the CLI.
+- `doc/table-api.md` "Basic Usage" section now showcases `print-table`
+  and `columns-from` so a reader doesn't have to dig to find them.
+
+No breaking changes; everything in this release is additive.
+
 ## [2.1.1] - 2026-05-22
 
 ### Changed
@@ -236,7 +279,8 @@ form is essentially `:key` → `:from`, `:title` → `:as`. If you used
 
 - Previous published release.
 
-[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/mbjarland/clj-string-layout/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.2.0
 [2.1.1]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.1.1
 [2.1.0]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.1.0
 [2.0.2]: https://github.com/mbjarland/clj-string-layout/releases/tag/v2.0.2

@@ -101,7 +101,7 @@ side by side with the same data.
 
 ```clojure
 ;; deps.edn
-{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.1.1"}}}
+{:deps {io.github.mbjarland/clj-string-layout {:mvn/version "2.2.0"}}}
 ```
 
 No third-party Clojure runtime dependencies — a Babashka script can
@@ -111,7 +111,7 @@ require it directly:
 #!/usr/bin/env bb
 (require '[babashka.deps :as deps])
 (deps/add-deps '{:deps {io.github.mbjarland/clj-string-layout
-                        {:mvn/version "2.1.1"}}})
+                        {:mvn/version "2.2.0"}}})
 
 (require '[clj-string-layout.table :as table])
 (println (table/table-str {:format :box

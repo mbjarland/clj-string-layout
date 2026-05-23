@@ -30,6 +30,42 @@ Use `table-str` when the consumer wants one string:
 ;; => "Name   Qty\napple  12 "
 ```
 
+At the REPL, `print-table` saves a `(println …)` wrap:
+
+```clojure
+(table/print-table {:format :box
+                    :headers ["Name" "Qty"]
+                    :rows [["apple" 12]]})
+;; (prints the box to *out*; returns nil)
+```
+
+For the common case where your rows are maps and you'd write the same
+column spec by hand, `columns-from` derives a sensible `:columns`
+vector from a sample row — numerics default to right-aligned, labels
+default to the source key's name:
+
+```clojure
+(def items [{:item "apple" :qty 12 :price 1.50}
+            {:item "pear"  :qty  4 :price 2.00}])
+
+(table/table {:format :markdown
+              :columns (table/columns-from items)
+              :rows items})
+;; | item  | qty | price |
+;; |:----- | ---:| -----:|
+;; | apple |  12 |   1.5 |
+;; | pear  |   4 |   2.0 |
+```
+
+Pass overrides as a second argument to customise individual columns —
+the keys are the source keys, the values are partial column maps:
+
+```clojure
+(table/columns-from items
+                    {:price {:as "Price"
+                             :formatter #(format "$%.2f" %)}})
+```
+
 ## Named Formats
 
 Available formats are discoverable at runtime:

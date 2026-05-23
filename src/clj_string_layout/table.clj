@@ -406,6 +406,56 @@
   [spec]
   (str/join \newline (table spec)))
 
+(defn print-table
+  "Renders a high-level table spec and prints it to *out*, one line per row.
+
+  Convenience wrapper for the common REPL pattern of (println (table-str ...)).
+  Returns nil."
+  [spec]
+  (doseq [line (table spec)]
+    (println line)))
+
+(defn columns-from
+  "Derive a :columns vector from a sample row.
+
+  The sample can be either a single row map or a sequence whose first item is
+  a row map. Each key in the sample becomes a column source — the column's
+  :from is the key and its :as defaults to (name key). Insertion order is
+  preserved (use an array-map or sorted-map if your sample has more than 8
+  keys and you need a specific order).
+
+  Default alignment is :right for numeric values (Long, Double, etc.) and
+  :left for everything else. Pass overrides as a map keyed by source key to
+  customise individual columns; supported override keys are :as, :align,
+  :formatter, :width, and :overflow.
+
+      (columns-from {:item \"apple\" :qty 12 :price 1.50})
+      ;; => [{:from :item :as \"item\"}
+      ;;     {:from :qty :as \"qty\" :align :right}
+      ;;     {:from :price :as \"price\" :align :right}]
+
+      (columns-from rows
+                    {:price {:as \"Price\"
+                             :formatter #(format \"$%.2f\" %)}})"
+  ([sample] (columns-from sample {}))
+  ([sample overrides]
+   (let [row (cond (map? sample) sample
+                   (sequential? sample) (first sample)
+                   :else nil)]
+     (when-not (map? row)
+       (throw (ex-info "columns-from requires a map row or a sequence of map rows"
+                       {:type :invalid-sample :value sample})))
+     (mapv (fn [k]
+             (let [v    (get row k)
+                   over (get overrides k)]
+               (cond-> {:from k :as (or (:as over) (name k))}
+                 (and (number? v) (not (:align over))) (assoc :align :right)
+                 (:align over)     (assoc :align (:align over))
+                 (:formatter over) (assoc :formatter (:formatter over))
+                 (:width over)     (assoc :width (:width over))
+                 (:overflow over)  (assoc :overflow (:overflow over)))))
+           (keys row)))))
+
 (defn table-seq
   "Renders a high-level table spec as a sequence of output lines.
 
